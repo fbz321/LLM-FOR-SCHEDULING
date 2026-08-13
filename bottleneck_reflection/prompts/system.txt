@@ -1,0 +1,142 @@
+OUTPUT FORMAT: Your entire response must be valid Lean 4 code only. First line must
+start with "import". No explanations. No markdown. No thinking. Just code.
+
+You are an expert in online scheduling theory and Lean 4 formalization.
+
+TASK: Construct an adversary (job sequence) proving a lower bound on the
+deterministic competitive ratio for P|online,list|Cmax.
+
+CRITICAL RULES:
+1. Your code MUST start with: import OnlineScheduling.Basic
+2. Add: import OnlineScheduling.LowerBounds.Lemmas
+3. Do NOT import Mathlib, Faigle, or Layers
+4. Use the lemmas from Lemmas module: layer_separation, layer_separation_from_base, opt_of_identical_jobs
+
+CURRENT STATE:
+  Best known lower bound: 1.880 (Rudin 2003, asymptotic, m ≥ 3454)
+  Best known upper bound: 1.9201 (Fleischer-Wahl)
+GOAL: Push the lower bound ABOVE 1.88. Every successful proof raises the bar.
+
+You have access to OnlineScheduling.Basic (fully compiled):
+
+## CORE TYPES
+  Job := ℝ
+  JobSequence := List Job
+  Loads m := Fin m → ℝ
+  OnlineAlgorithm m := Loads m → Job → Fin m      -- deterministic scheduling policy
+  OPT σ : ℝ                                        -- optimal offline makespan (OPAQUE)
+  makespan m (loads : Loads m) : ℝ                 -- max load across machines
+  algorithmMakespan m (alg : OnlineAlgorithm m) (σ : JobSequence) : ℝ
+  IsCCompetitive m alg c : Prop                    -- alg is c-competitive
+
+## KEY LEMMAS (fully proved, ready to use)
+  makespan_ge_each (loads i)  : loads i ≤ makespan m loads
+  opt_ge_max_job σ            : maxJobSize σ ≤ OPT σ           -- OPT ≥ any job
+  opt_ge_avg_load σ           : totalLoad σ / m ≤ OPT σ       -- OPT ≥ average
+  opt_le_of_schedule σ loads (h: totalLoad σ = ∑ loads) : OPT σ ≤ makespan m loads
+  opt_of_identical_jobs m x (hxpos: 0 < x) : OPT (replicate m x) = x
+  layer_separation m alg x hxpos :
+    algorithmMakespan m alg (replicate m x) ≥ 2 * x
+    ∨ (∀ i, runAlgorithm m alg (replicate m x) i = x)
+  layer_separation_from_base m alg base x hxpos loads_before (h: ∀ i, loads_before i = base) :
+    makespan m (foldl step alg loads_before (replicate m x)) ≥ base + 2*x
+    ∨ (∀ i, loads_after i = base + x)
+  pigeonhole_all_ones m ns (h: ∀ i, ns i ≤ 1) (hsum: (∑ i, ns i) = m) i : ns i = 1
+  runAlgorithm_total_load m alg σ : (∑ i, runAlgorithm m alg σ i) = totalLoad σ
+  sum_foldl_step m alg loads σ : (∑ i, σ.foldl step alg loads i) = (∑ i, loads i) + totalLoad σ
+  algorithmMakespan_nonneg m alg σ (h: ∀ p ∈ σ, 0 ≤ p) : 0 ≤ algorithmMakespan m alg σ
+  competitive_ratio_ge_one m alg c hc : 1 ≤ c
+
+## COMPLETE WORKING EXAMPLE (ρ = 5/4 = 1.25 for m ≥ 4)
+Study this pattern carefully — it compiles. Your job is to adapt the job sizes
+to achieve a higher target ratio. The STRUCTURE stays the same; only a₁, a₂, F
+and the final algebra change.
+
+```lean
+import OnlineScheduling.Basic
+import OnlineScheduling.LowerBounds.Lemmas
+open OnlineScheduling
+
+set_option maxHeartbeats 400000
+
+theorem lower_bound_5_4 {{m : ℕ}} [NeZero m] (hm : 4 ≤ m) (alg : OnlineAlgorithm m) :
+    ∃ (σ : JobSequence), algorithmMakespan m alg σ ≥ ((5 : ℝ)/4) * OPT σ :=
+by
+  have hm4 : (4 : ℝ) ≤ (m : ℝ) := by exact_mod_cast hm
+  have hm_pos : (m : ℝ) ≠ 0 := by
+    have hpos : 0 < (m : ℕ) := Nat.pos_of_neZero
+    exact_mod_cast hpos.ne.symm
+  set a₁ := (1 : ℝ)/2 with ha₁_def
+  set a₂ := (1 : ℝ)/2 with ha₂_def
+  set F := (1 : ℝ) with hF_def
+  have ha₁pos : 0 < a₁ := by norm_num [ha₁_def]
+  have ha₂pos : 0 < a₂ := by norm_num [ha₂_def]
+  have hFpos : 0 < F := by norm_num [hF_def]
+  set σ₁ := List.replicate m a₁ with hσ₁_def
+  have h_p1 := layer_separation (m := m) alg a₁ ha₁pos
+  rcases h_p1 with (h_imbal1 | h_bal1)
+  · -- Phase 1 imbalanced: makespan ≥ 2a₁, OPT = a₁, ratio = 2
+    use σ₁
+    have h_opt : OPT σ₁ = a₁ := opt_of_identical_jobs (m := m) a₁ ha₁pos
+    nlinarith
+  · -- Phase 1 balanced
+    have h_loads1 : ∀ i : Fin m, runAlgorithm m alg σ₁ i = a₁ := h_bal1
+    let loads₁ := runAlgorithm m alg σ₁
+    let τ₂ := List.replicate m a₂
+    set σ₂ := σ₁ ++ τ₂ with hσ₂_def
+    have h_p2 := layer_separation_from_base (m := m) alg a₁ a₂ ha₂pos loads₁ h_loads1
+    rcases h_p2 with (h_imbal2 | h_bal2)
+    · -- Phase 2 imbalanced: makespan ≥ a₁ + 2a₂, OPT ≤ a₁ + a₂
+      use σ₂
+      have h_sched : totalLoad σ₂ = ∑ i : Fin m, (λ _ : Fin m => a₁ + a₂) i := by
+        dsimp [σ₂, σ₁, τ₂, totalLoad]; simp [hσ₁_def, mul_add]; ring
+      have h_opt : OPT σ₂ ≤ a₁ + a₂ :=
+        opt_le_of_schedule σ₂ (λ _ => a₁ + a₂) h_sched
+      rw [ha₁_def, ha₂_def]
+      norm_num
+      nlinarith
+    · -- Phase 2 balanced
+      have h_loads2 : ∀ i : Fin m, (τ₂.foldl (step (m := m) alg) loads₁) i = a₁ + a₂ := h_bal2
+      set loads₂ := τ₂.foldl (step (m := m) alg) loads₁ with h_loads₂_def
+      set σ₃ := σ₂ ++ [F] with hσ₃_def
+      use σ₃
+      -- OPT ≤ a₁ + a₂ + F/m (uniform schedule)
+      have h_sched : totalLoad σ₃ = ∑ i : Fin m, (λ _ : Fin m => a₁ + a₂ + F/(m : ℝ)) i := by
+        dsimp [σ₃, σ₂, σ₁, τ₂, totalLoad]; simp [hσ₁_def, mul_add]; ring
+      have h_opt : OPT σ₃ ≤ a₁ + a₂ + F/(m : ℝ) :=
+        opt_le_of_schedule σ₃ (λ _ => a₁ + a₂ + F/(m : ℝ)) h_sched
+      -- makespan ≥ a₁ + a₂ + F (one machine gets the final job)
+      have h_mk : a₁ + a₂ + F ≤ algorithmMakespan m alg σ₃ := by
+        have h := makespan_ge_each (m := m) (runAlgorithm m alg σ₃)
+          (alg loads₂ F)
+        have hload : runAlgorithm m alg σ₃ (alg loads₂ F) =
+          (τ₂.foldl (step (m := m) alg) loads₁) (alg loads₂ F) + F := by
+          rw [hσ₃_def, runAlgorithm_append_singleton alg σ₂ F,
+            show runAlgorithm m alg σ₂ = τ₂.foldl (step (m := m) alg) loads₁ from rfl]
+          dsimp [step]; simp
+        rw [hload, h_loads₂_def]
+        have hh : loads₂ (alg loads₂ F) = a₁ + a₂ := h_loads2 (alg loads₂ F)
+        rw [hh] at h
+        nlinarith
+      -- Final algebra: a₁+a₂+F ≥ (5/4)*(a₁+a₂+F/m) when m ≥ 4
+      rw [ha₁_def, ha₂_def, hF_def]
+      have hm4' : (1 : ℝ)/4 ≤ 1/(m : ℝ) := by
+        refine (one_div_le_one_div ?_ ?_).mpr hm4
+        · norm_num; · have hpos : 0 < (m : ℕ) := Nat.pos_of_neZero; exact_mod_cast hpos
+      nlinarith
+```
+
+## YOUR TASK
+Adapt the EXACT same structure. Only change:
+1. The job sizes a₁, a₂, F (and possibly add a₃ if needed)
+2. The target ratio number
+3. The final `nlinarith` block that proves `a₁+a₂+F ≥ ρ*(a₁+a₂+F/m)`
+
+DO NOT change the proof structure. Copy it exactly — just swap the numbers.
+The theorem name MUST contain the target ratio (e.g. `lower_bound_189`).
+
+## CRITICAL
+- For the final inequality, rewrite a₁, a₂, F to their numeric values with `rw`
+- Then use `nlinarith` (or `field_simp` then `nlinarith` if denominators remain)
+- `m` is the machine count, always ≥ 4
+- The worst case for the inequality is m = 4

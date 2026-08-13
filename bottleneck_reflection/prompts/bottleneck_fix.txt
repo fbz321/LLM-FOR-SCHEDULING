@@ -1,0 +1,38 @@
+YOUR PREVIOUS PROOF FAILED Lean compilation while targeting ratio {target}.
+
+## BOTTLENECK ANALYSIS
+
+Error category: {error_category}
+
+{goals_section}
+
+{hypotheses_section}
+
+NATURAL LANGUAGE EXPLANATION:
+{nl_description}
+
+SUGGESTED FIX:
+{suggested_fix}
+
+SPECIFIC GUIDANCE:
+{guidance}
+
+## YOUR TASK
+
+Fix the specific issue identified above. You have {remaining_attempts} fix attempts remaining.
+
+Options:
+1. Adjust job sizes (a₁, a₂, ..., F) to make the inequality actually provable
+2. Add an intermediate lemma (have statement) to close the gap
+3. Restructure the case analysis if needed
+4. Use a different OPT upper bound construction
+5. Add a positivity/nonzero hypothesis that's missing
+
+KEEP ALL WORKING PARTS UNCHANGED. Only modify what's needed to fix this bottleneck.
+
+## PREVIOUS CODE (for context):
+```lean
+{previous_code}
+```
+
+Return ONLY the corrected Lean code.

@@ -1,0 +1,542 @@
+[
+  {
+    "gap_id": "val_makespan_ge_average_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_01",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_01",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_01",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_02",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_02",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_02",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_03",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_03",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_03",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_04",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_04",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_04",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_05",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_05",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_makespan_ge_average_gap_05",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast N"
+  },
+  {
+    "gap_id": "val_opt_ge_both_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\nopt_ge_max_job  σ |>.trans (le_max_right _ _)\n\nend OnlineScheduling"
+  },
+  {
+    "gap_id": "val_opt_ge_both_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\nby\n  have h_ub : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ := by\n    -- Use the adv"
+  },
+  {
+    "gap_id": "val_opt_ge_both_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\nopt_ge_max_job  σ |>.trans (le_max_right _ _)\n\nend OnlineScheduling"
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  by\ninductio"
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  by\ninductio"
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  by\n  induct"
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_01",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_01",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_01",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_02",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_02",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_02",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_03",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_03",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_03",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_04",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_04",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_04",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_05",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_05",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_runAlgorithm_mono_gap_05",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_01",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_01",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_01",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_02",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_02",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_02",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_03",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_03",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_03",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_04",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_04",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_04",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_05",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_05",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_sum_foldl_step_gap_05",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before "
+  },
+  {
+    "gap_id": "val_load_mono_on_prefix_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i :="
+  },
+  {
+    "gap_id": "val_load_mono_on_prefix_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i :="
+  },
+  {
+    "gap_id": "val_load_mono_on_prefix_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i :="
+  },
+  {
+    "gap_id": "val_competitive_implies_bounded_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\nl"
+  },
+  {
+    "gap_id": "val_competitive_implies_bounded_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\nl"
+  },
+  {
+    "gap_id": "val_competitive_implies_bounded_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\nl"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\nhave h_run : runAlgorithm m alg sigma = step (m := m) alg "
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\nhave h_run : runAlgorithm m alg sigma = step (m := m) alg "
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  have h_run : runAlgorithm m alg sigma = step (m := m) al"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_01",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_01",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_01",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_02",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_02",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_02",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_03",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_03",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_03",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_04",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_04",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_04",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_05",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_05",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_competitive_ratio_ge_one_gap_05",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads"
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_00",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load (m := m) inst.jobs"
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_00",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load (m := m) inst.jobs"
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_00",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load (m := m) inst.jobs"
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_01",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  apply opt_le_of_schedule\n  e"
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_01",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  apply opt_le_of_schedule\n  e"
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_01",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  apply opt_le_of_schedule\n  e"
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_00_01",
+    "sample": 0,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load inst.jobs (by\n    -- Need: totalLoad / "
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_00_01",
+    "sample": 1,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load inst.jobs (by\n    -- Need: totalLoad / "
+  },
+  {
+    "gap_id": "val_known_sum_opt_bound_gap_00_01",
+    "sample": 2,
+    "lean_error": null,
+    "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load inst.jobs\n  -- The adversary can always"
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "total_gaps": 30,
+  "num_samples_per_gap": 3,
+  "pass@k": 1,
+  "pass_rate": 0.0333,
+  "avg_generated_length": 859.6,
+  "avg_illegal_output_rate": 0.0222,
+  "by_difficulty": {
+    "medium": {
+      "count": 6,
+      "pass": 0,
+      "avg_len": 894.3333333333334,
+      "illegal_rate": 0.0,
+      "pass_rate": 0.0
+    },
+    "easy": {
+      "count": 6,
+      "pass": 1,
+      "avg_len": 614.6666666666666,
+      "illegal_rate": 0.11116666666666668,
+      "pass_rate": 0.16666666666666666
+    },
+    "hard": {
+      "count": 18,
+      "pass": 0,
+      "avg_len": 929.7055555555556,
+      "illegal_rate": 0.0,
+      "pass_rate": 0.0
+    }
+  },
+  "by_source": {
+    "Basic.lean": {
+      "count": 20,
+      "pass": 0,
+      "pass_rate": 0.0
+    },
+    "CompetitiveRatio.lean": {
+      "count": 7,
+      "pass": 0,
+      "pass_rate": 0.0
+    },
+    "Models/KnownSum.lean": {
+      "count": 3,
+      "pass": 1,
+      "pass_rate": 0.3333333333333333
+    }
+  },
+  "adapter": "/root/autodl-tmp/LLaMA-Factory/saves/deepseek-math-7b/qlora/r9",
+  "base_model": "/root/autodl-tmp/models/deepseek-math-7b-base",
+  "lean_checked": true,
+  "evaluation_time": 1623.0
+}

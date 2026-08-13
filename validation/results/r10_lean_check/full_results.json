@@ -1,0 +1,1404 @@
+{
+  "total_gaps": 30,
+  "num_samples_per_gap": 3,
+  "pass@k": 0,
+  "pass_rate": 0.0,
+  "avg_generated_length": 854.3,
+  "avg_illegal_output_rate": 0.0222,
+  "by_difficulty": {
+    "medium": {
+      "count": 6,
+      "pass": 0,
+      "avg_len": 924.2833333333333,
+      "illegal_rate": 0.0,
+      "pass_rate": 0.0
+    },
+    "easy": {
+      "count": 6,
+      "pass": 0,
+      "avg_len": 543.4333333333333,
+      "illegal_rate": 0.111,
+      "pass_rate": 0.0
+    },
+    "hard": {
+      "count": 18,
+      "pass": 0,
+      "avg_len": 934.6722222222223,
+      "illegal_rate": 0.0,
+      "pass_rate": 0.0
+    }
+  },
+  "by_source": {
+    "Basic.lean": {
+      "count": 20,
+      "pass": 0,
+      "pass_rate": 0.0
+    },
+    "CompetitiveRatio.lean": {
+      "count": 7,
+      "pass": 0,
+      "pass_rate": 0.0
+    },
+    "Models/KnownSum.lean": {
+      "count": 3,
+      "pass": 0,
+      "pass_rate": 0.0
+    }
+  },
+  "detailed_results": [
+    {
+      "gap_id": "val_makespan_ge_average_gap_00",
+      "difficulty": "medium",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 941.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.out m)\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 941,
+          "elapsed_seconds": 14.9,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.out m)\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 941,
+          "elapsed_seconds": 14.39,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast Nat.pos_of_ne_zero (NeZero.out m)\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 941,
+          "elapsed_seconds": 14.21,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_makespan_ge_average_gap_01",
+      "difficulty": "medium",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1142.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\nhave h_total_nonneg : 0 ≤ (Finset.sum Finset.univ loads) := by\n    apply Finset.sum_nonneg\n    intro i _\n    exact Loads.each_load_nonneg m loads i\n  -- Use the fact that the makespan is an upper bound for each job\n  have h_each_le (i : Fin m) : loads i ≤ makespan m loads := by\n    apply le_of_not_gt\n    intro h\n      -- If any job > makespan, then the total load > m * makespan\n      have h_total_gt : (Finset.sum Finset.univ loads) > (m : ℝ) * makespan m loads := by\n        calc\n          (Finset.sum Finset.univ loads) > loads i := by linarith\n          _ ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n            Finset.single_le_sum (fun j _ => h_each_le j) (by simp)\n          _ = (m : ℝ) * makespan m loads := by simp\n      linarith\n  -- Divide both sides by m (which is positive)\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan",
+          "generated_length": 1382,
+          "elapsed_seconds": 19.21,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\nhave h_each_le (i : Fin m) : loads i ≤ makespan m loads := by\n    have h_foldl : makespan m loads = max (loads i) (makespan m loads) := by\n      unfold makespan\n      simp [foldl_max, hm_pos.ne']\n    rw [h_foldl]\n    exact le_max_left _ _\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 1073,
+          "elapsed_seconds": 16.26,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\nhave h_each_le (i : Fin m) : loads i ≤ makespan m loads := by\n    have h_mkp := makespan_ge_each m loads i\n    simpa [h_mkp] using h_mkp\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 971,
+          "elapsed_seconds": 14.89,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_makespan_ge_average_gap_02",
+      "difficulty": "medium",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 926.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n    have h_sum_le : (Finset.sum Finset.univ loads) ≤ Finset.sum Finset.univ (λ i => makespan m loads) :=\n      Finset.sum_le_sum fun i hi => h_each_le i\n    simpa [Finset.sum_const, nsmul_eq_mul] using h_sum_le\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 930,
+          "elapsed_seconds": 13.78,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n    have h_sum_le : (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ fun i => makespan m loads) :=\n      Finset.sum_le_sum fun i hi => h_each_le i\n    simpa [Finset.sum_const, nsmul_eq_mul] using h_sum_le\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 932,
+          "elapsed_seconds": 14.27,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n    have h_sum_le : (Finset.sum Finset.univ loads) ≤ Finset.sum Finset.univ (λ i => makespan m loads) :=\n      Finset.sum_le_sum h_each_le\n    simpa [Finset.sum_const, nsmul_eq_mul] using h_sum_le\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 916,
+          "elapsed_seconds": 14.15,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_makespan_ge_average_gap_03",
+      "difficulty": "medium",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 748.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  rw [div_le_iff hm_pos]\n  exact h_sum_le\n\nend OnlineScheduling",
+          "generated_length": 748,
+          "elapsed_seconds": 10.92,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  rw [div_le_iff hm_pos]\n  exact h_sum_le\n\nend OnlineScheduling",
+          "generated_length": 748,
+          "elapsed_seconds": 11.28,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  rw [div_le_iff hm_pos]\n  exact h_sum_le\n\nend OnlineScheduling",
+          "generated_length": 748,
+          "elapsed_seconds": 11.12,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_makespan_ge_average_gap_04",
+      "difficulty": "medium",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 874.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\nby gcongr\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 874,
+          "elapsed_seconds": 13.04,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\nby gcongr\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 874,
+          "elapsed_seconds": 13.4,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\nby gcongr\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 874,
+          "elapsed_seconds": 13.39,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_makespan_ge_average_gap_05",
+      "difficulty": "medium",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 914.7,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n_ = makespan m loads := by\n    rw [mul_comm]; field_simp [hm_pos.ne']",
+          "generated_length": 913,
+          "elapsed_seconds": 13.63,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n_ = makespan m loads := by\n      rw [mul_comm]; field_simp [hm_pos.ne']",
+          "generated_length": 915,
+          "elapsed_seconds": 13.9,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n_ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+          "generated_length": 916,
+          "elapsed_seconds": 13.95,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_opt_ge_both_gap_00",
+      "difficulty": "easy",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 554.3,
+      "illegal_output_rate": 0.333,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\nopt_ge_max_job  σ |>.trans (le_max_right _ _)\n\nend OnlineScheduling",
+          "generated_length": 275,
+          "elapsed_seconds": 3.73,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\nby\n  have h_ub : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ := by\n    -- Use the adversary theorem: either the makespan or the average job size\n    -- is a lower bound on OPT.\n    have h_ad := opt_ge_max_job  (m := m) σ\n    have h_ls := opt_ge_mean_load (m := m) σ\n    -- Either the maximum job size is ≥ some machine (which is ≥ OPT/m)\n    -- or the average load is ≥ OPT/m.\n    -- Either way, the max of the two is ≥ OPT/m.\n    -- But wait: the makespan is already ≥ OPT/m, so the max is ≥ OPT/m.\n    -- But we need to show it's ≥ the max of the two.\n    -- Actually, the makespan is ≥ max(max_job_size, total_load/m),\n    -- so the max of the two is ≤ makespan.\n    -- Therefore, the makespan ≥ the max of the two.\n    rcases le_total (maxJobSize σ) (totalLoad σ / (m : ℝ)) with h | h\n    · rw [max_eq_right h]; exact h_ls\n    · rw [max_eq_left h]; exact h_ad\n  exact h_ub\n\nend OnlineScheduling",
+          "generated_length": 1113,
+          "elapsed_seconds": 14.73,
+          "is_empty": false,
+          "illegal_patterns": [
+            "comment_explanation"
+          ],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\nopt_ge_max_job  σ |>.trans (le_max_right _ _)\n\nend OnlineScheduling",
+          "generated_length": 275,
+          "elapsed_seconds": 3.78,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_runAlgorithm_mono_gap_00",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 755.7,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  by\ninduction' σ₃ with p σ₃ ih\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 755,
+          "elapsed_seconds": 11.6,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  by\ninduction' σ₃ with p σ₃ ih\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 755,
+          "elapsed_seconds": 11.7,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  by\n  induction' σ₃ with p σ₃ ih\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 757,
+          "elapsed_seconds": 11.86,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_runAlgorithm_mono_gap_01",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 775.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n· intro i; simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 775,
+          "elapsed_seconds": 11.93,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n· intro i; simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 775,
+          "elapsed_seconds": 11.81,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n· intro i; simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 775,
+          "elapsed_seconds": 12.89,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_runAlgorithm_mono_gap_02",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 723.7,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\nhave h_rest : ∀ p ∈ σ₃, 0 ≤ p := by intro p hp; exact (get_mem _ _ hp).2\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 717,
+          "elapsed_seconds": 11.11,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\nrw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 640,
+          "elapsed_seconds": 10.41,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\nhave h_rest : ∀ p ∈ σ₃, 0 ≤ p := by\n      intro p hp\n      exact (List.mem_cons.mp hp).elim (fun h => h ▸ (by simp [h_nonneg p hp]))\n        (fun h => h ▸ h_nonneg p hp)\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 814,
+          "elapsed_seconds": 13.48,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_runAlgorithm_mono_gap_03",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 706.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\nhave h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 706,
+          "elapsed_seconds": 11.26,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\nhave h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 706,
+          "elapsed_seconds": 11.01,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\nhave h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 706,
+          "elapsed_seconds": 11.1,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_runAlgorithm_mono_gap_04",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 705.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n  have h_step := runAlgorithm_mono_step m alg σ₁ (p :: σ₃) hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 705,
+          "elapsed_seconds": 11.13,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n  have h_step := runAlgorithm_mono_step m alg σ₁ (p :: σ₃) hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 705,
+          "elapsed_seconds": 11.71,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n  have h_step := runAlgorithm_mono_step m alg σ₁ (p :: σ₃) hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+          "generated_length": 705,
+          "elapsed_seconds": 11.69,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_runAlgorithm_mono_gap_05",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 844.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\nhave h_rec : runAlgorithm m alg (σ₁ ++ [p]) i ≤ runAlgorithm m alg ((σ₁ ++ [p]) ++ σ₃) i :=\n      ih (σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_rec\n\nend OnlineScheduling",
+          "generated_length": 844,
+          "elapsed_seconds": 13.49,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\nhave h_rec : runAlgorithm m alg (σ₁ ++ [p]) i ≤ runAlgorithm m alg ((σ₁ ++ [p]) ++ σ₃) i :=\n      ih (σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_rec\n\nend OnlineScheduling",
+          "generated_length": 844,
+          "elapsed_seconds": 13.38,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\nhave h_rec : runAlgorithm m alg (σ₁ ++ [p]) i ≤ runAlgorithm m alg ((σ₁ ++ [p]) ++ σ₃) i :=\n      ih (σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_rec\n\nend OnlineScheduling",
+          "generated_length": 844,
+          "elapsed_seconds": 13.93,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_sum_foldl_step_gap_00",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 835.3,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau := by\n  have h_base : (∑ i : Fin m, loads_before i) = (∑ i : Fin m, loads_before i) := rfl\n  have h_rec := foldl_step_totalLoad (m := m) alg loads_before tau\n  simp [h_base, h_rec]\n\nend OnlineScheduling",
+          "generated_length": 550,
+          "elapsed_seconds": 7.72,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau := by\n  have h_base : (∑ i : Fin m, (step (m := m) alg loads_before (tau.get ⟨0, by simp⟩))) =\n      (∑ i, loads_before i) + totalLoad tau := by\n    simp [totalLoad]\n  have h_rec : ∀ (p : Job) (ih : ∀ (i : Fin m),\n      (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n      (∑ i, loads_before i) + totalLoad tau) (h : tau ≠ []) →\n      (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n      (∑ i, loads_before i) + totalLoad tau := by\n    intro p ih\n    rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\n  induction' tau with p tau ih\n  · simp [h_base]\n  · exact h_rec p (by simp)\n\nend OnlineScheduling",
+          "generated_length": 1137,
+          "elapsed_seconds": 16.83,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau := by\n  have h_base : (∑ i : Fin m, loads_before i) = (∑ i : Fin m, loads_before i) := rfl\n  have h_rec := tau.foldl_foldl_step (m := m) alg loads_before\n  rw [h_rec]\n  rw [Finset.sum_add_distrib]\n  induction' tau with p tau ih\n  · simp [h_base]\n  · rw [List.foldl]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 819,
+          "elapsed_seconds": 11.62,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_sum_foldl_step_gap_01",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 645.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n· simp\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 645,
+          "elapsed_seconds": 8.7,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n· simp\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 645,
+          "elapsed_seconds": 8.55,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n· simp\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 645,
+          "elapsed_seconds": 8.64,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_sum_foldl_step_gap_02",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 729.3,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 632,
+          "elapsed_seconds": 8.13,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  rw [show tau.foldl (step (m := m) alg) loads_before =\n      fun i => step (m := m) alg loads_before p i := by\n    ext i; rw [foldl_cons, ih]]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 778,
+          "elapsed_seconds": 10.35,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  rw [show tau.foldl (step (m := m) alg) loads_before =\n      fun i => step (m := m) alg loads_before p i := by\n    ext i; rw [foldl_cons, ih]]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 778,
+          "elapsed_seconds": 10.42,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_sum_foldl_step_gap_03",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 604.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\nsimp [step, loads_after, Finset.sum_add_distrib, ih]\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 604,
+          "elapsed_seconds": 8.29,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\nsimp [step, loads_after, Finset.sum_add_distrib, ih]\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 604,
+          "elapsed_seconds": 8.17,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\nsimp [step, loads_after, Finset.sum_add_distrib, ih]\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 604,
+          "elapsed_seconds": 7.88,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_sum_foldl_step_gap_04",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 771.7,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\nhave h_add : (∑ i : Fin m, (step (m := m) alg loads_before p) i) = alg loads_before p := by\n      simp [step, loads_before]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 764,
+          "elapsed_seconds": 9.8,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\nhave h_add : (∑ i : Fin m, (step (m := m) alg loads_before p) i) = alg loads_before p := by\n      simp [step, loads_before]\n    rw [h_add]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 779,
+          "elapsed_seconds": 10.04,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\nhave h_add : (∑ i : Fin m, step (m := m) alg loads_before p i) = alg loads_before p := by\n      simp [step, Finset.sum_add_distrib]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+          "generated_length": 772,
+          "elapsed_seconds": 10.01,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_sum_foldl_step_gap_05",
+      "difficulty": "hard",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 633.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n  simp [totalLoad, List.foldl]\n\nend OnlineScheduling",
+          "generated_length": 633,
+          "elapsed_seconds": 8.08,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n  simp [totalLoad, List.foldl]\n\nend OnlineScheduling",
+          "generated_length": 633,
+          "elapsed_seconds": 8.06,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n  simp [totalLoad, List.foldl]\n\nend OnlineScheduling",
+          "generated_length": 633,
+          "elapsed_seconds": 8.12,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_load_mono_on_prefix_gap_00",
+      "difficulty": "easy",
+      "source": "Basic.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 417.3,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i := by\n  rw [runAlgorithm_append]\n  exact load_mono_on_schedule (runAlgorithm m alg sigma) i h_nonneg\n\nend OnlineScheduling",
+          "generated_length": 420,
+          "elapsed_seconds": 5.26,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i := by\n  rw [runAlgorithm_append]\n  exact load_mono_on_schedule (runAlgorithm m alg sigma) i h_nonneg\n\nend OnlineScheduling",
+          "generated_length": 420,
+          "elapsed_seconds": 5.31,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i :=\nload_mono_on_prefix_aux m alg sigma tau h_nonneg i (le_refl (runAlgorithm m alg sigma i))\n\nend OnlineScheduling",
+          "generated_length": 412,
+          "elapsed_seconds": 5.23,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_competitive_implies_bounded_gap_00",
+      "difficulty": "easy",
+      "source": "CompetitiveRatio.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 554.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\n  have h := hc σ\n  dsimp [algorithmMakespan, OPT] at h ⊢\n  exact h",
+          "generated_length": 554,
+          "elapsed_seconds": 7.14,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\n  have h := hc σ\n  dsimp [algorithmMakespan, OPT] at h ⊢\n  exact h",
+          "generated_length": 554,
+          "elapsed_seconds": 7.18,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ := by\n  have h := hc σ\n  dsimp [algorithmMakespan, OPT] at h ⊢\n  exact h",
+          "generated_length": 554,
+          "elapsed_seconds": 7.27,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_competitive_ratio_ge_one_gap_00",
+      "difficulty": "hard",
+      "source": "CompetitiveRatio.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1363.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\nhave h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1",
+          "generated_length": 1363,
+          "elapsed_seconds": 18.87,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\nhave h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1",
+          "generated_length": 1363,
+          "elapsed_seconds": 19.28,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge :",
+          "generated_length": 1363,
+          "elapsed_seconds": 19.24,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_competitive_ratio_ge_one_gap_01",
+      "difficulty": "hard",
+      "source": "CompetitiveRatio.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1339.7,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = fun i => if i = j then (1 : ℝ) else 0 := by\n    have h_step : ∀ i : Fin m, step (m := m) alg loadsBefore 1 i = (if i = j then (1 : ℝ) else 0) := by\n      intro i\n      simp [step, loadsBefore, j]\n    rw [runAlgorithm_eq_foldl_step sigma]\n    rw [show sigma = [1] by rfl]\n    rw [List.foldl]\n    simp [h_step]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : �",
+          "generated_length": 1324,
+          "elapsed_seconds": 19.23,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = fun i => if i = j then (1 : ℝ) else 0 := by\n    have h_step : ∀ i : Fin m, step (m := m) alg loadsBefore 1 i = (if i = j then (1 : ℝ) else 0) := by\n      intro i\n      by_cases hij : i = j\n      · simp [hij, loadsBefore, j]\n      · simp [hij, loadsBefore, j]\n    rw [runAlgorithm_step_schedule (m := m) alg loadsBefore 1]\n    exact funext h_step\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makes",
+          "generated_length": 1346,
+          "elapsed_seconds": 19.66,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = fun i => if i = j then (1 : ℝ) else 0 := by\n    have h_step : ∀ i : Fin m, step (m := m) alg loadsBefore 1 i = (if i = j then (1 : ℝ) else 0) := by\n      intro i\n      by_cases hij : i = j\n      · simp [hij, loadsBefore, step]\n      · simp [hij, loadsBefore, step]\n    rw [runAlgorithm_step_schedule (m := m) alg loadsBefore 1]\n    exact funext h_step\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m",
+          "generated_length": 1349,
+          "elapsed_seconds": 19.13,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_competitive_ratio_ge_one_gap_02",
+      "difficulty": "hard",
+      "source": "CompetitiveRatio.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1375.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = (1 : ℝ) := by\n    have h := alg_run_job_load (m := m) alg loadsBefore 1 j\n    simpa [h_run, loadsBefore] using h\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m)",
+          "generated_length": 1375,
+          "elapsed_seconds": 19.61,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = (1 : ℝ) := by\n    have h := alg_run_job (m := m) alg loadsBefore 1 j\n    simpa [h_run, loadsBefore] using h\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoad",
+          "generated_length": 1378,
+          "elapsed_seconds": 19.32,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n\n  have h_load_j : runAlgorithm m alg sigma j = (1 : ℝ) := by\n    have h := alg_run_job_load (m := m) alg loadsBefore j 1\n    simpa [h_run, loadsBefore] using h\n\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m",
+          "generated_length": 1372,
+          "elapsed_seconds": 19.05,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_competitive_ratio_ge_one_gap_03",
+      "difficulty": "hard",
+      "source": "CompetitiveRatio.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1362.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\nhave h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      sim",
+          "generated_length": 1362,
+          "elapsed_seconds": 19.62,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\nhave h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      sim",
+          "generated_length": 1362,
+          "elapsed_seconds": 19.44,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\nhave h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      sim",
+          "generated_length": 1362,
+          "elapsed_seconds": 19.4,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_competitive_ratio_ge_one_gap_04",
+      "difficulty": "hard",
+      "source": "CompetitiveRatio.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1276.7,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\nhave h_opt_le : algorithmMakespan m alg sigma ≤ OPT sigma := by\n  dsimp [algorithmMakespan, OPT]\n  have h_mkp := makespan_le_totalLoad (m := m) (runAlgorithm m alg sigma)\n    (by simp [sigma, totalLoad]; exact (le_refl 1))\n  have h_total : totalLoad sigma = (1 : ℝ) := by\n    simp [sigma, totalLoad]\n  nlinarith\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+          "generated_length": 1366,
+          "elapsed_seconds": 18.88,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\nhave h_opt_le : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+          "generated_length": 1232,
+          "elapsed_seconds": 17.05,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\nhave h_opt_le : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+          "generated_length": 1232,
+          "elapsed_seconds": 16.4,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_competitive_ratio_ge_one_gap_05",
+      "difficulty": "hard",
+      "source": "CompetitiveRatio.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1380.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_",
+          "generated_length": 1380,
+          "elapsed_seconds": 18.36,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_",
+          "generated_length": 1380,
+          "elapsed_seconds": 18.38,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_",
+          "generated_length": 1380,
+          "elapsed_seconds": 18.62,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_known_sum_opt_bound_gap_00",
+      "difficulty": "easy",
+      "source": "Models/KnownSum.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 279.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load (m := m) inst.jobs",
+          "generated_length": 279,
+          "elapsed_seconds": 3.52,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load (m := m) inst.jobs",
+          "generated_length": 279,
+          "elapsed_seconds": 3.48,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load (m := m) inst.jobs",
+          "generated_length": 279,
+          "elapsed_seconds": 3.57,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_known_sum_opt_bound_gap_01",
+      "difficulty": "easy",
+      "source": "Models/KnownSum.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 328.0,
+      "illegal_output_rate": 0.0,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  apply opt_le_of_schedule\n  exact known_sum_schedule inst",
+          "generated_length": 328,
+          "elapsed_seconds": 3.99,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  apply opt_le_of_schedule\n  exact known_sum_schedule inst",
+          "generated_length": 328,
+          "elapsed_seconds": 4.14,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  apply opt_le_of_schedule\n  exact known_sum_schedule inst",
+          "generated_length": 328,
+          "elapsed_seconds": 4.16,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    },
+    {
+      "gap_id": "val_known_sum_opt_bound_gap_00_01",
+      "difficulty": "easy",
+      "source": "Models/KnownSum.lean",
+      "num_samples": 3,
+      "pass@1": false,
+      "pass@k": false,
+      "any_nonempty": true,
+      "any_clean": true,
+      "avg_generated_length": 1128.0,
+      "illegal_output_rate": 0.333,
+      "lean_checked": true,
+      "completions": [
+        {
+          "sample_index": 0,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load inst.jobs (by\n    -- Need: totalLoad / m ≤ maxJobSize\n    -- But maxJobSize = 1 for KnownSumInstance\n    dsimp [KnownSumInstance.maxJobSize]\n    have h := inst.max_job_le_one\n    rwa [le_div_iff (by positivity : (0 : ℝ) < m)] at h)\n  )\n  sorry",
+          "generated_length": 504,
+          "elapsed_seconds": 6.66,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 1,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load inst.jobs (by\n    -- Need: totalLoad / m ≤ maxJobSize\n    have h_mkp : ∃ p : ℝ, p = (Finset.sum Finset.univ inst.jobs) / (m : ℝ) := by\n      exact ⟨(Finset.sum Finset.univ inst.jobs) / (m : ℝ), rfl⟩\n    rcases h_mkp with ⟨p, hp⟩\n    have h_avg_nonneg : 0 ≤ p := by\n      rw [hp]\n      exact div_nonneg (Finset.sum_nonneg fun _ _ => le_of_lt inst.pos_jobs) (Nat.cast_nonneg m)\n    -- Each machine gets at most p + maxJob, so maxLoad ≤ p + maxJob\n    have h_max_load_bound : maxLoad inst.jobs ≤ p + (Finset.max' (Finset.univ) (inst.max_pos_jobs)) :=\n      calc\n        maxLoad inst.jobs = Finset.foldl max (0 : ℝ) (inst.jobs) := rfl\n        _ ≤ Finset.sum Finset.univ inst.jobs := by\n          -- Sum is upper bound for max load when all jobs are unit\n          exact load_le_sum_on_univ (Finset.foldl_eq_sum_of_comm _) 0 inst.jobs\n        _ = (Finset.sum Finset.univ inst.jobs) := rfl\n        _ = p * (m : ℝ) := by rw [hp]; simp [mul_comm]\n        _ = p * (m : ℝ) := rfl\n        _ ≤ p + (Finset.max' (Finset.univ",
+          "generated_length": 1272,
+          "elapsed_seconds": 18.96,
+          "is_empty": false,
+          "illegal_patterns": [],
+          "lean_passes": false,
+          "lean_error": null
+        },
+        {
+          "sample_index": 2,
+          "generated": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  opt_ge_avg_load inst.jobs\n  -- The adversary can always achieve ratio >= 1/m by making all jobs = 1/m.\n  -- This follows from the adversary's strategy:\n  -- 1. Start with m machines each with load 0.\n  -- 2. For each job of size 1/m, decide which machine to put it on.\n  --    The adversary can put it on any machine, so the max load >= 1/m.\n  --    The total load is m * (1/m) = 1, so the makespan = 1.\n  --    The average load = 1/m, so the ratio = 1.\n  -- 3. For any schedule, some machine has load >= 1/m and some <= 1/m.\n  --    The makespan >= 1/m and the average load = 1/m, so ratio >= 1.\n  -- Thus the adversary's strategy forces ratio >= 1/m.\n  -- But the theorem says ratio <= 1/m, so we must have ratio = 1/m.\n  -- This is a contradiction unless the instance is perfectly balanced.\n  -- Therefore, the algorithm's output must be balanced within a factor of 2.\n  -- But this is a known theorem (Graham's tight example for List Scheduling).\n  -- So we don't need to reprove it; we just use the fact that the algorithm\n  -- achieves ratio exactly 1/m on perfectly balanced instances.\n  -- For the general case, the algorithm's makespan <= OPT + (1-1/m) after\n  -- ListScheduling, and then Balance makes it <= OPT.\n  -- Therefore, the makespan <= OPT and the average load = OPT/m, so ratio <= 1.\n  -- But we already showed ratio >= 1/m, so 1/m <= ratio <=",
+          "generated_length": 1608,
+          "elapsed_seconds": 19.11,
+          "is_empty": false,
+          "illegal_patterns": [
+            "comment_explanation"
+          ],
+          "lean_passes": false,
+          "lean_error": null
+        }
+      ]
+    }
+  ]
+}

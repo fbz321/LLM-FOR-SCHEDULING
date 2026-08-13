@@ -1,0 +1,69 @@
+{
+  "total_gaps": 30,
+  "num_theorems": 8,
+  "by_difficulty": {
+    "easy": 6,
+    "medium": 6,
+    "hard": 18
+  },
+  "theorems": [
+    {
+      "theorem": "val_makespan_ge_average",
+      "source": "Basic.lean",
+      "difficulty": "medium",
+      "num_gaps": 6
+    },
+    {
+      "theorem": "val_opt_ge_both",
+      "source": "Basic.lean",
+      "difficulty": "easy",
+      "num_gaps": 1
+    },
+    {
+      "theorem": "val_runAlgorithm_mono",
+      "source": "Basic.lean",
+      "difficulty": "hard",
+      "num_gaps": 6
+    },
+    {
+      "theorem": "val_sum_foldl_step",
+      "source": "Basic.lean",
+      "difficulty": "hard",
+      "num_gaps": 6
+    },
+    {
+      "theorem": "val_load_mono_on_prefix",
+      "source": "Basic.lean",
+      "difficulty": "easy",
+      "num_gaps": 1
+    },
+    {
+      "theorem": "val_competitive_implies_bounded",
+      "source": "CompetitiveRatio.lean",
+      "difficulty": "easy",
+      "num_gaps": 1
+    },
+    {
+      "theorem": "val_competitive_ratio_ge_one",
+      "source": "CompetitiveRatio.lean",
+      "difficulty": "hard",
+      "num_gaps": 6
+    },
+    {
+      "theorem": "val_known_sum_opt_bound",
+      "source": "Models/KnownSum.lean",
+      "difficulty": "easy",
+      "num_gaps": 3
+    }
+  ],
+  "theorem_names": [
+    "val_makespan_ge_average",
+    "val_opt_ge_both",
+    "val_runAlgorithm_mono",
+    "val_sum_foldl_step",
+    "val_load_mono_on_prefix",
+    "val_competitive_implies_bounded",
+    "val_competitive_ratio_ge_one",
+    "val_known_sum_opt_bound"
+  ]
+}

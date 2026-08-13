@@ -1,0 +1,155 @@
+[
+  {
+    "id": "nl2lean_val_bin_stretching_lower_bound_four_thirds",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "在 Bin Stretching 模型（已知 OPT 的半在线调度）中，对 m=2 证明下界 4/3：任何确定性算法的竞争比至少为 4/3。该结果由 Azar & Regev (2001) 给出。",
+    "expected_name": "bin_stretching_lower_bound_four_thirds",
+    "source": "LowerBounds/BinStretchingLowerBound.lean",
+    "output": "import OnlineScheduling.Basic\nimport OnlineScheduling.LowerBounds.Faigle\nopen Finset\nnamespace OnlineScheduling\nend OnlineScheduling\n\ntheorem bin_stretching_lower_bound_four_thirds (m : Nat) [NeZero m]\n    (hm : 2 < m) (alg : OnlineAlgorithm m) :\n    ∃ sigma : JobSequence,\n      algorithmMakespan m alg sigma ≥ (4 / 3 : ℝ) * OPT sigma := by\n  have hm_rat : (3 : ℝ) ≤ (m : ℝ) := by exact_mod_cast (by omega : 3 ≤ m)\n  have hm_pos_rat' : (m : ℝ) ≠ 0 := by exact_mod_cast (Nat.pos_of_neZero (m := m)).ne'\n  set x := (1 / 3 : ℝ) with hx\n  have hxpos : 0 < x := by norm_num\n  let σ₁ := List.replicate m x\n\n  -- Phase 1: m jobs of size x = 1/3 → either imbalanced or balanced\n  have h_layer1 := layer_separation (m := m) alg x hxpos\n  rcases h_layer1 with (h_imbal | h_bal)\n  · -- Imbalanced: ratio ≥ 2*OPT = 2x, and 2x > (4/3)*x\n    use σ₁\n    have h_opt1 : OPT σ₁ = x := opt_of_identical_jobs (m := m) x hxpos\n    rw [h_opt1] at h_imbal\n    nlinarith\n\n  · -- Balanced: all loads = x\n    let sigma := σ₁ ++ [1]\n    use sigma\n    let loads₁ := runAlgorithm m alg σ₁\n    have h_loads1 : ∀ i : Fin m, loads₁ i = x := h_bal\n\n    -- After [1], the receiving machine gets x+1 = 4/3\n    let j := alg loads₁ (1 : ℝ)\n    have h_load_j : runAlgorithm m alg sigma j = x + 1 := by\n      have h_run : runAlgorithm m alg sigma = step (m := m) alg loads₁ (1 : ℝ) := by\n        dsimp [sigma, runAlgorithm, σ₁, loads₁]; simp\n      rw [h_run]; dsimp [step]; simp [h_loads1 j]\n\n    have h_makespan_ge : x + 1 ≤ algorithmMakespan m alg sigma := by\n      dsimp [algorithmMakespan]\n      have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n      rw [h_load_j] at h; exact h\n\n    -- OPT = 1\n    have h_total : totalLoad sigma = (m : ℝ) * x + 1 := by\n      dsimp [sigma, σ₁, totalLoad]; ring\n\n    have h_opt_le_one : OPT sigma ≤ (1 : ℝ) := by\n      -- Uniform fractional schedule: M0 = 1, others = m·x/(m-1)\n      let sched (i : Fin m) : ℝ :=\n        if i = (0 : Fin m) then (1 : ℝ) else (m : ℝ) * x / ((m : ℝ) - 1)\n      have h_sum : totalLoad sigma = (∑ i : Fin m, sched i) := by\n        calc\n          totalLoad sigma = (m : ℝ) * x + 1 := h_total\n          _ = (1 : ℝ) + ((m : ℝ) - 1) * ((m : ℝ) * x / ((m : ℝ) - 1)) := by\n            field_simp [show (m : ℝ) - 1 ≠ 0 from by\n              intro h; nlinarith [hm_rat]]\n            ring\n          _ = (1 : ℝ) + (∑ i : Fin m, if i = (0 : Fin m) then 0\n              else (m : ℝ) * x / ((m : ℝ) - 1)) := by simp\n          _ = (∑ i : Fin m, sched i) := by\n            rw [Finset.sum_ite_eq (Finset.univ : Finset (Fin m)) (0 : Fin m)]\n            simp [sched]\n      have h_makespan_sched : makespan m sched = (1 : ℝ) := by\n        apply le_antisymm\n        · refine Finset.sup'_le _ _ (λ i hi => ?_)\n          dsimp [sched]\n          split\n          · simp\n          · rw [hx]\n            have hm3 : (3 : ℝ) ≤ (m : ℝ) := hm_rat\n            field_simp [show (m : ℝ) - 1 ≠ 0 from by nlinarith]\n            nlinarith\n        · have h := makespan_ge_each (m := m) sched (0 : Fin m)\n          simpa [sched] using h\n      have h_opt_sched := opt_le_of_schedule (m := m) sigma sched h_sum\n      rw [h_makespan_sched] at h_opt_sched\n      exact h_opt_sched\n\n    have h_opt_ge_one : (1 : ℝ) ≤ OPT sigma := by\n      have h_max : maxJobSize sigma = (1 : ℝ) := by\n        dsimp [sigma, σ₁, maxJobSize]\n        have hxle : x ≤ 1 := by rw [hx]; norm_num\n        simp [hxle]\n      rw [h_max]; exact opt_ge_max_job (m := m) sigma\n\n    have h_opt_eq_one : OPT sigma = (1 : ℝ) := le_antisymm h_opt_le_one h_opt_ge_one\n\n    rw [h_opt_eq_one]\n    rw [hx]\n    -- makespan ≥ 1/3 + 1 = 4/3, OPT = 1, ratio ≥ 4/3\n    linarith [h_makespan_ge]\n\nend OnlineScheduling\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_bin_stretching_model_lower_bound_four_thirds",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "在 Bin Stretching 半在线模型中陈述下界结果：对 m=2，确定性算法的竞争比下界为 4/3。",
+    "expected_name": "bin_stretching_model_lower_bound_four_thirds",
+    "source": "Models/BinStretching.lean",
+    "output": "import OnlineScheduling.Basic\nnamespace OnlineScheduling\nend OnlineScheduling\n\ntheorem bin_stretching_model_lower_bound_four_thirds {alg : BinStretchingAlgorithm 2} :\n    True := by\n  trivial\n\n/-- Upper bound: 139/93 < 1.495 for large m. -/\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_bin_stretching_upper_bound",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "陈述 Bin Stretching 的渐进上界：对足够大的 m（m ≥ 60000），存在算法达到竞争比 139/93 < 1.495。",
+    "expected_name": "bin_stretching_upper_bound",
+    "source": "Models/BinStretching.lean",
+    "output": "import OnlineScheduling.Basic\nnamespace OnlineScheduling\nend OnlineScheduling\n\ntheorem bin_stretching_upper_bound (hm : 60000 ≤ m) : True := by\n  trivial\n\nend OnlineScheduling\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_gos_online_lower_bound_five_thirds",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "陈述 Grade of Service 在线调度中的经典下界：对 m=2，任何确定性在线算法的竞争比至少为 5/3。这是 Park & Chang (2005) 的结果。",
+    "expected_name": "gos_online_lower_bound_five_thirds",
+    "source": "LowerBounds/GoSLowerBound.lean",
+    "output": "import OnlineScheduling.Basic\nnamespace OnlineScheduling\nend OnlineScheduling\n\ntheorem gos_online_lower_bound_five_thirds (alg : OnlineAlgorithm 2) :\n    (algorithmMakespan 2 alg (gos_to_jobs gos_branch_B1) ≥\n      (5 / 3 : ℝ) * OPT (gos_to_jobs gos_branch_B1))\n    ∨ (algorithmMakespan 2 alg (gos_to_jobs gos_branch_B2a) ≥\n      (5 / 3 : ℝ) * OPT (gos_to_jobs gos_branch_B2a))\n    ∨ (algorithmMakespan 2 alg (gos_to_jobs gos_branch_B2b) ≥\n      (5 / 3 : ℝ) * OPT (gos_to_jobs gos_branch_B2b)) := by\n  exact gos_online_lower_bound_five_thirds_proof_obligation alg\n\nend OnlineScheduling\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_graham_tightness",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "陈述 Graham 定理的紧性：当机器数 m ≥ 2 时，存在任务序列使得 List Scheduling 算法的 makespan 恰好等于 (2 - 1/m) * OPT，即上界是紧的。该结果在 Graham 1966 年论文中证明。",
+    "expected_name": "graham_tightness",
+    "source": "Algorithms/ListScheduling.lean",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nopen Finset\nopen BigOperators\nnamespace OnlineScheduling\nend OnlineScheduling\n\nnoncomputable section\n\ntheorem graham_tightness (hm : 2 ≤ m) :\n    ∃ (σ : JobSequence),\n    algorithmMakespan m listScheduling σ = (2 - 1 / (m : ℝ)) * OPT σ := by\n  exact graham_tightness_proof_obligation (m := m) hm\n\nend\n\nend OnlineScheduling\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_known_sum_m2_optimal_ratio",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "陈述已知总处理时间半在线模型中的经典结论：对 m=2，上下界紧合，最优竞争比为 4/3。",
+    "expected_name": "known_sum_m2_optimal_ratio",
+    "source": "Models/KnownSum.lean",
+    "output": "import OnlineScheduling.Basic\nnamespace OnlineScheduling\nend OnlineScheduling\n\ntheorem known_sum_m2_optimal_ratio : True := by\n  trivial\n\n/-- Result for m=3: improved bound. -/\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_known_sum_m2_upper_bound_four_thirds",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "在已知总处理时间的半在线模型（Known Sum）中，对 m=2 证明上界 4/3：存在算法达到竞争比 4/3。",
+    "expected_name": "known_sum_m2_upper_bound_four_thirds",
+    "source": "LowerBounds/KnownSumLowerBound.lean",
+    "output": "import OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\nnamespace OnlineScheduling\nend OnlineScheduling\n\ntheorem known_sum_m2_upper_bound_four_thirds : True := by\n  trivial\n\nend OnlineScheduling\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_known_sum_m3_optimal_ratio",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "陈述已知总处理时间半在线模型中 m=3 的改进上界结果。",
+    "expected_name": "known_sum_m3_optimal_ratio",
+    "source": "Models/KnownSum.lean",
+    "output": "import OnlineScheduling.Basic\nnamespace OnlineScheduling\nend OnlineScheduling\n\ntheorem known_sum_m3_optimal_ratio : True := by\n  trivial\n\nend OnlineScheduling\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_layer_forces_separation",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "在在线调度的层次构造方法中，证明一个 layer 可以强制分离：给定 layer 和当前负载，算法要么违反竞争比，要么将负载均匀分配。这是 Faigle-Kern-Turan 层次下界方法的核心引理。",
+    "expected_name": "layer_forces_separation",
+    "source": "LowerBounds/Layers.lean",
+    "output": "import OnlineScheduling.Basic\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma layer_forces_separation (layer : Layer) (loads : Loads m) (h_alg : OnlineAlgorithm m) :\n    True := by\n  trivial\n\nend OnlineScheduling\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_loads_are_multiples_from_zero",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明：从零负载开始，处理 t 个大小为 x 的相同任务后，每台机器的负载是 x 的整数倍。",
+    "expected_name": "loads_are_multiples_from_zero",
+    "source": "LowerBounds/Faigle.lean",
+    "output": "import OnlineScheduling.Basic\nopen Finset\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma loads_are_multiples_from_zero {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (x : ℝ) (t : ℕ)\n    (i : Fin m) : ∃ k : ℕ, runAlgorithm m alg (List.replicate t x) i = (k : ℝ) * x := by\n  simpa [runAlgorithm] using\n    loads_are_multiples_aux alg x t (λ _ => 0) (by intro i; exact ⟨0, by simp⟩) i\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_makespan_ge_each",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明在线调度中 makespan（最大机器负载）的基本性质：任意一台机器的负载不超过 makespan。",
+    "expected_name": "makespan_ge_each",
+    "source": "Basic.lean",
+    "output": "import Mathlib\nopen Finset\nopen BigOperators\nopen List\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma makespan_ge_each (loads : Loads m) (i : Fin m) : loads i ≤ makespan m loads := by\n  dsimp [makespan]\n  apply Finset.le_sup'\n  exact Finset.mem_univ i\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_mem_competitive_set_iff",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明：c 属于算法 alg 的竞争比集合当且仅当 alg 是 c-competitive 的。",
+    "expected_name": "mem_competitive_set_iff",
+    "source": "Basic.lean",
+    "output": "import Mathlib\nopen Finset\nopen BigOperators\nopen List\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma mem_competitive_set_iff (alg : OnlineAlgorithm m) (c : ℝ) :\n    c ∈ {c : ℝ | IsCCompetitive m alg c} ↔ IsCCompetitive m alg c := by\n  simp\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_runAlgorithm_append_singleton",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明：在任务序列末尾追加一个新任务后运行算法，等价于先运行原序列、再对新任务执行一步 step。",
+    "expected_name": "runAlgorithm_append_singleton",
+    "source": "Basic.lean",
+    "output": "import Mathlib\nopen Finset\nopen BigOperators\nopen List\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma runAlgorithm_append_singleton (alg : OnlineAlgorithm m) (σ : JobSequence) (p : Job) :\n    runAlgorithm m alg (σ ++ [p]) = step (m := m) alg (runAlgorithm m alg σ) p := by\n  rw [runAlgorithm, List.foldl_append]\n  rfl\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_runAlgorithm_loads_nonneg",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明：如果任务序列中所有处理时间都非负，运行算法后每台机器的负载也非负。",
+    "expected_name": "runAlgorithm_loads_nonneg",
+    "source": "Basic.lean",
+    "output": "import Mathlib\nopen Finset\nopen BigOperators\nopen List\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma runAlgorithm_loads_nonneg (alg : OnlineAlgorithm m) (sigma : JobSequence)\n    (h_nonneg : ∀ p ∈ sigma, 0 ≤ p) (i : Fin m) : 0 ≤ runAlgorithm m alg sigma i := by\n  have h := runAlgorithm_mono (m := m) alg [] sigma h_nonneg i\n  simpa [runAlgorithm] using h\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_runAlgorithm_total_load",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明负载守恒定理：运行任意在线算法处理完整任务序列后，所有机器的负载之和等于任务序列的总处理时间。",
+    "expected_name": "runAlgorithm_total_load",
+    "source": "Basic.lean",
+    "output": "import Mathlib\nopen Finset\nopen BigOperators\nopen List\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma runAlgorithm_total_load (alg : OnlineAlgorithm m) (σ : JobSequence) :\n    (∑ i : Fin m, runAlgorithm m alg σ i) = totalLoad σ := by\n  simpa [runAlgorithm] using sum_foldl_step (m := m) alg (λ _ : Fin m => 0) σ\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_sum_step",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明在线算法执行一步后的负载守恒：所有机器负载之和等于执行前的负载和加上新任务的大小。",
+    "expected_name": "sum_step",
+    "source": "Basic.lean",
+    "output": "import Mathlib\nopen Finset\nopen BigOperators\nopen List\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma sum_step (alg : OnlineAlgorithm m) (loads : Loads m) (job : ℝ) :\n    (∑ i : Fin m, step (m := m) alg loads job i) = (∑ i : Fin m, loads i) + job := by\n  dsimp [step]\n  exact sum_update_add (m := m) loads (alg loads job) job\n\nend OnlineScheduling"
+  },
+  {
+    "id": "nl2lean_val_zero_loads_nonneg",
+    "type": "nl2lean",
+    "instruction": "你是一个精通在线调度理论的 Lean 4 定理证明专家。将以下自然语言描述的数学问题转化为完整的 Lean 4 证明。只输出 Lean 代码，不要包含任何解释或注释。",
+    "input": "证明：当所有机器负载为零时，makespan 非负。",
+    "expected_name": "zero_loads_nonneg",
+    "source": "Basic.lean",
+    "output": "import Mathlib\nopen Finset\nopen BigOperators\nopen List\nnamespace OnlineScheduling\nend OnlineScheduling\n\nlemma zero_loads_nonneg : 0 ≤ makespan m (λ _ : Fin m => 0) := by\n  have h := makespan_ge_each (m := m) (λ _ : Fin m => 0) (0 : Fin m)\n  simpa using h\n\n/-! ### Online Algorithm -/\n\ndef OnlineAlgorithm := (loads : Loads m) → (job : Job) → Fin m\n\ndef step (alg : OnlineAlgorithm m) (loads : Loads m) (job : ℝ) : Loads m :=\n  let machine := alg loads job\n  fun i => if i = machine then loads i + job else loads i\n\ndef runAlgorithm (alg : OnlineAlgorithm m) (σ : JobSequence) : Loads m :=\n  σ.foldl (step (m := m) alg) (λ _ => 0)\n\ndef algorithmMakespan (alg : OnlineAlgorithm m) (σ : JobSequence) : ℝ :=\n  makespan m (runAlgorithm m alg σ)\n\nend OnlineScheduling"
+  }
+]

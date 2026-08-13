@@ -1,0 +1,40 @@
+TARGET RATIO: {target}
+CURRENT BEST RHO: {current_best}
+DELTA: {delta}
+
+Generate a COMPLETE Lean 4 theorem that proves the deterministic competitive
+ratio for P|online,list|Cmax is at least {target}.
+
+YOUR FIRST LINE MUST BE: import OnlineScheduling.Basic
+YOUR SECOND LINE MUST BE: import OnlineScheduling.LowerBounds.Lemmas
+YOUR THIRD LINE MUST BE: open OnlineScheduling
+
+This would improve the known lower bound from {current_best} to {target}.
+
+Construct a layered adversary (job sequence) following the Faigle-Kern-Turan
+pattern:
+
+1. Choose job sizes a₁, a₂, ..., ak (positive rational numbers) and a final job F
+2. Each phase: send m copies of a_job, branch on balance vs imbalance
+3. Imbalance → immediate ratio ≥ 2 > {target}, done
+4. Balance → continue to next layer
+5. Final phase: send [F], makespan = sum + F
+6. OPT ≤ sum + F/m (uniform schedule)
+7. Prove: (sum + F) / (sum + F/m) ≥ {target} for all m ≥ 4
+
+STRATEGY HINT:
+- The hardest case is m = 4 (smaller m → larger F/m → smaller ratio)
+- To make the algebra work, choose job sizes that satisfy the final inequality
+  (a₁ + a₂ + ... + F) ≥ {target} * (a₁ + a₂ + ... + F/4)
+- Start simple: try 2 layers (a₁, a₂, F) first
+- If 2 layers can't reach {target}, add a 3rd layer
+- Use simple rationals like 1/2, 1/3, 2/3, 1/4, etc.
+
+IMPORTANT — OUTPUT ONLY CODE:
+Your ENTIRE response must be a compilable .lean file. No markdown, no explanation.
+First character: "i" (import). Last character must be valid Lean syntax.
+
+IMPORTANT:
+- The theorem MUST compile with `lake env lean`
+- Only import OnlineScheduling.Basic (NOT Faigle, Layers, or any other submodule)
+- Write self-contained proofs using only the lemmas listed in the system prompt

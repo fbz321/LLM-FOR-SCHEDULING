@@ -1,0 +1,52 @@
+{
+  "total_gaps": 30,
+  "num_samples_per_gap": 3,
+  "pass@k": 0,
+  "pass_rate": 0.0,
+  "avg_generated_length": 966.4,
+  "avg_illegal_output_rate": 0.0444,
+  "by_difficulty": {
+    "medium": {
+      "count": 6,
+      "pass": 0,
+      "avg_len": 943.1500000000001,
+      "illegal_rate": 0.0,
+      "pass_rate": 0.0
+    },
+    "easy": {
+      "count": 6,
+      "pass": 0,
+      "avg_len": 957.2333333333332,
+      "illegal_rate": 0.222,
+      "pass_rate": 0.0
+    },
+    "hard": {
+      "count": 18,
+      "pass": 0,
+      "avg_len": 977.1722222222221,
+      "illegal_rate": 0.0,
+      "pass_rate": 0.0
+    }
+  },
+  "by_source": {
+    "Basic.lean": {
+      "count": 20,
+      "pass": 0,
+      "pass_rate": 0.0
+    },
+    "CompetitiveRatio.lean": {
+      "count": 7,
+      "pass": 0,
+      "pass_rate": 0.0
+    },
+    "Models/KnownSum.lean": {
+      "count": 3,
+      "pass": 0,
+      "pass_rate": 0.0
+    }
+  },
+  "adapter": "/root/backups/round1",
+  "base_model": "/root/autodl-tmp/models/deepseek-math-7b-base",
+  "lean_checked": true,
+  "evaluation_time": 1758.0
+}

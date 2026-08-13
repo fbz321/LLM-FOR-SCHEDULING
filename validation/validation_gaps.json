@@ -1,0 +1,402 @@
+[
+  {
+    "id": "val_makespan_ge_average_gap_00",
+    "source": "Basic.lean",
+    "difficulty": "medium",
+    "removed": "have hm_pos",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  sorry\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_makespan_ge_average_gap_01",
+    "source": "Basic.lean",
+    "difficulty": "medium",
+    "removed": "have h_each_le",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  sorry\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_makespan_ge_average_gap_02",
+    "source": "Basic.lean",
+    "difficulty": "medium",
+    "removed": "h_sum_le calc block",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  sorry\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_makespan_ge_average_gap_03",
+    "source": "Basic.lean",
+    "difficulty": "medium",
+    "removed": "final calc chain",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  sorry\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_makespan_ge_average_gap_04",
+    "source": "Basic.lean",
+    "difficulty": "medium",
+    "removed": "div_le_div_of_nonneg_right",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n  sorry\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_makespan_ge_average_gap_05",
+    "source": "Basic.lean",
+    "difficulty": "medium",
+    "removed": "field_simp cancel",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n  sorry\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma makespan_ge_average (loads : Loads m) :\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ makespan m loads := by\n  have hm_pos : 0 < (m : ℝ) := by exact_mod_cast NeZero.pos m\n  have h_each_le : ∀ i, loads i ≤ makespan m loads := makespan_ge_each (m := m) loads\n  have h_sum_le : (Finset.sum Finset.univ loads) ≤ (m : ℝ) * makespan m loads := by\n    calc\n      (Finset.sum Finset.univ loads) ≤ (Finset.sum Finset.univ (fun _ => makespan m loads)) :=\n        Finset.sum_le_sum (fun i _ => h_each_le i)\n      _ = (m : ℝ) * makespan m loads := by simp\n  refine calc\n    (Finset.sum Finset.univ loads) / (m : ℝ) ≤ ((m : ℝ) * makespan m loads) / (m : ℝ) :=\n      div_le_div_of_nonneg_right h_sum_le (by linarith)\n    _ = makespan m loads := by field_simp [hm_pos.ne']\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_opt_ge_both_gap_00",
+    "source": "Basic.lean",
+    "difficulty": "easy",
+    "removed": "full proof (max_le)",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\n  sorry\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma opt_ge_both (σ : JobSequence) : max (maxJobSize σ) (totalLoad σ / (m : ℝ)) ≤ OPT σ :=\n  max_le (opt_ge_max_job σ) (opt_ge_avg_load (m := m) σ)\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_runAlgorithm_mono_gap_00",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "induction start",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  sorry\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_runAlgorithm_mono_gap_01",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "nil case",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  sorry\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_runAlgorithm_mono_gap_02",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "nonneg hypotheses",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n  sorry\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_runAlgorithm_mono_gap_03",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "rewrite append",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n  sorry\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_runAlgorithm_mono_gap_04",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "h_step via runAlgorithm_snoc",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n  sorry\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_runAlgorithm_mono_gap_05",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "induction hypothesis",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n  sorry\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma runAlgorithm_mono (alg : OnlineAlgorithm m) (σ₁ σ₃ : JobSequence) (h_nonneg : ∀ p ∈ σ₃, 0 ≤ p) :\n    ∀ i, runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ σ₃) i :=\n  induction' σ₃ with p σ₃ ih generalizing σ₁\n  · simp\n  · intro i\n    have hp_nonneg : 0 ≤ p := h_nonneg p (by simp)\n    have h_rest : ∀ q ∈ σ₃, 0 ≤ q := λ q hq => h_nonneg q (by simp [hq])\n    rw [show σ₁ ++ (p :: σ₃) = (σ₁ ++ [p]) ++ σ₃ by simp]\n    have h_step : runAlgorithm m alg σ₁ i ≤ runAlgorithm m alg (σ₁ ++ [p]) i :=\n      runAlgorithm_snoc (m := m) alg σ₁ p hp_nonneg i\n    have h_ih := ih (σ₁ := σ₁ ++ [p]) h_rest i\n    exact le_trans h_step h_ih\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_sum_foldl_step_gap_00",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "induction start",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  sorry\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_sum_foldl_step_gap_01",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "nil case",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  sorry\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_sum_foldl_step_gap_02",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "rw foldl_cons",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  sorry\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_sum_foldl_step_gap_03",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "apply sum_step and ih",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n  sorry\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_sum_foldl_step_gap_04",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "rw h and h_step",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n  sorry\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_sum_foldl_step_gap_05",
+    "source": "Basic.lean",
+    "difficulty": "hard",
+    "removed": "simp arithmetic",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n  sorry\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nopen Finset\nopen BigOperators\nopen List\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma sum_foldl_step (alg : OnlineAlgorithm m) (loads_before : Loads m) (tau : JobSequence) :\n    (∑ i : Fin m, (tau.foldl (step (m := m) alg) loads_before i)) =\n    (∑ i, loads_before i) + totalLoad tau :=\n  induction' tau with p tau ih generalizing loads_before\n  · simp [totalLoad]\n  · rw [List.foldl_cons]\n    have h_step := sum_step (m := m) alg loads_before p\n    have h := ih (step (m := m) alg loads_before p)\n    rw [h, h_step]\n    simp [totalLoad, add_comm, add_left_comm, add_assoc]\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_load_mono_on_prefix_gap_00",
+    "source": "Basic.lean",
+    "difficulty": "easy",
+    "removed": "delegate to runAlgorithm_mono",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i :=\n  sorry\n\nend OnlineScheduling",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\n\nnamespace OnlineScheduling\n\nvariable (m : ℕ) [NeZero m]\n\nlemma load_mono_on_prefix (alg : OnlineAlgorithm m) (sigma tau : JobSequence)\n    (h_nonneg : ∀ p ∈ tau, 0 ≤ p) (i : Fin m) :\n    runAlgorithm m alg sigma i ≤ runAlgorithm m alg (sigma ++ tau) i :=\n  runAlgorithm_mono (m := m) alg sigma tau h_nonneg i\n\nend OnlineScheduling",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic"
+    ]
+  },
+  {
+    "id": "val_competitive_implies_bounded_gap_00",
+    "source": "CompetitiveRatio.lean",
+    "difficulty": "easy",
+    "removed": "apply hc (definitional)",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ :=\n  sorry",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_implies_bounded {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) (σ : JobSequence) :\n    algorithmMakespan m alg σ ≤ c * OPT σ :=\n  hc σ",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.CompetitiveRatio"
+    ]
+  },
+  {
+    "id": "val_competitive_ratio_ge_one_gap_00",
+    "source": "CompetitiveRatio.lean",
+    "difficulty": "hard",
+    "removed": "setup sigma, loadsBefore, j",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  sorry\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.CompetitiveRatio"
+    ]
+  },
+  {
+    "id": "val_competitive_ratio_ge_one_gap_01",
+    "source": "CompetitiveRatio.lean",
+    "difficulty": "hard",
+    "removed": "h_run via simp",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  sorry\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.CompetitiveRatio"
+    ]
+  },
+  {
+    "id": "val_competitive_ratio_ge_one_gap_02",
+    "source": "CompetitiveRatio.lean",
+    "difficulty": "hard",
+    "removed": "h_load_j via rw+simp",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  sorry\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.CompetitiveRatio"
+    ]
+  },
+  {
+    "id": "val_competitive_ratio_ge_one_gap_03",
+    "source": "CompetitiveRatio.lean",
+    "difficulty": "hard",
+    "removed": "h_makespan_ge proof",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  sorry\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.CompetitiveRatio"
+    ]
+  },
+  {
+    "id": "val_competitive_ratio_ge_one_gap_04",
+    "source": "CompetitiveRatio.lean",
+    "difficulty": "hard",
+    "removed": "h_opt_le proof (OPT upper bound)",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  sorry\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.CompetitiveRatio"
+    ]
+  },
+  {
+    "id": "val_competitive_ratio_ge_one_gap_05",
+    "source": "CompetitiveRatio.lean",
+    "difficulty": "hard",
+    "removed": "h_opt_ge proof (OPT lower bound)",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  sorry\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.CompetitiveRatio\n\nopen OnlineScheduling\n\nlemma competitive_ratio_ge_one {m : ℕ} [NeZero m] (alg : OnlineAlgorithm m) (c : ℝ)\n    (hc : IsCCompetitive m alg c) : 1 ≤ c := by\n  let sigma : JobSequence := [1]\n  let loadsBefore : Loads m := fun _ => 0\n  let j : Fin m := alg loadsBefore 1\n  have h_run : runAlgorithm m alg sigma = step (m := m) alg loadsBefore 1 := by\n    simp [sigma, runAlgorithm, loadsBefore]\n  have h_load_j : runAlgorithm m alg sigma j = 1 := by\n    rw [h_run]\n    simp [step, loadsBefore, j]\n  have h_makespan_ge : 1 ≤ algorithmMakespan m alg sigma := by\n    dsimp [algorithmMakespan]\n    have h := makespan_ge_each (m := m) (runAlgorithm m alg sigma) j\n    simpa [h_load_j] using h\n  have h_opt_le : OPT sigma ≤ 1 := by\n    let optLoads : Loads m := fun i => if i = j then (1 : ℝ) else 0\n    have h_total : totalLoad sigma = ∑ i : Fin m, optLoads i := by\n      have h_sum : (∑ i : Fin m, optLoads i) = (1 : ℝ) := by\n        simp [optLoads]\n      simp [sigma, totalLoad, h_sum]\n    have h_makespan : makespan m optLoads = (1 : ℝ) := by\n      apply le_antisymm\n      · dsimp [makespan]\n        apply Finset.sup'_le\n        intro i _\n        by_cases hij : i = j <;> simp [optLoads, hij]\n      · have h := makespan_ge_each (m := m) optLoads j\n        simpa [optLoads] using h\n    have h := opt_le_of_schedule (m := m) sigma optLoads h_total\n    simpa [h_makespan] using h\n  have h_opt_ge : 1 ≤ OPT sigma := by\n    have h_max : maxJobSize sigma = (1 : ℝ) := by\n      simp [sigma, maxJobSize]\n    have h := opt_ge_max_job sigma\n    simpa [h_max] using h\n  have h_bound := hc sigma\n  have h_opt_eq : OPT sigma = 1 := le_antisymm h_opt_le h_opt_ge\n  nlinarith",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.CompetitiveRatio"
+    ]
+  },
+  {
+    "id": "val_known_sum_opt_bound_gap_00",
+    "source": "Models/KnownSum.lean",
+    "difficulty": "easy",
+    "removed": "rw h_consistent",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  sorry\n  exact opt_ge_avg_load (m := m) inst.jobs",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  exact opt_ge_avg_load (m := m) inst.jobs",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.Models.KnownSum"
+    ]
+  },
+  {
+    "id": "val_known_sum_opt_bound_gap_01",
+    "source": "Models/KnownSum.lean",
+    "difficulty": "easy",
+    "removed": "apply opt_ge_avg_load",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  sorry",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  exact opt_ge_avg_load (m := m) inst.jobs",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.Models.KnownSum"
+    ]
+  },
+  {
+    "id": "val_known_sum_opt_bound_gap_00_01",
+    "source": "Models/KnownSum.lean",
+    "difficulty": "easy",
+    "removed": "rw h_consistent + apply opt_ge_avg_load",
+    "instruction": "You are an expert Lean 4 theorem prover specializing in online scheduling theory. Complete the given proof by replacing `sorry` with a correct proof.",
+    "input": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  sorry\n  sorry",
+    "output": "import Mathlib\nimport OnlineScheduling.Basic\nimport OnlineScheduling.Models.KnownSum\n\nopen OnlineScheduling\n\nvariable {m : Nat} [NeZero m]\n\nlemma known_sum_opt_bound (inst : KnownSumInstance m) :\n    inst.totalSum / (m : ℝ) ≤ OPT inst.jobs :=\n  rw [← inst.h_consistent]\n  exact opt_ge_avg_load (m := m) inst.jobs",
+    "check_imports": [
+      "import Mathlib",
+      "import OnlineScheduling.Basic",
+      "import OnlineScheduling.Models.KnownSum"
+    ]
+  }
+]

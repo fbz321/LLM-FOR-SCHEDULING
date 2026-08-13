@@ -1,0 +1,38 @@
+The LAST {k} ATTEMPTS at proving the lower bound {target} have ALL FAILED.
+
+## FAILURE PATTERNS
+
+{failure_summary}
+
+## CURRENT APPROACH
+
+The layered adversary with sizes {current_sizes} is not working after {k} attempts.
+
+## ALTERNATIVE STRATEGIES
+
+1. DIFFERENT NUMBER OF LAYERS
+   - More layers may allow finer-grained job sizes that make the algebra work
+   - Try k+1 layers with smaller increments per layer
+
+2. TYPE-2 LAYERS (from Rudin/Layers.lean)
+   - Instead of m identical jobs per layer, use (m-1) × [A] + [A + 2C]
+   - This allows gradual ratio reduction toward V/2
+   - Requires proving a variant of layer_separation for Type-2 layers
+
+3. EXPLOIT SPECIFIC SMALL m
+   - Prove the bound for a specific m (m=4, m=6, m=8) first
+   - The asymptotic bound may follow from a different argument
+   - Crystal clear OPT bounds for small m
+
+4. KNOWN SUM APPROACH
+   - If the adversary can exploit known total work, tighter bounds exist
+   - KnownSumP3.lean shows adaptive branching on prefix decisions
+
+5. DIFFERENT ADVERSARY STRUCTURE
+   - Instead of uniform layers, use a decreasing sequence
+   - Or use a binary-tree adversary construction
+
+Propose a COMPLETELY NEW construction. Do NOT modify the failed approach —
+start fresh with a different idea.
+
+Return ONLY Lean code with a complete new proof.
