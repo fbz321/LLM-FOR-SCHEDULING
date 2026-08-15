@@ -976,6 +976,38 @@ lemma braunAbs_layer1_forcing (alg : OnlineAlgorithm 4)
                 braunAbs_Sp1_trap_ratio braunAbsCR1 braunAbsCR1_ne_two braunAbsCR1_3c5_ne
           _ ≤ algorithmMakespan 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1]) := hmk
 
+/-- **Braun–Chung–Graham 2025, Theorem 2 (r = 1)**. Every deterministic online
+    algorithm for 4 machines has absolute competitive ratio at least c₁, the root
+    of `6c³ − 28c² + 38c − 13 = 0` in (5/3, 2). -/
+theorem braun_absolute_lower_bound_1 (alg : OnlineAlgorithm 4) :
+    ∃ σ : JobSequence, braunAbsCR1 * optMakespan (m := 4) σ ≤ algorithmMakespan 4 alg σ := by
+  rcases braunAbs_base_forcing alg with hb | hb
+  · exact hb
+  · rcases braunAbs_layer1_forcing alg hb with hl | hl
+    · exact hl
+    · let l := runAlgorithm 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1])
+      refine ⟨braunAbsSeq1 braunAbsCR1, ?_⟩
+      have hmk : braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1 ≤ algorithmMakespan 4 alg (braunAbsSeq1 braunAbsCR1) := by
+        have hrun : runAlgorithm 4 alg (braunAbsSeq1 braunAbsCR1) = step (m := 4) alg l (braunAbsF1 braunAbsCR1) := by
+          dsimp only [braunAbsSeq1, braunAbsS1Witness, braunAbsBase, runAlgorithm, l]
+          simp only [List.foldl_append, List.foldl_cons, List.foldl_nil]
+        have hload : braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1 ≤
+            runAlgorithm 4 alg (braunAbsSeq1 braunAbsCR1) (alg l (braunAbsF1 braunAbsCR1)) := by
+          rw [hrun]
+          dsimp only [step]
+          rw [if_pos rfl]
+          have hl' : braunAbsLayerSum1 braunAbsCR1 ≤ l (alg l (braunAbsF1 braunAbsCR1)) :=
+            hl (alg l (braunAbsF1 braunAbsCR1))
+          nlinarith [hl']
+        dsimp only [algorithmMakespan]
+        exact le_trans hload (makespan_ge_each (m := 4) (runAlgorithm 4 alg (braunAbsSeq1 braunAbsCR1)) (alg l (braunAbsF1 braunAbsCR1)))
+      calc
+        braunAbsCR1 * optMakespan (m := 4) (braunAbsSeq1 braunAbsCR1)
+            ≤ braunAbsCR1 * braunAbsF1 braunAbsCR1 :=
+              mul_le_mul_of_nonneg_left braunAbs_opt_F_le (le_of_lt (by nlinarith [braunAbsCR1_lo]))
+        _ = braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1 := braunAbs_F_trap_ratio
+        _ ≤ algorithmMakespan 4 alg (braunAbsSeq1 braunAbsCR1) := hmk
+
 end
 
 end OnlineScheduling
