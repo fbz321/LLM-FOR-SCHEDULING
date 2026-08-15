@@ -174,6 +174,24 @@ lemma braunAbsCR1_fixedpoint :
     braunAbsCR1 = (braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1) / braunAbsF1 braunAbsCR1 :=
   (braunAbs_cubic braunAbsCR1 braunAbsCR1_ne_two braunAbsCR1_3c5_ne braunAbsF1_CR1_ne).mpr braunAbsCR1_root
 
+/-! ### Trap ratios (multiplicative) -/
+
+/-- L₀ trap: `c·1 ≤ 2` whenever `c ≤ 2`. -/
+lemma braunAbs_L0_trap_ratio (c : ℝ) (hc : c ≤ 2) : c * (1 : ℝ) ≤ 2 := by
+  simpa using hc
+
+/-- S₀ trap is exact: `c·(1+S₀) = 1+2·S₀` for `c ≠ 2`. -/
+lemma braunAbs_S0_trap_ratio (c : ℝ) (h2 : c ≠ 2) :
+    c * (1 + braunAbsS0 c) = 1 + 2 * braunAbsS0 c := by
+  dsimp [braunAbsS0]
+  field_simp [h2]
+  ring
+
+/-- F trap is exact: `c·F = Σ + F` (the fixed point, evaluated at c₁). -/
+lemma braunAbs_F_trap_ratio :
+    braunAbsCR1 * braunAbsF1 braunAbsCR1 = braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1 := by
+  exact (eq_div_iff braunAbsF1_CR1_ne).mp braunAbsCR1_fixedpoint
+
 end
 
 end OnlineScheduling
