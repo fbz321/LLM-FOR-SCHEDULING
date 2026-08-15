@@ -1,0 +1,7 @@
+现在补下面这个声明（只输出这一个声明的完整 Lean 代码，不要 import/open/namespace/end，不要解释）：
+
+```lean
+{statement}
+```
+
+{context}

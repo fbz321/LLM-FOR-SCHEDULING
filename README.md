@@ -56,10 +56,17 @@ Formalizing Braun–Chung–Graham 2025 (J. Scheduling 28:529–544): for m=4, e
 deterministic online algorithm has sequences with τ_A ≥ √3·τ_o − (2−√3) — an
 **additive** lower bound that does not break the √3 multiplicative barrier.
 
-- Definitions, layers, and all algebraic identities compile with 0 sorry
-  ([BraunGraham2025.lean](BraunGraham2025.lean))
-- Next: forced-schedule induction (Table 3), OPT packing (Table 7, residual
-  invariant), then the main theorem
+- **Complete (0 sorry)** ([LowerBounds/BraunGraham2025.lean](OnlineScheduling/LowerBounds/BraunGraham2025.lean)):
+  definitions, layers, all algebraic identities, the Table-6 prefix OPT
+  (`braun_opt_prefix_Sp`), the Table-7 packing (OPT(σ_r) = F, `braun_opt_eq_F`),
+  and **Theorem 1** (`braun_asymptotic_lower_bound`): for every deterministic
+  online algorithm on 4 machines there is a task sequence with makespan
+  ≥ √3·OPT − (2−√3). The proof is an adaptive adversary on the r = 1 instance
+  (17 jobs): deviations at L₀/S₀/L₁/S₁ trigger ratio traps (2, √3, 1.800, 1.781),
+  the S⁺₁ placement is exact by the prefix additive identity
+  Φ₁ + S⁺₁ = √3·(S⁺₁+L₁) − (2−√3), and a clean schedule is finished off by the
+  final job F (Φ₁ + F = √3·F − (2−√3)).
+- Registered in the build as `OnlineScheduling.LowerBounds.BraunGraham2025`.
 
 ### Foundational work
 

@@ -46,6 +46,8 @@ _NOISE_PATTERNS = [
 
 
 def _filter_noise(text: str) -> str:
+    if not text:
+        return ""
     lines = text.split("\n")
     return "\n".join(
         l for l in lines
@@ -70,6 +72,8 @@ def check_lean_code(code: str, timeout: int = 120) -> LeanResult:
             cwd=LEAN_PROJECT_PATH,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=timeout,
         )
 
@@ -127,9 +131,9 @@ def _has_sorry(output: str) -> bool:
 
 
 def _parse_errors(output: str) -> list[LeanError]:
-    """Parse structured Lean errors from compiler output."""
+    """Parse structured Lean errors from compiler output (errors only, not warnings)."""
     errors = []
-    pattern = r"([^\s:]+\.lean):(\d+):(\d+):\s*(error|warning):\s*(.*?)(?=\n[^\s:]+\.lean:\d+:\d+:\s*(?:error|warning):|\Z)"
+    pattern = r"([^\s:]+\.lean):(\d+):(\d+):\s*(error):\s*(.*?)(?=\n[^\s:]+\.lean:\d+:\d+:\s*error:|\Z)"
     for match in re.finditer(pattern, output, re.DOTALL):
         errors.append(LeanError(
             file=match.group(1),

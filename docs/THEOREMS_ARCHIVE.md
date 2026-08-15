@@ -247,6 +247,25 @@
 | theorem | `known_sum_m2_optimal_ratio` | ✅ | theorem known_sum_m2_optimal_ratio : True := by    trivial  /-- Result for m=3: improved bound. -/ |
 | theorem | `known_sum_m3_optimal_ratio` | ✅ | theorem known_sum_m3_optimal_ratio : True := by    trivial  end OnlineScheduling |
 
+## LowerBounds/BraunGraham2025.lean（Braun–Chung–Graham 2025，m=4 加性下界；0 sorry）
+
+> Theorem 1：对任意确定性在线算法，存在序列使 makespan ≥ √3·OPT − (2−√3)。
+> 构造：α = 1+√3，q = 2α²，L_k = q^k，S_k = αq^k，S⁺_k = S_k+2S_{k−1}，F = 2S_r。
+> 主定理用 r=1 实例（17 作业）的自适应对抗：L₀/S₀/L₁/S₁ 偏离触发比率陷阱
+> （2、√3、1.800、1.781），S⁺₁ 陷阱由前缀加性恒等式精确给出，clean 路径由
+> F 收尾（braun_additive_identity + braun_opt_eq_F）。
+
+| 类型 | 名称 | 状态 | 签名 |
+|------|------|:--:|------|
+| theorem | `braun_additive_identity` | ✅ | braunForcedMakespan r = √3·braunF r − (2−√3) |
+| theorem | `braun_opt_eq_F` | ✅ | optMakespan (m:=4) (braunSeq r) = braunF r |
+| theorem | `braun_opt_prefix_Sp` | ✅ | optMakespan (m:=4) (braunPrefixSp k) = braunSp k + braunL k |
+| lemma | `braun_prefix_additive_identity` | ✅ | braunSumLS k + braunSp k = √3·(braunSp k + braunL k) − (2−√3) |
+| lemma | `braun_layer_separation_from_base` | ✅ | 均匀 base 上 4 个相同作业：makespan ≥ base+2x 或全机 base+x |
+| lemma | `braun_three_from_base` | ✅ | 均匀 base 上 3 个相同作业：makespan ≥ base+2x 或 3 机 base+x、1 机 base |
+| lemma | `braunLayerBlock_makespan_ge` | ✅ | 任意分配下 block {S⁺_k,S_k³,L_k⁴} 的 makespan ≥ S⁺_k+L_k |
+| theorem | `braun_asymptotic_lower_bound` | ✅ | ∀ alg : OnlineAlgorithm 4, ∃ σ, algorithmMakespan 4 alg σ ≥ √3·optMakespan (m:=4) σ − (2−√3) |
+
 ---
 | 统计 | 数量 |
 |------|:--:|

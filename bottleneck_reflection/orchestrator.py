@@ -11,6 +11,7 @@ Usage:
   python orchestrator.py --target 1.89 --max-iterations 50
 """
 
+import os
 import argparse
 import sys
 import time
@@ -27,6 +28,7 @@ from prompt_builder import (
     construct_user_message,
 )
 from llm_client import LLMClient, MockLLMClient
+from model_router import ModelRouter
 
 
 class BottleneckOrchestrator:
@@ -34,7 +36,8 @@ class BottleneckOrchestrator:
 
     def __init__(
         self,
-        llm_client: LLMClient | MockLLMClient,
+        llm_client: LLMClient | MockLLMClient | None = None,
+        router: ModelRouter | None = None,
         initial_rho: float = 1.88,
         delta: float = 0.01,
         direction: str = "lower",
@@ -43,7 +46,12 @@ class BottleneckOrchestrator:
         max_stuck: int = 5,
         run_name: str = "",
     ):
+        if (llm_client is None) == (router is None):
+            raise ValueError(
+                "Provide exactly one of llm_client (single-model) or router (adaptive)."
+            )
         self.llm = llm_client
+        self.router = router
         self.state = SystemState(
             rho=initial_rho,
             delta=delta,
@@ -84,16 +92,17 @@ class BottleneckOrchestrator:
 
             self.state.iteration += 1
 
-            # ── Phase 1: Propose ──
+            # ── Phase 1: Propose (adaptive: flash→pro escalation) ──
             print(f"  [PHASE 1] Proposing...")
-            proposal = self._propose_initial(target)
+            code, result, model_used = self._propose_initial(target)
 
             # ── Phase 2: Verify ──
-            print(f"  [PHASE 2] Verifying with Lean...")
-            success, result, code = self._verify(proposal)
+            if result is None:  # reused strategy-rethink proposal
+                print(f"  [PHASE 2] Verifying with Lean...")
+                result = self._verify_code(code)
 
-            if success:
-                self._handle_success(target, code, "initial proposal")
+            if result.compiles:
+                self._handle_success(target, code, f"initial proposal ({model_used})")
                 continue
 
             # ── Phase 3-4: Reflect → Propose (targeted fix) ──
@@ -120,23 +129,32 @@ class BottleneckOrchestrator:
                     remaining_attempts=self.state.max_fix_attempts - fix_attempt - 1,
                 )
                 messages = construct_user_message(self._system_msg, fix_prompt)
-                fix_code = self.llm.generate(messages)
-                self._total_attempts += 1
+                extra = {"iteration": self.state.iteration, "target": target,
+                         "fix_attempt": fix_attempt,
+                         "error_category": bottleneck.error_category}
 
-                # Save attempt
-                self.state_manager.save_attempt(
-                    self.round_dir, self._total_attempts, fix_code,
-                    {"iteration": self.state.iteration, "target": target,
-                     "fix_attempt": fix_attempt, "error_category": bottleneck.error_category}
-                )
+                if self.router is not None:
+                    rr = self.router.generate_and_verify(
+                        "bottleneck_fix", messages, check_lean_code
+                    )
+                    self._total_attempts += rr.llm_calls
+                    self._record_result(rr.code, rr.result, extra={
+                        **extra, "model_used": rr.model_used, "escalated": rr.escalated,
+                    })
+                    fix_code = rr.code
+                    result2 = rr.result
+                    model_used = rr.model_used
+                else:
+                    # 单模型回退：_verify_code 内部已用 extra 存档（含计时与 fix 元数据）
+                    fix_code = self.llm.generate(messages)
+                    self._total_attempts += 1
+                    result2 = self._verify_code(fix_code, extra=extra)
+                    model_used = "single"
 
                 print(f"  [PHASE 4] Re-verifying with Lean...")
-                t0 = time.time()
-                result2 = check_lean_code(fix_code)
-                t1 = time.time()
 
                 if result2.compiles:
-                    self._handle_success(target, fix_code, f"bottleneck fix (attempt {fix_attempt + 1})")
+                    self._handle_success(target, fix_code, f"bottleneck fix (attempt {fix_attempt + 1}, {model_used})")
                     fixed = True
                     break
                 else:
@@ -169,7 +187,9 @@ class BottleneckOrchestrator:
                     k=self.state.stuck_count,
                 )
                 messages = construct_user_message(self._system_msg, rethink_prompt)
-                new_approach = self.llm.generate(messages)
+                new_approach = (self.router.generate("strategy_rethink", messages)
+                                if self.router is not None
+                                else self.llm.generate(messages))
                 self._total_attempts += 1
                 self.state.last_proposal = new_approach
                 self.state.stuck_count = 0
@@ -193,25 +213,42 @@ class BottleneckOrchestrator:
         print(f"  Final ρ: {self.state.rho}")
         print(f"  Total iterations: {self.state.iteration}")
         print(f"  Total LLM calls: {self._total_attempts}")
+        if self.router is not None:
+            print(f"  Router stats: {self.router.stats}")
         print(f"  Gap remaining: [{self.state.rho}, 1.9201]")
         print(f"{'='*70}")
         return self.state.rho
 
-    def _propose_initial(self, target: float) -> str:
-        """Phase 1: Generate initial adversary proposal for target ratio."""
+    def _propose_initial(self, target: float):
+        """Phase 1: propose. Returns (code, result_or_None, model_used).
+
+        result is None when reusing a strategy-rethink proposal (not yet verified).
+        """
         if self.state.last_proposal and self.state.stuck_count == 0:
-            # Reuse strategy rethink result
-            return self.state.last_proposal
+            return self.state.last_proposal, None, "pro"
 
-        prompt_text = initial_proposal(
-            target=target,
-            current_best=self.state.rho,
-        )
+        prompt_text = initial_proposal(target=target, current_best=self.state.rho)
         messages = construct_user_message(self._system_msg, prompt_text)
-        return self.llm.generate(messages)
 
-    def _verify(self, code: str) -> tuple[bool, object, str]:
-        """Phase 2: Run Lean compilation check."""
+        if self.router is not None:
+            rr = self.router.generate_and_verify(
+                "initial_proposal", messages, check_lean_code
+            )
+            self._total_attempts += rr.llm_calls
+            self._record_result(rr.code, rr.result, extra={
+                "iteration": self.state.iteration,
+                "target": target,
+                "phase": "initial_proposal",
+                "model_used": rr.model_used,
+                "escalated": rr.escalated,
+            })
+            return rr.code, rr.result, rr.model_used
+
+        code = self.llm.generate(messages)
+        return code, self._verify_code(code), "single"
+
+    def _verify_code(self, code: str, extra: dict | None = None):
+        """Run Lean check with timing + logging, return the LeanResult."""
         self._total_attempts += 1
         t0 = time.time()
         result = check_lean_code(code)
@@ -226,19 +263,22 @@ class BottleneckOrchestrator:
                 first = result.errors[0]
                 print(f"       {first.file}:{first.line}:{first.col}: {first.message[:120]}")
 
-        # Save attempt
-        error_info = {
-            "compiles": result.compiles,
-            "error_count": result.error_count,
-            "elapsed": elapsed,
-        }
+        self._record_result(code, result, elapsed, extra=extra)
+        return result
+
+    def _record_result(self, code: str, result, elapsed: float | None = None,
+                       extra: dict | None = None):
+        """Persist one attempt using an already-computed LeanResult."""
+        error_info = {"compiles": result.compiles, "error_count": result.error_count}
+        if elapsed is not None:
+            error_info["elapsed"] = elapsed
         if result.errors:
             error_info["first_error"] = result.errors[0].message[:300]
+        if extra:
+            error_info.update(extra)
         self.state_manager.save_attempt(
             self.round_dir, self._total_attempts, code, error_info
         )
-
-        return result.compiles, result, code
 
     def _handle_success(self, target: float, code: str, source: str):
         """Handle a successful proof."""
@@ -293,29 +333,59 @@ def main():
                         help="Name for this experiment run")
     parser.add_argument("--temperature", type=float, default=0.3,
                         help="LLM temperature (default: 0.3)")
+    parser.add_argument("--flash-model", type=str, default="deepseek-chat",
+                        help="Flash (cheap) model for adaptive routing (default: deepseek-chat)")
+    parser.add_argument("--pro-model", type=str, default="deepseek-reasoner",
+                        help="Pro (capable) model for adaptive routing (default: deepseek-reasoner)")
+    parser.add_argument("--no-router", action="store_true",
+                        help="Disable adaptive routing; use a single --model/--provider client")
     args = parser.parse_args()
 
-    # Create LLM client
+    # Create LLM client / router
     if args.mock:
         llm = MockLLMClient()
         print("⚠️  Using MOCK LLM client — no API calls will be made")
-    else:
+        orch = BottleneckOrchestrator(
+            llm_client=llm,
+            initial_rho=args.initial_rho,
+            delta=args.delta,
+            max_iterations=args.max_iterations,
+            max_fix_attempts=args.max_fix_attempts,
+            max_stuck=args.max_stuck,
+            run_name=args.run_name,
+        )
+    elif args.no_router:
         llm = LLMClient(
             provider=args.provider,
             model=args.model,
             temperature=args.temperature,
         )
-
-    # Create and run orchestrator
-    orch = BottleneckOrchestrator(
-        llm_client=llm,
-        initial_rho=args.initial_rho,
-        delta=args.delta,
-        max_iterations=args.max_iterations,
-        max_fix_attempts=args.max_fix_attempts,
-        max_stuck=args.max_stuck,
-        run_name=args.run_name,
-    )
+        orch = BottleneckOrchestrator(
+            llm_client=llm,
+            initial_rho=args.initial_rho,
+            delta=args.delta,
+            max_iterations=args.max_iterations,
+            max_fix_attempts=args.max_fix_attempts,
+            max_stuck=args.max_stuck,
+            run_name=args.run_name,
+        )
+    else:
+        api_key = os.environ.get("DEEPSEEK_API_KEY", "")
+        flash = LLMClient(provider="deepseek", model=args.flash_model,
+                          api_key=api_key, temperature=args.temperature)
+        pro = LLMClient(provider="deepseek", model=args.pro_model,
+                        api_key=api_key, temperature=args.temperature)
+        router = ModelRouter(flash, pro)
+        print(f"🧭 Adaptive router: flash={args.flash_model} → pro={args.pro_model}")
+        orch = BottleneckOrchestrator(
+            router=router,
+            initial_rho=args.initial_rho,
+            delta=args.delta,
+            max_iterations=args.max_iterations,
+            max_fix_attempts=args.max_fix_attempts,
+            max_stuck=args.max_stuck,
+            run_name=args.run_name,
+        )
 
     final_rho = orch.run()
 
