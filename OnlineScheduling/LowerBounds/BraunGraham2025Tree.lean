@@ -344,6 +344,472 @@ theorem braun_tree_lower_bound (alg : OnlineAlgorithm 4) :
 
 end BraunTree
 
+namespace BraunTreeR1
+
+open AdvTree
+open BraunTree
+
+/-! ### r = 1 combinators (three identical jobs) -/
+
+/-- Place three identical jobs of size `x` on machines `m1 m2 m3` in order. -/
+def place3 (loads : Loads 4) (x : ℝ) (m1 m2 m3 : Fin 4) : Loads 4 :=
+  place (m := 4) (place (m := 4) (place (m := 4) loads x m1) x m2) x m3
+
+/-- Release three identical jobs `x` from state `(σ, loads)`. -/
+def stage3 (σ : JobSequence) (loads : Loads 4) (x : ℝ)
+    (leaf : JobSequence → Loads 4 → AdvTree 4) : AdvTree 4 :=
+  .node σ loads x (fun m1 =>
+    .node (σ ++ [x]) (place (m := 4) loads x m1) x (fun m2 =>
+      .node (σ ++ [x, x]) (place (m := 4) (place (m := 4) loads x m1) x m2) x (fun m3 =>
+        leaf (σ ++ [x, x, x]) (place3 loads x m1 m2 m3))))
+
+/-- The total load after three placements grows by `3·x`. -/
+lemma sum_place3 (loads : Loads 4) (x : ℝ) (m1 m2 m3 : Fin 4) :
+    (∑ i : Fin 4, place3 loads x m1 m2 m3 i) = (∑ i : Fin 4, loads i) + 3 * x := by
+  dsimp [place3]
+  rw [sum_place, sum_place, sum_place]
+  ring
+
+/-- The online algorithm identified by three running-total choices. -/
+def tupleAlg3 (base step : ℝ) (m1 m2 m3 : Fin 4) : OnlineAlgorithm 4 :=
+  fun loads _ =>
+    if (∑ i : Fin 4, loads i) = base then m1
+    else if (∑ i : Fin 4, loads i) = base + step then m2
+    else m3
+
+/-- Releasing three jobs through the tuple algorithm reproduces the tuple
+    placements (when the initial total is `base` and the step is nonzero). -/
+lemma tupleAlg3_run (base x : ℝ) (hx : x ≠ 0) (loads : Loads 4)
+    (hsum : (∑ i : Fin 4, loads i) = base) (m1 m2 m3 : Fin 4) :
+    place3 loads x m1 m2 m3 =
+      (List.replicate 3 x).foldl (step (m := 4) (tupleAlg3 base x m1 m2 m3)) loads := by
+  dsimp [place3]
+  have h1 : tupleAlg3 base x m1 m2 m3 loads x = m1 := by
+    dsimp [tupleAlg3]
+    rw [if_pos hsum]
+  have hstep1 : step (m := 4) (tupleAlg3 base x m1 m2 m3) loads x = place (m := 4) loads x m1 := by
+    dsimp [step]
+    rw [h1]
+    rfl
+  rw [hstep1]
+  have hsum1 : (∑ i : Fin 4, place (m := 4) loads x m1 i) = base + x := by
+    rw [sum_place, hsum]
+  have h2ne1 : (∑ i : Fin 4, place (m := 4) loads x m1 i) ≠ base := by
+    intro h
+    have hx0 : x = 0 := by linarith [h, hsum1]
+    exact hx hx0
+  have h2 : tupleAlg3 base x m1 m2 m3 (place (m := 4) loads x m1) x = m2 := by
+    dsimp [tupleAlg3]
+    rw [if_neg h2ne1, if_pos hsum1]
+  have hstep2 : step (m := 4) (tupleAlg3 base x m1 m2 m3) (place (m := 4) loads x m1) x =
+      place (m := 4) (place (m := 4) loads x m1) x m2 := by
+    dsimp [step]
+    rw [h2]
+    rfl
+  rw [hstep2]
+  have hsum2 : (∑ i : Fin 4, place (m := 4) (place (m := 4) loads x m1) x m2 i) = base + 2 * x := by
+    rw [sum_place, sum_place, hsum]
+    ring
+  have h3ne1 : (∑ i : Fin 4, place (m := 4) (place (m := 4) loads x m1) x m2 i) ≠ base := by
+    intro h
+    have hx0 : x = 0 := by linarith [h, hsum2]
+    exact hx hx0
+  have h3ne2 : (∑ i : Fin 4, place (m := 4) (place (m := 4) loads x m1) x m2 i) ≠ base + x := by
+    intro h
+    have hx0 : x = 0 := by linarith [h, hsum2]
+    exact hx hx0
+  have h3 : tupleAlg3 base x m1 m2 m3 (place (m := 4) (place (m := 4) loads x m1) x m2) x = m3 := by
+    dsimp [tupleAlg3]
+    rw [if_neg h3ne1, if_neg h3ne2]
+  have hstep3 : step (m := 4) (tupleAlg3 base x m1 m2 m3) (place (m := 4) (place (m := 4) loads x m1) x m2) x =
+      place (m := 4) (place (m := 4) (place (m := 4) loads x m1) x m2) x m3 := by
+    dsimp [step]
+    rw [h3]
+    rfl
+  rw [hstep3]
+
+/-! ### r = 1 trap certificates -/
+
+/-- L₁ trap certificate: unless the four L₁ jobs are perfectly balanced, the
+    makespan reaches Φ₀ + 2·L₁ (layer separation). -/
+lemma l1bad (loads : Loads 4) (hloads : ∀ i : Fin 4, loads i = braunSumLS 0)
+    (m1 m2 m3 m4 : Fin 4)
+    (h : ¬ ∀ i : Fin 4, place4 loads (braunL 1) m1 m2 m3 m4 i = braunSumLS 0 + braunL 1) :
+    braunSumLS 0 + 2 * braunL 1 ≤ makespan 4 (place4 loads (braunL 1) m1 m2 m3 m4) := by
+  let alg : OnlineAlgorithm 4 := tupleAlg4 (4 * braunSumLS 0) (braunL 1) m1 m2 m3 m4
+  have hsum : (∑ i : Fin 4, loads i) = 4 * braunSumLS 0 := by
+    simp [hloads, Finset.sum_const]
+  have hrun := tupleAlg4_run (4 * braunSumLS 0) (braunL 1) (ne_of_gt (braunL_pos 1))
+    loads hsum m1 m2 m3 m4
+  rcases braun_layer_separation_from_base alg (braunSumLS 0) (braunL 1) (braunL_pos 1) loads hloads with hbad | hgood
+  · rw [← hrun] at hbad
+    simpa using hbad
+  · exfalso
+    apply h
+    intro i
+    rw [hrun]
+    simpa using hgood i
+
+/-- S₁ trap certificate: unless the three S₁ jobs land as `(base, base+S₁)×3`,
+    the makespan reaches Φ₀ + L₁ + 2·S₁ (three-job layer separation). -/
+lemma s1bad (loads : Loads 4) (hloads : ∀ i : Fin 4, loads i = braunSumLS 0 + braunL 1)
+    (m1 m2 m3 : Fin 4)
+    (h : ¬ ∃ j0 : Fin 4, place3 loads (braunS 1) m1 m2 m3 j0 = braunSumLS 0 + braunL 1 ∧
+        ∀ i : Fin 4, i ≠ j0 → place3 loads (braunS 1) m1 m2 m3 i = braunSumLS 0 + braunL 1 + braunS 1) :
+    braunSumLS 0 + braunL 1 + 2 * braunS 1 ≤ makespan 4 (place3 loads (braunS 1) m1 m2 m3) := by
+  let alg : OnlineAlgorithm 4 := tupleAlg3 (4 * (braunSumLS 0 + braunL 1)) (braunS 1) m1 m2 m3
+  have hsum : (∑ i : Fin 4, loads i) = 4 * (braunSumLS 0 + braunL 1) := by
+    simp [hloads, Finset.sum_const]
+    ring
+  have hrun := tupleAlg3_run (4 * (braunSumLS 0 + braunL 1)) (braunS 1) (ne_of_gt (braunS_pos 1))
+    loads hsum m1 m2 m3
+  rcases braun_three_from_base alg (braunSumLS 0 + braunL 1) (braunS 1) (braunS_pos 1) loads hloads with hbad | hgood
+  · rw [← hrun] at hbad
+    simpa using hbad
+  · exfalso
+    apply h
+    rcases hgood with ⟨j0, hj0base, hj0rest⟩
+    refine ⟨j0, ?_, ?_⟩
+    · rw [hrun]
+      exact hj0base
+    · intro i hi
+      rw [hrun]
+      exact hj0rest i hi
+
+/-- S⁺₁ trap certificate: if the plus job lands on a machine already at Φ₁,
+    the exact additive bound is reached. -/
+lemma sp1bad (loads : Loads 4) (h : ∃ j : Fin 4, braunSumLS 1 + braunSp 1 ≤ loads j) :
+    Real.sqrt 3 * optMakespan (m := 4) (braunPrefixSp 1) - (2 - Real.sqrt 3) ≤ makespan 4 loads := by
+  rcases h with ⟨j, hj⟩
+  have hopt := braun_opt_prefix_Sp 1 (by norm_num : (1 : ℕ) ≤ 1)
+  have hid := braun_prefix_additive_identity 1 (by norm_num : (1 : ℕ) ≤ 1)
+  have hmk : braunSumLS 1 + braunSp 1 ≤ makespan 4 loads :=
+    le_trans hj (makespan_ge_each (m := 4) loads j)
+  calc
+    Real.sqrt 3 * optMakespan (m := 4) (braunPrefixSp 1) - (2 - Real.sqrt 3)
+        = Real.sqrt 3 * (braunSp 1 + braunL 1) - (2 - Real.sqrt 3) := by rw [hopt]
+    _ = braunSumLS 1 + braunSp 1 := by rw [hid]
+    _ ≤ makespan 4 loads := hmk
+
+/-- Φ₁ = Φ₀ + L₁ + S₁. -/
+lemma braunSumLS1_eq : braunSumLS 1 = braunSumLS 0 + braunL 1 + braunS 1 := by
+  simp [braunSumLS, Finset.sum_range_succ]
+  ring
+
+/-- From the S₁-good state, if S⁺₁ does not create a trap (no machine reaches
+    Φ₁ + S⁺₁), then S⁺₁ landed on the `j0` machine and every machine ends at
+    load ≥ Φ₁. -/
+lemma sp1_good_invariant (loads : Loads 4)
+    (hgood : ∃ j0 : Fin 4, loads j0 = braunSumLS 0 + braunL 1 ∧
+      ∀ i : Fin 4, i ≠ j0 → loads i = braunSumLS 0 + braunL 1 + braunS 1)
+    (m : Fin 4) (hntrap : ¬ ∃ j : Fin 4, braunSumLS 1 + braunSp 1 ≤ place (m := 4) loads (braunSp 1) m j) :
+    ∀ i : Fin 4, braunSumLS 1 ≤ place (m := 4) loads (braunSp 1) m i := by
+  rcases hgood with ⟨j0, hj0base, hj0rest⟩
+  have hmj0 : m = j0 := by
+    by_contra hne
+    have hloadm : loads m = braunSumLS 1 := by
+      simpa [braunSumLS1_eq] using hj0rest m hne
+    have htrap : braunSumLS 1 + braunSp 1 ≤ place (m := 4) loads (braunSp 1) m m := by
+      dsimp [place]
+      rw [if_pos rfl, hloadm]
+    exact hntrap ⟨m, htrap⟩
+  intro i
+  by_cases hij0 : i = j0
+  · subst hij0
+    rw [hmj0]
+    dsimp [place]
+    rw [if_pos rfl, hj0base]
+    rw [braunSumLS1_eq]
+    have hsp : braunS 1 ≤ braunSp 1 := by
+      dsimp [braunSp]
+      nlinarith [braunS_pos 0]
+    nlinarith
+  · dsimp [place]
+    rw [if_neg (by intro h; exact hij0 (by rw [h, hmj0]))]
+    rw [hj0rest i hij0]
+    rw [braunSumLS1_eq]
+
+/-- F finish certificate: from the good S⁺₁ state (every machine ≥ Φ₁), the
+    final job forces the exact additive bound. -/
+lemma fgood1 (loads : Loads 4) (hloads : ∀ i : Fin 4, braunSumLS 1 ≤ loads i) (m : Fin 4) :
+    Real.sqrt 3 * optMakespan (m := 4) (braunSeq 1) - (2 - Real.sqrt 3) ≤
+      makespan 4 (place (m := 4) loads (braunF 1) m) := by
+  have hm : braunSumLS 1 + braunF 1 ≤ place (m := 4) loads (braunF 1) m m := by
+    dsimp [place]
+    rw [if_pos rfl]
+    exact add_le_add_left (hloads m) (braunF 1)
+  have hmk : braunSumLS 1 + braunF 1 ≤ makespan 4 (place (m := 4) loads (braunF 1) m) :=
+    le_trans hm (makespan_ge_each (m := 4) (place (m := 4) loads (braunF 1) m) m)
+  have hopt := braun_opt_eq_F 1
+  have hid := braun_additive_identity 1
+  calc
+    Real.sqrt 3 * optMakespan (m := 4) (braunSeq 1) - (2 - Real.sqrt 3)
+        = Real.sqrt 3 * braunF 1 - (2 - Real.sqrt 3) := by rw [hopt]
+    _ = braunForcedMakespan 1 := by rw [← hid]
+    _ = braunSumLS 1 + braunF 1 := rfl
+    _ ≤ makespan 4 (place (m := 4) loads (braunF 1) m) := hmk
+
+/-! ### r = 1 adversary tree -/
+
+/-- The F stage: every placement stops immediately. -/
+def fLeaf1 (σ : JobSequence) (loads : Loads 4) : AdvTree 4 :=
+  .stop σ loads
+
+/-- The S⁺₁ stage classifier: a trap (some machine ≥ Φ₁ + S⁺₁) stops, otherwise
+    the final job F is released. -/
+def sp1Leaf (σ : JobSequence) (loads : Loads 4) : AdvTree 4 :=
+  if _ : ∃ j : Fin 4, braunSumLS 1 + braunSp 1 ≤ loads j then
+    .stop σ loads
+  else
+    stage1 σ loads (braunF 1) fLeaf1
+
+/-- The S₁ stage classifier: the `(base, base+S₁)×3` split continues, otherwise
+    stop. -/
+def s1Leaf (σ : JobSequence) (loads : Loads 4) : AdvTree 4 :=
+  if _ : ∃ j0 : Fin 4, loads j0 = braunSumLS 0 + braunL 1 ∧
+      ∀ i : Fin 4, i ≠ j0 → loads i = braunSumLS 0 + braunL 1 + braunS 1 then
+    stage1 σ loads (braunSp 1) sp1Leaf
+  else
+    .stop σ loads
+
+/-- The L₁ stage classifier. -/
+def l1Leaf (σ : JobSequence) (loads : Loads 4) : AdvTree 4 :=
+  if _ : ∀ i : Fin 4, loads i = braunSumLS 0 + braunL 1 then
+    stage3 σ loads (braunS 1) s1Leaf
+  else
+    .stop σ loads
+
+/-- The S₀ stage classifier. -/
+def s0Leaf1 (σ : JobSequence) (loads : Loads 4) : AdvTree 4 :=
+  if _ : ∀ i : Fin 4, loads i = braunL 0 + braunS 0 then
+    stage4 σ loads (braunL 1) l1Leaf
+  else
+    .stop σ loads
+
+/-- The L₀ stage classifier. -/
+def l0Leaf1 (σ : JobSequence) (loads : Loads 4) : AdvTree 4 :=
+  if _ : ∀ i : Fin 4, loads i = braunL 0 then
+    stage4 σ loads (braunS 0) s0Leaf1
+  else
+    .stop σ loads
+
+/-- The Braun r = 1 adversary as an explicit tree. -/
+def braunTree1 : AdvTree 4 :=
+  stage4 [] (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) l0Leaf1
+
+/-! ### Well-formedness of the r = 1 tree -/
+
+lemma braunTree1_wellFormed : WellFormed braunTree1 := by
+  dsimp [braunTree1]
+  refine ⟨?_, ?_, ?_⟩
+  · intro m1; refine ⟨?_, ?_, ?_⟩
+    · intro m2; refine ⟨?_, ?_, ?_⟩
+      · intro m3; refine ⟨?_, ?_, ?_⟩
+        · intro m4
+          dsimp [l0Leaf1]
+          by_cases h : ∀ i : Fin 4, place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4 i = braunL 0
+          · simp [h]
+            refine ⟨?_, ?_, ?_⟩
+            · intro m1'; refine ⟨?_, ?_, ?_⟩
+              · intro m2'; refine ⟨?_, ?_, ?_⟩
+                · intro m3'; refine ⟨?_, ?_, ?_⟩
+                  · intro m4'
+                    dsimp [s0Leaf1]
+                    by_cases h' : ∀ i : Fin 4, place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4' i = braunL 0 + braunS 0
+                    · simp [h']
+                      refine ⟨?_, ?_, ?_⟩
+                      · intro m1''; refine ⟨?_, ?_, ?_⟩
+                        · intro m2''; refine ⟨?_, ?_, ?_⟩
+                          · intro m3''; refine ⟨?_, ?_, ?_⟩
+                            · intro m4''
+                              dsimp [l1Leaf]
+                              by_cases h'' : ∀ i : Fin 4, place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'' i = braunSumLS 0 + braunL 1
+                              · simp [h'']
+                                refine ⟨?_, ?_, ?_⟩
+                                · intro m1'''; refine ⟨?_, ?_, ?_⟩
+                                  · intro m2'''; refine ⟨?_, ?_, ?_⟩
+                                    · intro m3'''
+                                      dsimp [s1Leaf]
+                                      by_cases h''' : ∃ j0 : Fin 4, place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' j0 = braunSumLS 0 + braunL 1 ∧
+                                          ∀ i : Fin 4, i ≠ j0 → place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' i = braunSumLS 0 + braunL 1 + braunS 1
+                                      · simp [h''']
+                                        refine ⟨?_, ?_, ?_⟩
+                                        · intro m
+                                          dsimp [sp1Leaf]
+                                          by_cases h'''' : ∃ j : Fin 4, braunSumLS 1 + braunSp 1 ≤ place (m := 4) (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') (braunSp 1) m j
+                                          · simp [h'''', WellFormed]
+                                          · simp [h'''']
+                                            refine ⟨?_, ?_, ?_⟩
+                                            · intro mF; simp [fLeaf1, WellFormed]
+                                            · intro mF; rfl
+                                            · intro mF; rfl
+                                        · intro m
+                                          by_cases h'''' : ∃ j : Fin 4, braunSumLS 1 + braunSp 1 ≤ place (m := 4) (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') (braunSp 1) m j <;>
+                                            simp [sp1Leaf, stage1, AdvTree.sigma, h'''']
+                                        · intro m
+                                          by_cases h'''' : ∃ j : Fin 4, braunSumLS 1 + braunSp 1 ≤ place (m := 4) (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') (braunSp 1) m j <;>
+                                            simp [sp1Leaf, stage1, AdvTree.loads, h''''] <;> rfl
+                                      · simp [h''', WellFormed]
+                                    · intro m3'''
+                                      by_cases h''' : ∃ j0 : Fin 4, place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' j0 = braunSumLS 0 + braunL 1 ∧
+                                          ∀ i : Fin 4, i ≠ j0 → place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' i = braunSumLS 0 + braunL 1 + braunS 1 <;>
+                                        simp [s1Leaf, stage1, AdvTree.sigma, h''']
+                                    · intro m3'''
+                                      by_cases h''' : ∃ j0 : Fin 4, place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' j0 = braunSumLS 0 + braunL 1 ∧
+                                          ∀ i : Fin 4, i ≠ j0 → place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' i = braunSumLS 0 + braunL 1 + braunS 1 <;>
+                                        simp [s1Leaf, stage1, AdvTree.loads, h'''] <;> rfl
+                                  · intro m2'''; rfl
+                                  · intro m2'''; rfl
+                                · intro m1'''; rfl
+                                · intro m1'''; rfl
+                              · simp [h'', WellFormed]
+                            · intro m4''
+                              by_cases h'' : ∀ i : Fin 4, place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'' i = braunSumLS 0 + braunL 1 <;>
+                                simp [l1Leaf, stage3, AdvTree.sigma, h'']
+                            · intro m4''
+                              by_cases h'' : ∀ i : Fin 4, place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'' i = braunSumLS 0 + braunL 1 <;>
+                                simp [l1Leaf, stage3, AdvTree.loads, h''] <;> rfl
+                          · intro m3''; rfl
+                          · intro m3''; rfl
+                        · intro m2''; rfl
+                        · intro m2''; rfl
+                      · intro m1''; rfl
+                      · intro m1''; rfl
+                    · simp [h', WellFormed]
+                  · intro m4'
+                    by_cases h' : ∀ i : Fin 4, place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4' i = braunL 0 + braunS 0 <;>
+                      simp [s0Leaf1, stage4, AdvTree.sigma, h']
+                  · intro m4'
+                    by_cases h' : ∀ i : Fin 4, place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4' i = braunL 0 + braunS 0 <;>
+                      simp [s0Leaf1, stage4, AdvTree.loads, h'] <;> rfl
+                · intro m3'; rfl
+                · intro m3'; rfl
+              · intro m2'; rfl
+              · intro m2'; rfl
+            · intro m1'; rfl
+            · intro m1'; rfl
+          · simp [h, WellFormed]
+        · intro m4
+          by_cases h : ∀ i : Fin 4, place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4 i = braunL 0 <;>
+            simp [l0Leaf1, stage4, AdvTree.sigma, h]
+        · intro m4
+          by_cases h : ∀ i : Fin 4, place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4 i = braunL 0 <;>
+            simp [l0Leaf1, stage4, AdvTree.loads, h] <;> rfl
+      · intro m3; rfl
+      · intro m3; rfl
+    · intro m2; rfl
+    · intro m2; rfl
+  · intro m1; rfl
+  · intro m1; rfl
+
+/-! ### OPT reconciliations (tree witness sequences) -/
+
+lemma opt_l0trap : optMakespan (m := 4) ([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) = braunL 0 := by
+  rw [show ([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) = List.replicate 4 (braunL 0) by rfl]
+  exact braun_opt_replicate4_L0
+
+lemma opt_s0trap : optMakespan (m := 4) (([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) = braunL 0 + braunS 0 := by
+  rw [show (([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) = braunPrefixSp 0 by rfl]
+  exact braun_opt_prefix0
+
+lemma opt_l1trap : optMakespan (m := 4) ((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) ≤ braunSumLS 0 + braunL 1 := by
+  rw [show ((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) = braunPrefixSp 0 ++ List.replicate 4 (braunL 1) by rfl]
+  exact braun_opt_prefix_4L1_le
+
+lemma opt_s1trap : optMakespan (m := 4) (((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) ++ [braunS 1, braunS 1, braunS 1]) ≤ braunS 1 + braunL 1 := by
+  rw [show (((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) ++ [braunS 1, braunS 1, braunS 1]) = braunPrefixSp 0 ++ List.replicate 4 (braunL 1) ++ List.replicate 3 (braunS 1) by rfl]
+  exact braun_opt_prefix_3S1_le
+
+/-! ### Certification of every r = 1 stop leaf -/
+
+lemma braunTree1_certified : Certified (Real.sqrt 3) (2 - Real.sqrt 3) braunTree1 := by
+  dsimp [braunTree1, Certified]
+  intro m1 m2 m3 m4
+  dsimp [l0Leaf1]
+  by_cases h : ∀ i : Fin 4, place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4 i = braunL 0
+  · simp [h]
+    dsimp [stage4, Certified]
+    intro m1' m2' m3' m4'
+    dsimp [s0Leaf1]
+    by_cases h' : ∀ i : Fin 4, place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4' i = braunL 0 + braunS 0
+    · simp [h']
+      dsimp [stage4, Certified]
+      intro m1'' m2'' m3'' m4''
+      dsimp [l1Leaf]
+      by_cases h'' : ∀ i : Fin 4, place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'' i = braunSumLS 0 + braunL 1
+      · simp [h'']
+        dsimp [stage3, Certified]
+        intro m1''' m2''' m3'''
+        dsimp [s1Leaf]
+        by_cases h''' : ∃ j0 : Fin 4, place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' j0 = braunSumLS 0 + braunL 1 ∧
+            ∀ i : Fin 4, i ≠ j0 → place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''' i = braunSumLS 0 + braunL 1 + braunS 1
+        · simp [h''']
+          dsimp [stage1, Certified]
+          intro m
+          dsimp [sp1Leaf]
+          by_cases h'''' : ∃ j : Fin 4, braunSumLS 1 + braunSp 1 ≤ place (m := 4) (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') (braunSp 1) m j
+          · simp [h'''']
+            exact sp1bad (place (m := 4) (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') (braunSp 1) m) h''''
+          · simp [h'''']
+            dsimp [stage1, Certified]
+            intro mF
+            dsimp [fLeaf1, Certified]
+            exact fgood1 (place (m := 4) (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') (braunSp 1) m)
+              (sp1_good_invariant (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') h''' m h'''') mF
+        · simp [h''']
+          dsimp [Certified]
+          have hs1 := s1bad (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (by intro i; exact h'' i) m1''' m2''' m3''' h'''
+          have hsq : Real.sqrt 3 * optMakespan (m := 4) (((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) ++ [braunS 1, braunS 1, braunS 1]) ≤ Real.sqrt 3 * (braunS 1 + braunL 1) :=
+            mul_le_mul_of_nonneg_left opt_s1trap (le_of_lt (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 3)))
+          calc
+            Real.sqrt 3 * optMakespan (m := 4) (((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) ++ [braunS 1, braunS 1, braunS 1]) - (2 - Real.sqrt 3)
+                ≤ Real.sqrt 3 * (braunS 1 + braunL 1) - (2 - Real.sqrt 3) := by linarith
+            _ ≤ braunSumLS 0 + braunL 1 + 2 * braunS 1 := braun_trap_S1
+            _ ≤ makespan 4 (place3 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') (braunS 1) m1''' m2''' m3''') := hs1
+      · simp [h'']
+        dsimp [Certified]
+        have hl1 := l1bad (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (by intro i; simpa [braunSumLS] using h' i) m1'' m2'' m3'' m4'' h''
+        have hsq : Real.sqrt 3 * optMakespan (m := 4) ((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) ≤ Real.sqrt 3 * (braunSumLS 0 + braunL 1) :=
+          mul_le_mul_of_nonneg_left opt_l1trap (le_of_lt (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 3)))
+        calc
+          Real.sqrt 3 * optMakespan (m := 4) ((([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) ++ [braunL 1, braunL 1, braunL 1, braunL 1]) - (2 - Real.sqrt 3)
+              ≤ Real.sqrt 3 * (braunSumLS 0 + braunL 1) - (2 - Real.sqrt 3) := by linarith
+          _ ≤ braunSumLS 0 + 2 * braunL 1 := braun_trap_L1
+          _ ≤ makespan 4 (place4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') (braunL 1) m1'' m2'' m3'' m4'') := hl1
+    · simp [h']
+      dsimp [Certified]
+      have hs0 := s0bad (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) h m1' m2' m3' m4' h'
+      calc
+        Real.sqrt 3 * optMakespan (m := 4) (([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) ++ [braunS 0, braunS 0, braunS 0, braunS 0]) - (2 - Real.sqrt 3)
+            = Real.sqrt 3 * (braunL 0 + braunS 0) - (2 - Real.sqrt 3) := by rw [opt_s0trap]
+        _ ≤ braunL 0 + 2 * braunS 0 := braun_trap_S0
+        _ ≤ makespan 4 (place4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) (braunS 0) m1' m2' m3' m4') := hs0
+  · simp [h]
+    dsimp [Certified]
+    have hl0 := l0bad m1 m2 m3 m4 h
+    calc
+      Real.sqrt 3 * optMakespan (m := 4) ([] ++ [braunL 0, braunL 0, braunL 0, braunL 0]) - (2 - Real.sqrt 3)
+          = Real.sqrt 3 * braunL 0 - (2 - Real.sqrt 3) := by rw [opt_l0trap]
+      _ ≤ 2 * braunL 0 := braun_trap_L0
+      _ ≤ makespan 4 (place4 (fun _ : Fin 4 => (0 : ℝ)) (braunL 0) m1 m2 m3 m4) := hl0
+
+/-! ### Rooted at the empty state -/
+
+lemma braunTree1_rootOK : rootOK braunTree1 := by
+  dsimp [braunTree1, rootOK, AdvTree.sigma, AdvTree.loads]
+  constructor <;> rfl
+
+/-! ### Braun–Chung–Graham 2025, r = 1 instance, derived through the
+    certification layer -/
+
+theorem braun_tree_r1_lower_bound (alg : OnlineAlgorithm 4) :
+    ∃ σ : JobSequence,
+      Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ :=
+  AdvTree.sound braunTree1 braunTree1_wellFormed braunTree1_rootOK (Real.sqrt 3) (2 - Real.sqrt 3)
+    braunTree1_certified alg
+
+end BraunTreeR1
+
 end
 
 end OnlineScheduling

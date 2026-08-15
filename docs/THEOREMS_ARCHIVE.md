@@ -278,6 +278,21 @@
 | theorem | `braun_asymptotic_lower_bound` | ✅ | ∀ alg : OnlineAlgorithm 4, ∃ σ, algorithmMakespan 4 alg σ ≥ √3·optMakespan (m:=4) σ − (2−√3) |
 | theorem | `braun_asymptotic_lower_bound_general` | ✅ | ∀ r, ∀ alg, ∃ σ ≤ σ_r（List.IsPrefix）, algorithmMakespan 4 alg σ ≥ √3·optMakespan (m:=4) σ − (2−√3) |
 
+## LowerBounds/AdversaryTree.lean + BraunGraham2025Tree.lean（对抗树认证层 + 树回放；0 sorry）
+
+> "模板 = 数据、证明零新增"的认证闭环：`AdvTree` 把自适应对手显式写成树
+> （节点=状态+释放作业，边=算法选机，叶=打包证书）；`AdvTree.sound` 只证一次
+> （∀m）：WellFormed + rootOK + Certified ⇒ ∀alg ∃σ 比率达标。Braun 实例降级为
+> 纯数据——枚举放置分支 + 逐叶证书（层分离引理 + OPT 打包）。
+> Braun r=0（9 作业）为冒烟测试；r=1（17 作业，L₀/S₀/L₁/S₁×3/S⁺₁/F 六阶段）
+> 回放主定理实例，证明"新实例 = 新数据、零新证明"。
+
+| 类型 | 名称 | 状态 | 签名 |
+|------|------|:--:|------|
+| theorem | `AdvTree.sound` | ✅ | WellFormed T → rootOK T → Certified ρ d T → ∀ alg, ∃ σ, ρ·OPT(σ)−d ≤ τ_A(σ) |
+| theorem | `braun_tree_lower_bound` | ✅ | (r=0) ∀ alg : OnlineAlgorithm 4, ∃ σ, √3·optMakespan σ −(2−√3) ≤ algorithmMakespan 4 alg σ |
+| theorem | `braun_tree_r1_lower_bound` | ✅ | (r=1) ∀ alg : OnlineAlgorithm 4, ∃ σ, √3·optMakespan σ −(2−√3) ≤ algorithmMakespan 4 alg σ |
+
 ---
 | 统计 | 数量 |
 |------|:--:|
