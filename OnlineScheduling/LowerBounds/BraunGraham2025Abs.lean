@@ -796,6 +796,186 @@ lemma braunAbs_opt_F_le :
     dsimp [braunAbsF1]
     nlinarith [hid]
 
+/-! ### Forcing and the main theorem (Theorem 2, r = 1) -/
+
+/-- The base prefix L₀×4 ++ S₀×4. -/
+def braunAbsBase (c : ℝ) : JobSequence :=
+  List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c)
+
+/-- 0 < S₀ at c₁. -/
+lemma braunAbsS0_pos : 0 < braunAbsS0 braunAbsCR1 := by
+  nlinarith [braunAbsS0_ge_2]
+
+/-- 0 < L₁ at c₁. -/
+lemma braunAbsL1_pos : 0 < braunAbsL1 braunAbsCR1 := by
+  have hden : 0 < (3 * braunAbsCR1 - 5) * (2 - braunAbsCR1) := by
+    have h3 : 0 < 3 * braunAbsCR1 - 5 := by nlinarith [braunAbsCR1_lo]
+    have h2 : 0 < 2 - braunAbsCR1 := by nlinarith [braunAbsCR1_hi]
+    exact mul_pos h3 h2
+  have hnum : 0 < 1 + 5 * braunAbsCR1 - 3 * braunAbsCR1 ^ 2 := by
+    have hfac : 1 + 5 * braunAbsCR1 - 3 * braunAbsCR1 ^ 2 =
+        (7 / 4 - braunAbsCR1) * (3 * braunAbsCR1 + 17 / 4) + (4 * braunAbsCR1 - 103 / 16) := by ring
+    rw [hfac]
+    have h1 : 0 < 7 / 4 - braunAbsCR1 := by nlinarith [braunAbsCR1_lt_seven_quarters]
+    have h2 : 0 < 3 * braunAbsCR1 + 17 / 4 := by nlinarith [braunAbsCR1_lo]
+    have h3 : 0 < 4 * braunAbsCR1 - 103 / 16 := by nlinarith [braunAbsCR1_lo]
+    nlinarith [mul_pos h1 h2]
+  have hid : braunAbsL1 braunAbsCR1 * ((3 * braunAbsCR1 - 5) * (2 - braunAbsCR1)) =
+      1 + 5 * braunAbsCR1 - 3 * braunAbsCR1 ^ 2 := by
+    dsimp [braunAbsL1]
+    field_simp [braunAbsCR1_3c5_ne, sub_ne_zero.mpr (Ne.symm braunAbsCR1_ne_two)]
+    ring
+  have h : 0 < braunAbsL1 braunAbsCR1 * ((3 * braunAbsCR1 - 5) * (2 - braunAbsCR1)) := by
+    rw [hid]
+    exact hnum
+  exact (mul_pos_iff_of_pos_right hden).mp h
+
+/-- Base forcing: the L₀/S₀ layers either yield a witness achieving the absolute
+    bound, or leave every machine at load 1 + S₀. -/
+lemma braunAbs_base_forcing (alg : OnlineAlgorithm 4) :
+    (∃ σ : JobSequence, braunAbsCR1 * optMakespan (m := 4) σ ≤ algorithmMakespan 4 alg σ) ∨
+    (∀ i : Fin 4, runAlgorithm 4 alg (braunAbsBase braunAbsCR1) i = 1 + braunAbsS0 braunAbsCR1) := by
+  rcases braun_layer_separation_from_base alg 0 (1 : ℝ) (by norm_num : (0 : ℝ) < 1)
+      (fun _ : Fin 4 => (0 : ℝ)) (by intro i; rfl) with hbad | hgood
+  · left
+    refine ⟨List.replicate 4 (1 : ℝ), ?_⟩
+    have hmk : 2 ≤ algorithmMakespan 4 alg (List.replicate 4 (1 : ℝ)) := by
+      dsimp only [algorithmMakespan, runAlgorithm]
+      simpa using hbad
+    calc
+      braunAbsCR1 * optMakespan (m := 4) (List.replicate 4 (1 : ℝ))
+          = braunAbsCR1 * (1 : ℝ) := by rw [braunAbs_opt_L0]
+      _ ≤ 2 := braunAbs_L0_trap_ratio braunAbsCR1 braunAbsCR1_hi.le
+      _ ≤ algorithmMakespan 4 alg (List.replicate 4 (1 : ℝ)) := hmk
+  · have hgood' : ∀ i : Fin 4, runAlgorithm 4 alg (List.replicate 4 (1 : ℝ)) i = 1 := by
+      intro i
+      dsimp only [runAlgorithm]
+      simpa using hgood i
+    rcases braun_layer_separation_from_base alg (1 : ℝ) (braunAbsS0 braunAbsCR1) braunAbsS0_pos
+        (runAlgorithm 4 alg (List.replicate 4 (1 : ℝ))) hgood' with hbad2 | hgood2
+    · left
+      refine ⟨braunAbsBase braunAbsCR1, ?_⟩
+      have hmk : 1 + 2 * braunAbsS0 braunAbsCR1 ≤ algorithmMakespan 4 alg (braunAbsBase braunAbsCR1) := by
+        dsimp only [algorithmMakespan, runAlgorithm, braunAbsBase]
+        rw [List.foldl_append]
+        exact hbad2
+      calc
+        braunAbsCR1 * optMakespan (m := 4) (braunAbsBase braunAbsCR1)
+            = braunAbsCR1 * (1 + braunAbsS0 braunAbsCR1) := by
+              rw [braunAbsBase, braunAbs_opt_S0 braunAbsCR1]
+        _ = 1 + 2 * braunAbsS0 braunAbsCR1 := braunAbs_S0_trap_ratio braunAbsCR1 braunAbsCR1_ne_two
+        _ ≤ algorithmMakespan 4 alg (braunAbsBase braunAbsCR1) := hmk
+    · right
+      intro i
+      have hrun : runAlgorithm 4 alg (braunAbsBase braunAbsCR1) i =
+          ((List.replicate 4 (braunAbsS0 braunAbsCR1)).foldl (step (m := 4) alg) (runAlgorithm 4 alg (List.replicate 4 (1 : ℝ)))) i := by
+        dsimp only [runAlgorithm, braunAbsBase]
+        rw [List.foldl_append]
+      rw [hrun, hgood2 i]
+
+/-- Layer-1 forcing: from the balanced base load 1 + S₀, the block {L₁×4, S₁×3, S⁺₁}
+    either yields a witness achieving the absolute bound, or leaves every machine
+    at load ≥ Φ₁ = 1 + S₀ + L₁ + S₁ after the S⁺₁ job. -/
+lemma braunAbs_layer1_forcing (alg : OnlineAlgorithm 4)
+    (h0 : ∀ i : Fin 4, runAlgorithm 4 alg (braunAbsBase braunAbsCR1) i = 1 + braunAbsS0 braunAbsCR1) :
+    (∃ σ : JobSequence, braunAbsCR1 * optMakespan (m := 4) σ ≤ algorithmMakespan 4 alg σ) ∨
+    (∀ i : Fin 4, braunAbsLayerSum1 braunAbsCR1 ≤
+      runAlgorithm 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1]) i) := by
+  rcases braun_layer_separation_from_base alg (1 + braunAbsS0 braunAbsCR1) (braunAbsL1 braunAbsCR1) braunAbsL1_pos
+      (runAlgorithm 4 alg (braunAbsBase braunAbsCR1)) h0 with hLbad | hLgood
+  · left
+    refine ⟨braunAbsBase braunAbsCR1 ++ List.replicate 4 (braunAbsL1 braunAbsCR1), ?_⟩
+    have hmk : 1 + braunAbsS0 braunAbsCR1 + 2 * braunAbsL1 braunAbsCR1 ≤
+        algorithmMakespan 4 alg (braunAbsBase braunAbsCR1 ++ List.replicate 4 (braunAbsL1 braunAbsCR1)) := by
+      dsimp only [algorithmMakespan, runAlgorithm]
+      rw [List.foldl_append]
+      exact hLbad
+    have hopt : optMakespan (m := 4) (braunAbsBase braunAbsCR1 ++ List.replicate 4 (braunAbsL1 braunAbsCR1)) =
+        1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 := by
+      rw [braunAbsBase]
+      exact braunAbs_opt_L1 braunAbsCR1
+    have hsq : braunAbsCR1 * optMakespan (m := 4) (braunAbsBase braunAbsCR1 ++ List.replicate 4 (braunAbsL1 braunAbsCR1)) ≤
+        braunAbsCR1 * (1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1) :=
+      mul_le_mul_of_nonneg_left (le_of_eq hopt) (le_of_lt (by nlinarith [braunAbsCR1_lo]))
+    calc
+      braunAbsCR1 * optMakespan (m := 4) (braunAbsBase braunAbsCR1 ++ List.replicate 4 (braunAbsL1 braunAbsCR1))
+          ≤ braunAbsCR1 * (1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1) := hsq
+      _ ≤ 1 + braunAbsS0 braunAbsCR1 + 2 * braunAbsL1 braunAbsCR1 := braunAbs_L1_trap
+      _ ≤ algorithmMakespan 4 alg (braunAbsBase braunAbsCR1 ++ List.replicate 4 (braunAbsL1 braunAbsCR1)) := hmk
+  · rcases braun_three_from_base alg (1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1)
+        (braunAbsS1 braunAbsCR1) (braunAbsS1_pos braunAbsCR1 braunAbsCR1_lo braunAbsCR1_hi)
+        ((List.replicate 4 (braunAbsL1 braunAbsCR1)).foldl (step (m := 4) alg) (runAlgorithm 4 alg (braunAbsBase braunAbsCR1))) hLgood
+        with hSbad | hSgood
+    · left
+      refine ⟨braunAbsS1Witness braunAbsCR1, ?_⟩
+      have hmk : 1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 + 2 * braunAbsS1 braunAbsCR1 ≤
+          algorithmMakespan 4 alg (braunAbsS1Witness braunAbsCR1) := by
+        dsimp only [algorithmMakespan, runAlgorithm, braunAbsS1Witness]
+        rw [List.foldl_append, List.foldl_append]
+        exact hSbad
+      have hsq : braunAbsCR1 * optMakespan (m := 4) (braunAbsS1Witness braunAbsCR1) ≤
+          braunAbsCR1 * (braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1) :=
+        mul_le_mul_of_nonneg_left braunAbs_opt_S1_le (le_of_lt (by nlinarith [braunAbsCR1_lo]))
+      calc
+        braunAbsCR1 * optMakespan (m := 4) (braunAbsS1Witness braunAbsCR1)
+            ≤ braunAbsCR1 * (braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1) := hsq
+        _ ≤ 1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 + 2 * braunAbsS1 braunAbsCR1 := braunAbs_S1_trap
+        _ ≤ algorithmMakespan 4 alg (braunAbsS1Witness braunAbsCR1) := hmk
+    · rcases hSgood with ⟨j0, hj0base, hj0rest⟩
+      let l2 : Loads 4 := (List.replicate 3 (braunAbsS1 braunAbsCR1)).foldl (step (m := 4) alg)
+        ((List.replicate 4 (braunAbsL1 braunAbsCR1)).foldl (step (m := 4) alg) (runAlgorithm 4 alg (braunAbsBase braunAbsCR1)))
+      have hj0base' : l2 j0 = 1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 := hj0base
+      have hj0rest' : ∀ i : Fin 4, i ≠ j0 → l2 i = 1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 + braunAbsS1 braunAbsCR1 := hj0rest
+      by_cases hjj0 : alg l2 (braunAbsSp1 braunAbsCR1) = j0
+      · right
+        intro i
+        have hrun : runAlgorithm 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1]) i =
+            step (m := 4) alg l2 (braunAbsSp1 braunAbsCR1) i := by
+          dsimp only [braunAbsS1Witness, braunAbsBase, runAlgorithm, l2]
+          simp only [List.foldl_append, List.foldl_cons, List.foldl_nil]
+        rw [hrun]
+        by_cases hij0 : i = j0
+        · dsimp only [step]
+          rw [if_pos (by rw [hij0]; exact hjj0.symm)]
+          rw [hij0, hj0base']
+          dsimp [braunAbsLayerSum1, braunAbsSp1]
+          nlinarith [braunAbsS0_pos]
+        · dsimp only [step]
+          rw [if_neg (by
+            intro h
+            have hh : i = j0 := by
+              rw [h, hjj0]
+            exact hij0 hh)]
+          rw [hj0rest' i hij0]
+          dsimp [braunAbsLayerSum1]
+          nlinarith
+      · left
+        have hjj0' : alg l2 (braunAbsSp1 braunAbsCR1) ≠ j0 := hjj0
+        refine ⟨braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1], ?_⟩
+        have hrunj : runAlgorithm 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1]) (alg l2 (braunAbsSp1 braunAbsCR1)) =
+            step (m := 4) alg l2 (braunAbsSp1 braunAbsCR1) (alg l2 (braunAbsSp1 braunAbsCR1)) := by
+          dsimp only [braunAbsS1Witness, braunAbsBase, runAlgorithm, l2]
+          simp only [List.foldl_append, List.foldl_cons, List.foldl_nil]
+        have hloadj : braunAbsLayerSum1 braunAbsCR1 + braunAbsSp1 braunAbsCR1 ≤
+            runAlgorithm 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1]) (alg l2 (braunAbsSp1 braunAbsCR1)) := by
+          rw [hrunj]
+          dsimp only [step]
+          rw [if_pos rfl]
+          rw [hj0rest' (alg l2 (braunAbsSp1 braunAbsCR1)) hjj0']
+          dsimp [braunAbsLayerSum1, braunAbsSp1]
+          nlinarith
+        have hmk : braunAbsLayerSum1 braunAbsCR1 + braunAbsSp1 braunAbsCR1 ≤
+            algorithmMakespan 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1]) := by
+          dsimp only [algorithmMakespan]
+          exact le_trans hloadj (makespan_ge_each (m := 4) (runAlgorithm 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1])) (alg l2 (braunAbsSp1 braunAbsCR1)))
+        calc
+          braunAbsCR1 * optMakespan (m := 4) (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1])
+              ≤ braunAbsCR1 * (braunAbsSp1 braunAbsCR1 + braunAbsL1 braunAbsCR1) :=
+                mul_le_mul_of_nonneg_left braunAbs_opt_Sp1_le (le_of_lt (by nlinarith [braunAbsCR1_lo]))
+          _ = braunAbsLayerSum1 braunAbsCR1 + braunAbsSp1 braunAbsCR1 :=
+                braunAbs_Sp1_trap_ratio braunAbsCR1 braunAbsCR1_ne_two braunAbsCR1_3c5_ne
+          _ ≤ algorithmMakespan 4 alg (braunAbsS1Witness braunAbsCR1 ++ [braunAbsSp1 braunAbsCR1]) := hmk
+
 end
 
 end OnlineScheduling
