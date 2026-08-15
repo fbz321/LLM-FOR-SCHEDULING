@@ -27,6 +27,8 @@ open OnlineScheduling
 | `LowerBounds.Faigle` | FKT lower bound (~1.707) |
 | `LowerBounds.Rudin` | Rudin lower bound (~1.88) |
 | `LowerBounds.BraunGraham2025` | Braun–Chung–Graham 2025: m = 4 additive lower bound √3·OPT − (2−√3) |
+| `LowerBounds.AdversaryTree` | Certification layer: `AdvTree` + one-time `sound` theorem |
+| `LowerBounds.BraunGraham2025Tree` | Braun r = 0 adversary as explicit tree, certified through `AdvTree.sound` |
 | `Models.Testing` | Scheduling with Testing |
 | `Models.Scenarios` | Scenarios model |
 | `Models.BinStretching` | Known OPT (bin stretching) |
@@ -55,6 +57,8 @@ import OnlineScheduling.LowerBounds.KnownSumM6
 import OnlineScheduling.LowerBounds.KnownSumSmallM
 import OnlineScheduling.LowerBounds.GoSLowerBound
 import OnlineScheduling.LowerBounds.BraunGraham2025
+import OnlineScheduling.LowerBounds.AdversaryTree
+import OnlineScheduling.LowerBounds.BraunGraham2025Tree
 import OnlineScheduling.Models.Testing
 import OnlineScheduling.Models.Scenarios
 import OnlineScheduling.Models.BinStretching
