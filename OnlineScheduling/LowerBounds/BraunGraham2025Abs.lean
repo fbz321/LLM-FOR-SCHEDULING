@@ -18,6 +18,7 @@ which (Table 12) is the unique root in (5/3, 2) of `6c³ − 28c² + 38c − 13 
 
 import Mathlib
 import OnlineScheduling.Basic
+import OnlineScheduling.LowerBounds.BraunGraham2025
 
 namespace OnlineScheduling
 
@@ -191,6 +192,83 @@ lemma braunAbs_S0_trap_ratio (c : ℝ) (h2 : c ≠ 2) :
 lemma braunAbs_F_trap_ratio :
     braunAbsCR1 * braunAbsF1 braunAbsCR1 = braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1 := by
   exact (eq_div_iff braunAbsF1_CR1_ne).mp braunAbsCR1_fixedpoint
+
+/-- S⁺₁ trap is exact: `c·(S⁺₁+L₁) = Σ + S⁺₁` for all `c ≠ 2, 3c−5 ≠ 0`
+    (this is the defining equation of `L₁`). -/
+lemma braunAbs_Sp1_trap_ratio (c : ℝ) (h2 : c ≠ 2) (h3 : 3 * c - 5 ≠ 0) :
+    c * (braunAbsSp1 c + braunAbsL1 c) = braunAbsLayerSum1 c + braunAbsSp1 c := by
+  dsimp [braunAbsSp1, braunAbsL1, braunAbsLayerSum1, braunAbsS0, braunAbsS1]
+  ring_nf
+  have h3' : -5 + c * 3 ≠ 0 := by
+    have h := h3
+    ring_nf at h
+    exact h
+  field_simp [h2, h3']
+  ring
+
+/-! ### OPT of the trap witnesses -/
+
+/-- OPT of the L₀ witness (four unit jobs) = 1. -/
+lemma braunAbs_opt_L0 : optMakespan (m := 4) (List.replicate 4 (1 : ℝ)) = 1 := by
+  apply le_antisymm
+  · have hle := optMakespan_le_of_schedule (m := 4) (List.replicate 4 (1 : ℝ))
+      (fun _ : Fin 4 => (1 : ℝ)) (diagAssignReplicate (m := 4) (1 : ℝ)) (by
+        rw [scheduleLoads_replicate_diag (m := 4) (1 : ℝ)])
+    rwa [makespan_const (m := 4)] at hle
+  · have hge := optMakespan_ge_avg (m := 4) (List.replicate 4 (1 : ℝ))
+    have htot : totalLoad (List.replicate 4 (1 : ℝ)) / ((4 : ℕ) : ℝ) = 1 := by
+      dsimp only [totalLoad]
+      simp only [List.sum_replicate, nsmul_eq_mul]
+      norm_num
+    rwa [htot] at hge
+
+/-- OPT of the S₀ witness (L₀×4 ++ S₀×4) = 1 + S₀. -/
+lemma braunAbs_opt_S0 (c : ℝ) :
+    optMakespan (m := 4) (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c)) = 1 + braunAbsS0 c := by
+  apply le_antisymm
+  · have hle := optMakespan_le_of_schedule (m := 4) (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c))
+      (fun _ : Fin 4 => 1 + braunAbsS0 c)
+      (appendAssign (m := 4) (List.replicate 4 (1 : ℝ)) (List.replicate 4 (braunAbsS0 c))
+        (diagAssignReplicate (m := 4) (1 : ℝ)) (diagAssignReplicate (m := 4) (braunAbsS0 c))) (by
+          ext j
+          rw [scheduleLoads_append (m := 4), scheduleLoads_replicate_diag (m := 4) (1 : ℝ),
+            scheduleLoads_replicate_diag (m := 4) (braunAbsS0 c)])
+    rwa [makespan_const (m := 4)] at hle
+  · have hge := optMakespan_ge_avg (m := 4) (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c))
+    have htot : totalLoad (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c)) / ((4 : ℕ) : ℝ) = 1 + braunAbsS0 c := by
+      dsimp only [totalLoad]
+      rw [List.sum_append]
+      simp only [List.sum_replicate, nsmul_eq_mul]
+      nlinarith
+    rwa [htot] at hge
+
+/-- OPT of the L₁ witness (L₀×4 ++ S₀×4 ++ L₁×4) = 1 + S₀ + L₁. -/
+lemma braunAbs_opt_L1 (c : ℝ) :
+    optMakespan (m := 4) (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c) ++ List.replicate 4 (braunAbsL1 c))
+      = 1 + braunAbsS0 c + braunAbsL1 c := by
+  apply le_antisymm
+  · have hle := optMakespan_le_of_schedule (m := 4)
+      (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c) ++ List.replicate 4 (braunAbsL1 c))
+      (fun _ : Fin 4 => 1 + braunAbsS0 c + braunAbsL1 c)
+      (appendAssign (m := 4) (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c)) (List.replicate 4 (braunAbsL1 c))
+        (appendAssign (m := 4) (List.replicate 4 (1 : ℝ)) (List.replicate 4 (braunAbsS0 c))
+          (diagAssignReplicate (m := 4) (1 : ℝ)) (diagAssignReplicate (m := 4) (braunAbsS0 c)))
+        (diagAssignReplicate (m := 4) (braunAbsL1 c))) (by
+          ext j
+          rw [scheduleLoads_append (m := 4), scheduleLoads_append (m := 4),
+            scheduleLoads_replicate_diag (m := 4) (1 : ℝ),
+            scheduleLoads_replicate_diag (m := 4) (braunAbsS0 c),
+            scheduleLoads_replicate_diag (m := 4) (braunAbsL1 c)])
+    rwa [makespan_const (m := 4)] at hle
+  · have hge := optMakespan_ge_avg (m := 4)
+      (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c) ++ List.replicate 4 (braunAbsL1 c))
+    have htot : totalLoad (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c) ++ List.replicate 4 (braunAbsL1 c)) / ((4 : ℕ) : ℝ)
+        = 1 + braunAbsS0 c + braunAbsL1 c := by
+      dsimp only [totalLoad]
+      rw [List.sum_append, List.sum_append]
+      simp only [List.sum_replicate, nsmul_eq_mul]
+      nlinarith
+    rwa [htot] at hge
 
 end
 
