@@ -662,6 +662,140 @@ lemma braunAbs_opt_Sp1_le :
     dsimp [braunAbsSp1]
     nlinarith [braunAbsS0_ge_2]
 
+/-! ### OPT upper bound for the final F witness (Table 13) -/
+
+/-- L₀×4 (and L₁×4) → machines 1,1,3,3. -/
+noncomputable def braunAbsAssign4_1133 : Fin 4 → Fin 4 :=
+  fun i => if i.1 < 2 then 1 else 3
+
+/-- S₀×4 → machines 1,3,3,3. -/
+noncomputable def braunAbsAssign4_1333 : Fin 4 → Fin 4 :=
+  fun i => if i.1 = 0 then 1 else 3
+
+/-- S₁×3 → machines 2,2,3. -/
+noncomputable def braunAbsAssign3_223 : Fin 3 → Fin 4 :=
+  fun i => if i.1 < 2 then 2 else 3
+
+/-- Load of a 4-replicate block under the 1,1,3,3 assignment. -/
+lemma braunAbs_loads_4_1133 (x : ℝ) (j : Fin 4) :
+    scheduleLoads (m := 4) (List.replicate 4 x) braunAbsAssign4_1133 j =
+      if j = 1 then 2 * x else if j = 3 then 2 * x else 0 := by
+  dsimp only [scheduleLoads]
+  change (∑ i : Fin 4, if braunAbsAssign4_1133 i = j then (List.replicate 4 x)[i] else 0) =
+    if j = 1 then 2 * x else if j = 3 then 2 * x else 0
+  rw [Fin.sum_univ_four]
+  fin_cases j <;> simp [braunAbsAssign4_1133, List.getElem_replicate] <;> ring
+
+/-- Load of a 4-replicate block under the 1,3,3,3 assignment. -/
+lemma braunAbs_loads_4_1333 (x : ℝ) (j : Fin 4) :
+    scheduleLoads (m := 4) (List.replicate 4 x) braunAbsAssign4_1333 j =
+      if j = 1 then x else if j = 3 then 3 * x else 0 := by
+  dsimp only [scheduleLoads]
+  change (∑ i : Fin 4, if braunAbsAssign4_1333 i = j then (List.replicate 4 x)[i] else 0) =
+    if j = 1 then x else if j = 3 then 3 * x else 0
+  rw [Fin.sum_univ_four]
+  fin_cases j <;> simp [braunAbsAssign4_1333, List.getElem_replicate] <;> ring
+
+/-- Load of a 3-replicate block under the 2,2,3 assignment. -/
+lemma braunAbs_loads_3_223 (x : ℝ) (j : Fin 4) :
+    scheduleLoads (m := 4) (List.replicate 3 x) braunAbsAssign3_223 j =
+      if j = 2 then 2 * x else if j = 3 then x else 0 := by
+  dsimp only [scheduleLoads]
+  change (∑ i : Fin 3, if braunAbsAssign3_223 i = j then (List.replicate 3 x)[i] else 0) =
+    if j = 2 then 2 * x else if j = 3 then x else 0
+  rw [Fin.sum_univ_three]
+  fin_cases j <;> simp [braunAbsAssign3_223, List.getElem_replicate] <;> ring
+
+/-- Assignment for the F packing (Table 13): F → 0; S⁺₁ → 1; L₀,L₁ → 1,1,3,3;
+    S₀ → 1,3,3,3; S₁ → 2,2,3. -/
+noncomputable def braunAbsAssignF (c : ℝ) :
+    Fin (braunAbsSeq1 c).length → Fin 4 :=
+  appendAssign (m := 4) (braunAbsS1Witness c ++ [braunAbsSp1 c]) [braunAbsF1 c]
+    (appendAssign (m := 4) (braunAbsS1Witness c) [braunAbsSp1 c]
+      (appendAssign (m := 4)
+        (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c) ++ List.replicate 4 (braunAbsL1 c))
+        (List.replicate 3 (braunAbsS1 c))
+        (appendAssign (m := 4)
+          (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c))
+          (List.replicate 4 (braunAbsL1 c))
+          (appendAssign (m := 4)
+            (List.replicate 4 (1 : ℝ))
+            (List.replicate 4 (braunAbsS0 c))
+            braunAbsAssign4_1133 braunAbsAssign4_1333)
+          braunAbsAssign4_1133)
+        braunAbsAssign3_223)
+      (fun _ : Fin 1 => (1 : Fin 4)))
+    (fun _ : Fin 1 => (0 : Fin 4))
+
+/-- Loads of the F packing. -/
+lemma braunAbsAssignF_loads (c : ℝ) :
+    scheduleLoads (m := 4) (braunAbsSeq1 c) (braunAbsAssignF c) 0 = braunAbsF1 c ∧
+    scheduleLoads (m := 4) (braunAbsSeq1 c) (braunAbsAssignF c) 1 = 2 + braunAbsS0 c + 2 * braunAbsL1 c + braunAbsSp1 c ∧
+    scheduleLoads (m := 4) (braunAbsSeq1 c) (braunAbsAssignF c) 2 = 2 * braunAbsS1 c ∧
+    scheduleLoads (m := 4) (braunAbsSeq1 c) (braunAbsAssignF c) 3 = 2 + 3 * braunAbsS0 c + 2 * braunAbsL1 c + braunAbsS1 c := by
+  have hdecomp (j : Fin 4) :
+      scheduleLoads (m := 4) (braunAbsSeq1 c) (braunAbsAssignF c) j =
+        scheduleLoads (m := 4) (List.replicate 4 (1 : ℝ)) braunAbsAssign4_1133 j +
+        scheduleLoads (m := 4) (List.replicate 4 (braunAbsS0 c)) braunAbsAssign4_1333 j +
+        scheduleLoads (m := 4) (List.replicate 4 (braunAbsL1 c)) braunAbsAssign4_1133 j +
+        scheduleLoads (m := 4) (List.replicate 3 (braunAbsS1 c)) braunAbsAssign3_223 j +
+        scheduleLoads (m := 4) [braunAbsSp1 c] (fun _ : Fin 1 => (1 : Fin 4)) j +
+        scheduleLoads (m := 4) [braunAbsF1 c] (fun _ : Fin 1 => (0 : Fin 4)) j := by
+    dsimp only [braunAbsSeq1, braunAbsS1Witness, braunAbsAssignF]
+    rw [scheduleLoads_append (m := 4), scheduleLoads_append (m := 4), scheduleLoads_append (m := 4),
+      scheduleLoads_append (m := 4), scheduleLoads_append (m := 4)]
+  constructor
+  · rw [hdecomp 0, braunAbs_loads_4_1133 (1 : ℝ) 0, braunAbs_loads_4_1333 (braunAbsS0 c) 0,
+      braunAbs_loads_4_1133 (braunAbsL1 c) 0, braunAbs_loads_3_223 (braunAbsS1 c) 0,
+      scheduleLoads_singleton (braunAbsSp1 c) (fun _ : Fin 1 => (1 : Fin 4)) 0,
+      scheduleLoads_singleton (braunAbsF1 c) (fun _ : Fin 1 => (0 : Fin 4)) 0]
+    simp <;> ring
+  constructor
+  · rw [hdecomp 1, braunAbs_loads_4_1133 (1 : ℝ) 1, braunAbs_loads_4_1333 (braunAbsS0 c) 1,
+      braunAbs_loads_4_1133 (braunAbsL1 c) 1, braunAbs_loads_3_223 (braunAbsS1 c) 1,
+      scheduleLoads_singleton (braunAbsSp1 c) (fun _ : Fin 1 => (1 : Fin 4)) 1,
+      scheduleLoads_singleton (braunAbsF1 c) (fun _ : Fin 1 => (0 : Fin 4)) 1]
+    simp <;> ring
+  constructor
+  · rw [hdecomp 2, braunAbs_loads_4_1133 (1 : ℝ) 2, braunAbs_loads_4_1333 (braunAbsS0 c) 2,
+      braunAbs_loads_4_1133 (braunAbsL1 c) 2, braunAbs_loads_3_223 (braunAbsS1 c) 2,
+      scheduleLoads_singleton (braunAbsSp1 c) (fun _ : Fin 1 => (1 : Fin 4)) 2,
+      scheduleLoads_singleton (braunAbsF1 c) (fun _ : Fin 1 => (0 : Fin 4)) 2]
+    simp <;> ring
+  · rw [hdecomp 3, braunAbs_loads_4_1133 (1 : ℝ) 3, braunAbs_loads_4_1333 (braunAbsS0 c) 3,
+      braunAbs_loads_4_1133 (braunAbsL1 c) 3, braunAbs_loads_3_223 (braunAbsS1 c) 3,
+      scheduleLoads_singleton (braunAbsSp1 c) (fun _ : Fin 1 => (1 : Fin 4)) 3,
+      scheduleLoads_singleton (braunAbsF1 c) (fun _ : Fin 1 => (0 : Fin 4)) 3]
+    simp <;> ring
+
+/-- OPT of the full r = 1 instance = F (Table 13). -/
+lemma braunAbs_opt_F_le :
+    optMakespan (m := 4) (braunAbsSeq1 braunAbsCR1) ≤ braunAbsF1 braunAbsCR1 := by
+  have hle := optMakespan_le_of_schedule (m := 4) (braunAbsSeq1 braunAbsCR1)
+    (scheduleLoads (m := 4) (braunAbsSeq1 braunAbsCR1) (braunAbsAssignF braunAbsCR1))
+    (braunAbsAssignF braunAbsCR1) rfl
+  refine le_trans hle ?_
+  dsimp only [makespan]
+  refine Finset.sup'_le _ _ (fun j hj => ?_)
+  rcases braunAbsAssignF_loads braunAbsCR1 with ⟨h0, h1, h2, h3⟩
+  have hid : braunAbsS1 braunAbsCR1 = 3 * braunAbsS0 braunAbsCR1 + 2 * braunAbsL1 braunAbsCR1 + 2 :=
+    braunAbs_S1_eq_3S0_2L1_2 braunAbsCR1 braunAbsCR1_ne_two braunAbsCR1_3c5_ne
+  fin_cases j
+  · change scheduleLoads (m := 4) (braunAbsSeq1 braunAbsCR1) (braunAbsAssignF braunAbsCR1) 0 ≤ braunAbsF1 braunAbsCR1
+    rw [h0]
+  · change scheduleLoads (m := 4) (braunAbsSeq1 braunAbsCR1) (braunAbsAssignF braunAbsCR1) 1 ≤ braunAbsF1 braunAbsCR1
+    rw [h1]
+    dsimp [braunAbsSp1, braunAbsF1]
+    nlinarith [hid]
+  · change scheduleLoads (m := 4) (braunAbsSeq1 braunAbsCR1) (braunAbsAssignF braunAbsCR1) 2 ≤ braunAbsF1 braunAbsCR1
+    rw [h2]
+    dsimp [braunAbsF1]
+    nlinarith
+  · change scheduleLoads (m := 4) (braunAbsSeq1 braunAbsCR1) (braunAbsAssignF braunAbsCR1) 3 ≤ braunAbsF1 braunAbsCR1
+    rw [h3]
+    dsimp [braunAbsF1]
+    nlinarith [hid]
+
 end
 
 end OnlineScheduling
