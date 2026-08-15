@@ -89,6 +89,91 @@ lemma braunAbs_cubic (c : ℝ) (h2 : c ≠ 2) (h3 : 3 * c - 5 ≠ 0) (hF : braun
     have hmul : braunAbsF1 c * c = braunAbsLayerSum1 c + braunAbsF1 c := sub_eq_zero.mp hsub
     exact (eq_div_iff hF).mpr (by simpa [mul_comm] using hmul)
 
+/-! ### The cubic root c₁ -/
+
+/-- The cubic has a root strictly between 5/3 and 2 (intermediate value theorem). -/
+lemma braunAbs_cubic_root_exists :
+    ∃ c : ℝ, 5 / 3 < c ∧ c < 2 ∧ 6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13 = 0 := by
+  let g : ℝ → ℝ := fun c => -(6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13)
+  have hcont : ContinuousOn g (Set.Icc (5 / 3 : ℝ) 2) := by
+    unfold g
+    fun_prop
+  have h5m : (5 / 3 : ℝ) ∈ Set.Icc (5 / 3 : ℝ) 2 := by
+    show (5 / 3 : ℝ) ≤ (5 / 3 : ℝ) ∧ (5 / 3 : ℝ) ≤ (2 : ℝ)
+    constructor <;> norm_num
+  have h2m : (2 : ℝ) ∈ Set.Icc (5 / 3 : ℝ) 2 := by
+    show (5 / 3 : ℝ) ≤ (2 : ℝ) ∧ (2 : ℝ) ≤ (2 : ℝ)
+    constructor <;> norm_num
+  have himage := isPreconnected_Icc.intermediate_value (a := (5 / 3 : ℝ)) (b := 2) h5m h2m hcont
+  have hzero : (0 : ℝ) ∈ Set.Icc (g (5 / 3 : ℝ)) (g 2) := by
+    constructor <;> dsimp [g] <;> norm_num
+  rcases himage hzero with ⟨c, hcmem, hceq⟩
+  have hroot : 6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13 = 0 := by
+    dsimp [g] at hceq
+    nlinarith
+  have hc_lo : (5 / 3 : ℝ) < c := by
+    have hne : (5 / 3 : ℝ) ≠ c := by
+      intro h
+      have : g (5 / 3 : ℝ) = 0 := by rw [h]; exact hceq
+      dsimp [g] at this
+      norm_num at this
+    exact lt_of_le_of_ne hcmem.1 hne
+  have hc_hi : c < 2 := by
+    have hne : c ≠ 2 := by
+      intro h
+      have : g (2 : ℝ) = 0 := by rw [h] at hceq; exact hceq
+      dsimp [g] at this
+      norm_num at this
+    exact lt_of_le_of_ne hcmem.2 (by simpa [eq_comm] using hne)
+  exact ⟨c, hc_lo, hc_hi, hroot⟩
+
+/-- The target absolute competitive ratio c₁ (the root in (5/3, 2)). -/
+def braunAbsCR1 : ℝ := Classical.choose braunAbs_cubic_root_exists
+
+/-- c₁ > 5/3. -/
+lemma braunAbsCR1_lo : (5 / 3 : ℝ) < braunAbsCR1 := (Classical.choose_spec braunAbs_cubic_root_exists).1
+
+/-- c₁ < 2. -/
+lemma braunAbsCR1_hi : braunAbsCR1 < 2 := (Classical.choose_spec braunAbs_cubic_root_exists).2.1
+
+/-- c₁ satisfies the cubic. -/
+lemma braunAbsCR1_root :
+    6 * braunAbsCR1 ^ 3 - 28 * braunAbsCR1 ^ 2 + 38 * braunAbsCR1 - 13 = 0 :=
+  (Classical.choose_spec braunAbs_cubic_root_exists).2.2
+
+/-- Side condition: c₁ ≠ 2. -/
+lemma braunAbsCR1_ne_two : braunAbsCR1 ≠ 2 := by
+  intro h
+  nlinarith [braunAbsCR1_hi, h]
+
+/-- Side condition: 3·c₁ − 5 ≠ 0. -/
+lemma braunAbsCR1_3c5_ne : 3 * braunAbsCR1 - 5 ≠ 0 := by
+  intro h
+  nlinarith [braunAbsCR1_lo, h]
+
+/-- S₁(c) > 0 on (5/3, 2). -/
+lemma braunAbsS1_pos (c : ℝ) (hlo : (5 / 3 : ℝ) < c) (hhi : c < 2) : 0 < braunAbsS1 c := by
+  dsimp [braunAbsS1]
+  have h3 : 0 < 3 * c - 5 := by nlinarith
+  have h2c : 0 < 2 - c := by nlinarith
+  have h3c : 0 < 3 - c := by nlinarith
+  have h1 : 0 < 6 / (3 * c - 5) := div_pos (by norm_num) h3
+  have h2' : 0 < (3 - c) / (2 - c) := div_pos h3c h2c
+  exact add_pos h1 h2'
+
+/-- Side condition: F(c₁) ≠ 0. -/
+lemma braunAbsF1_CR1_ne : braunAbsF1 braunAbsCR1 ≠ 0 := by
+  have hpos : 0 < braunAbsF1 braunAbsCR1 := by
+    dsimp [braunAbsF1]
+    have hS : 0 < braunAbsS1 braunAbsCR1 := braunAbsS1_pos braunAbsCR1 braunAbsCR1_lo braunAbsCR1_hi
+    nlinarith
+  exact ne_of_gt hpos
+
+/-- c₁ is the fixed point: c₁ = (Σ + F)/F. -/
+lemma braunAbsCR1_fixedpoint :
+    braunAbsCR1 = (braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1) / braunAbsF1 braunAbsCR1 :=
+  (braunAbs_cubic braunAbsCR1 braunAbsCR1_ne_two braunAbsCR1_3c5_ne braunAbsF1_CR1_ne).mpr braunAbsCR1_root
+
 end
 
 end OnlineScheduling
