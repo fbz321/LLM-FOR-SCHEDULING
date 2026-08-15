@@ -254,6 +254,10 @@
 > 主定理用 r=1 实例（17 作业）的自适应对抗：L₀/S₀/L₁/S₁ 偏离触发比率陷阱
 > （2、√3、1.800、1.781），S⁺₁ 陷阱由前缀加性恒等式精确给出，clean 路径由
 > F 收尾（braun_additive_identity + braun_opt_eq_F）。
+> 全参数族（RESEARCH_PLAN 0.2b）：`braun_asymptotic_lower_bound_general` 对任意 r
+> 给出 σ_r（n=8r+9）的前缀 witness——论文 Table 3 的逐层强制归纳（非均匀不变式
+> ∀i, Φ_k ≤ load_i），一般 k 陷阱（braun_trap_Lk/Sk）与一般 OPT witness
+> （braun_opt_Lk/Sk_trap_le），r=1 定理为其推论。
 
 | 类型 | 名称 | 状态 | 签名 |
 |------|------|:--:|------|
@@ -263,8 +267,16 @@
 | lemma | `braun_prefix_additive_identity` | ✅ | braunSumLS k + braunSp k = √3·(braunSp k + braunL k) − (2−√3) |
 | lemma | `braun_layer_separation_from_base` | ✅ | 均匀 base 上 4 个相同作业：makespan ≥ base+2x 或全机 base+x |
 | lemma | `braun_three_from_base` | ✅ | 均匀 base 上 3 个相同作业：makespan ≥ base+2x 或 3 机 base+x、1 机 base |
+| lemma | `braun_layer_separation_lb` | ✅ | 非均匀下界 base（∀i, base ≤ load_i）上 4 个相同作业：makespan ≥ base+2x 或每机恰 +x |
+| lemma | `braun_three_from_lb` | ✅ | 非均匀下界 base 上 3 个相同作业：makespan ≥ base+2x 或 3 机 +x、1 机不动 |
 | lemma | `braunLayerBlock_makespan_ge` | ✅ | 任意分配下 block {S⁺_k,S_k³,L_k⁴} 的 makespan ≥ S⁺_k+L_k |
+| lemma | `braun_trap_Lk` | ✅ | (k≥2) √3(S⁺_{k−1}+L_{k−1}+L_k) − d ≤ Φ_{k−1} + 2L_k |
+| lemma | `braun_trap_Sk` | ✅ | (k≥1) √3(S_k+L_k) − d ≤ Φ_{k−1} + L_k + 2S_k |
+| lemma | `braun_opt_Lk_trap_le` | ✅ | (k≥2) OPT(prefix(k−1) ++ L_k×4) ≤ S⁺_{k−1}+L_{k−1}+L_k |
+| lemma | `braun_opt_Sk_trap_le` | ✅ | (k≥1) OPT(prefix(k−1) ++ L_k×4 ++ S_k×3) ≤ S_k+L_k |
+| lemma | `braun_prefix_total_le_S` | ✅ | (k≥1) totalLoad(braunPrefixSp (k−1)) ≤ braunS k |
 | theorem | `braun_asymptotic_lower_bound` | ✅ | ∀ alg : OnlineAlgorithm 4, ∃ σ, algorithmMakespan 4 alg σ ≥ √3·optMakespan (m:=4) σ − (2−√3) |
+| theorem | `braun_asymptotic_lower_bound_general` | ✅ | ∀ r, ∀ alg, ∃ σ ≤ σ_r（List.IsPrefix）, algorithmMakespan 4 alg σ ≥ √3·optMakespan (m:=4) σ − (2−√3) |
 
 ---
 | 统计 | 数量 |

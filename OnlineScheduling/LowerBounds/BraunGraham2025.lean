@@ -2383,16 +2383,80 @@ lemma braun_three_from_base (alg : OnlineAlgorithm 4) (base x : ℝ) (hxpos : 0 
       rw [hn i, hn_i]
       norm_num
 
+/-! ### Prefix certificates: every adversary witness is a prefix of the family -/
+
+/-- Reflexivity of `List.IsPrefix` (used to avoid API-version differences). -/
+lemma braun_isPrefix_refl (σ : JobSequence) : List.IsPrefix σ σ := ⟨[], by simp⟩
+
+/-- Transitivity of `List.IsPrefix` (used to avoid API-version differences). -/
+lemma braun_isPrefix_trans {σ τ ρ : JobSequence} (h1 : List.IsPrefix σ τ) (h2 : List.IsPrefix τ ρ) :
+    List.IsPrefix σ ρ := by
+  rcases h1 with ⟨t1, rfl⟩
+  rcases h2 with ⟨t2, rfl⟩
+  refine ⟨t1 ++ t2, ?_⟩
+  rw [List.append_assoc]
+
+/-- The initial L₀ layer is a prefix of `braunPrefixSp 0`. -/
+lemma braun_L0_prefix_pref0 :
+    List.IsPrefix (List.replicate 4 (braunL 0)) (braunPrefixSp 0) := by
+  refine ⟨List.replicate 4 (braunS 0), ?_⟩
+  rfl
+
+/-- Each step of the prefix recursion extends by one layer block. -/
+lemma braun_prefix_step (k : ℕ) : List.IsPrefix (braunPrefixSp k) (braunPrefixSp (k + 1)) := by
+  refine ⟨braunLayerBlock (k + 1), ?_⟩
+  rfl
+
+/-- `braunPrefixSp k` is a prefix of `braunPrefixSp r` for k ≤ r. -/
+lemma braun_prefix_mono {k r : ℕ} (h : k ≤ r) :
+    List.IsPrefix (braunPrefixSp k) (braunPrefixSp r) := by
+  induction h with
+  | refl => exact braun_isPrefix_refl (braunPrefixSp k)
+  | step h ih => exact braun_isPrefix_trans ih (braun_prefix_step _)
+
+/-- The L_k-trap witness (prefix through S⁺_{k-1} plus the L_k layer) is a
+    prefix of `braunPrefixSp k` (k ≥ 1). -/
+lemma braun_L_witness_prefix (k : ℕ) (hk : 1 ≤ k) :
+    List.IsPrefix (braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k)) (braunPrefixSp k) := by
+  refine ⟨List.replicate 3 (braunS k) ++ [braunSp k], ?_⟩
+  have hk' : k = (k - 1) + 1 := by omega
+  conv_rhs => rw [hk']
+  dsimp only [braunPrefixSp, braunLayerBlock]
+  rw [← hk']
+  rw [List.append_assoc, List.append_assoc]
+
+/-- The S_k-trap witness (prefix plus L_k×4 and S_k×3) is a prefix of
+    `braunPrefixSp k` (k ≥ 1). -/
+lemma braun_S_witness_prefix (k : ℕ) (hk : 1 ≤ k) :
+    List.IsPrefix (braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k) ++ List.replicate 3 (braunS k))
+      (braunPrefixSp k) := by
+  refine ⟨[braunSp k], ?_⟩
+  have hk' : k = (k - 1) + 1 := by omega
+  conv_rhs => rw [hk']
+  dsimp only [braunPrefixSp, braunLayerBlock]
+  rw [← hk']
+  rw [List.append_assoc, List.append_assoc, List.append_assoc]
+
+/-- `braunPrefixSp r` is a prefix of the full sequence σ_r. -/
+lemma braun_prefix_seq (r : ℕ) : List.IsPrefix (braunPrefixSp r) (braunSeq r) := by
+  refine ⟨[braunF r], ?_⟩
+  rw [braunPrefixSp_eq_flat r, List.append_assoc, List.append_assoc]
+  dsimp only [braunSeq]
+  rw [List.append_assoc, List.append_assoc]
+
+/-! ### Base forcing (with prefix certificates) -/
+
 /-- Base forcing: the L₀/S₀ layers either yield a witness achieving the bound
-    or leave every machine at load Φ₀ after `braunPrefixSp 0`. -/
-lemma braun_base_forcing (alg : OnlineAlgorithm 4) :
-    (∃ σ : JobSequence,
+    (a prefix of `braunPrefixSp 0`), or leave every machine at load Φ₀ after
+    `braunPrefixSp 0`. -/
+lemma braun_base_forcing_pref (alg : OnlineAlgorithm 4) :
+    (∃ σ : JobSequence, List.IsPrefix σ (braunPrefixSp 0) ∧
        Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ) ∨
     (∀ i : Fin 4, runAlgorithm 4 alg (braunPrefixSp 0) i = braunSumLS 0) := by
   rcases braun_layer_separation_from_base alg 0 (braunL 0) (braunL_pos 0)
       (fun _ : Fin 4 => (0 : ℝ)) (by intro i; rfl) with hbad | hgood
   · left
-    refine ⟨List.replicate 4 (braunL 0), ?_⟩
+    refine ⟨List.replicate 4 (braunL 0), braun_L0_prefix_pref0, ?_⟩
     have hmk : 2 * braunL 0 ≤ algorithmMakespan 4 alg (List.replicate 4 (braunL 0)) := by
       dsimp only [algorithmMakespan, runAlgorithm]
       simpa using hbad
@@ -2408,7 +2472,7 @@ lemma braun_base_forcing (alg : OnlineAlgorithm 4) :
     rcases braun_layer_separation_from_base alg (braunL 0) (braunS 0) (braunS_pos 0)
         (runAlgorithm 4 alg (List.replicate 4 (braunL 0))) hgood' with hbad2 | hgood2
     · left
-      refine ⟨braunPrefixSp 0, ?_⟩
+      refine ⟨braunPrefixSp 0, braun_isPrefix_refl (braunPrefixSp 0), ?_⟩
       have hmk : braunL 0 + 2 * braunS 0 ≤ algorithmMakespan 4 alg (braunPrefixSp 0) := by
         dsimp only [algorithmMakespan, runAlgorithm, braunPrefixSp]
         rw [List.foldl_append]
@@ -2427,18 +2491,28 @@ lemma braun_base_forcing (alg : OnlineAlgorithm 4) :
       rw [hrun, hgood2 i]
       simp [braunSumLS]
 
+/-- Base forcing without the prefix certificate. -/
+lemma braun_base_forcing (alg : OnlineAlgorithm 4) :
+    (∃ σ : JobSequence,
+       Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ) ∨
+    (∀ i : Fin 4, runAlgorithm 4 alg (braunPrefixSp 0) i = braunSumLS 0) := by
+  rcases braun_base_forcing_pref alg with h | h
+  · rcases h with ⟨σ, hpref, hb⟩
+    exact Or.inl ⟨σ, hb⟩
+  · exact Or.inr h
+
 /-- Layer-1 forcing: from the balanced state Φ₀ after `braunPrefixSp 0`, the block
     {L₁×4, S₁×3, S⁺₁} either yields a witness achieving the bound, or leaves every
     machine at load ≥ Φ₁ after `braunPrefixSp 1`. -/
-lemma braun_layer1_forcing (alg : OnlineAlgorithm 4)
+lemma braun_layer1_forcing_pref (alg : OnlineAlgorithm 4)
     (h0 : ∀ i : Fin 4, runAlgorithm 4 alg (braunPrefixSp 0) i = braunSumLS 0) :
-    (∃ σ : JobSequence,
+    (∃ σ : JobSequence, List.IsPrefix σ (braunPrefixSp 1) ∧
        Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ) ∨
     (∀ i : Fin 4, braunSumLS 1 ≤ runAlgorithm 4 alg (braunPrefixSp 1) i) := by
   rcases braun_layer_separation_from_base alg (braunSumLS 0) (braunL 1) (braunL_pos 1)
       (runAlgorithm 4 alg (braunPrefixSp 0)) h0 with hLbad | hLgood
   · left
-    refine ⟨braunPrefixSp 0 ++ List.replicate 4 (braunL 1), ?_⟩
+    refine ⟨braunPrefixSp 0 ++ List.replicate 4 (braunL 1), braun_L_witness_prefix 1 (by norm_num : (1 : ℕ) ≤ 1), ?_⟩
     have hmk : braunSumLS 0 + 2 * braunL 1 ≤ algorithmMakespan 4 alg (braunPrefixSp 0 ++ List.replicate 4 (braunL 1)) := by
       dsimp only [algorithmMakespan, runAlgorithm]
       rw [List.foldl_append]
@@ -2456,7 +2530,8 @@ lemma braun_layer1_forcing (alg : OnlineAlgorithm 4)
   · rcases braun_three_from_base alg (braunSumLS 0 + braunL 1) (braunS 1) (braunS_pos 1)
         ((List.replicate 4 (braunL 1)).foldl (step (m := 4) alg) (runAlgorithm 4 alg (braunPrefixSp 0))) hLgood with hSbad | hSgood
     · left
-      refine ⟨braunPrefixSp 0 ++ List.replicate 4 (braunL 1) ++ List.replicate 3 (braunS 1), ?_⟩
+      refine ⟨braunPrefixSp 0 ++ List.replicate 4 (braunL 1) ++ List.replicate 3 (braunS 1),
+        braun_S_witness_prefix 1 (by norm_num : (1 : ℕ) ≤ 1), ?_⟩
       have hmk : braunSumLS 0 + braunL 1 + 2 * braunS 1 ≤
           algorithmMakespan 4 alg (braunPrefixSp 0 ++ List.replicate 4 (braunL 1) ++ List.replicate 3 (braunS 1)) := by
         dsimp only [algorithmMakespan, runAlgorithm]
@@ -2502,7 +2577,7 @@ lemma braun_layer1_forcing (alg : OnlineAlgorithm 4)
           nlinarith
       · -- S⁺₁ lands on a machine carrying S₁ — the exact trap
         left
-        refine ⟨braunPrefixSp 1, ?_⟩
+        refine ⟨braunPrefixSp 1, braun_isPrefix_refl (braunPrefixSp 1), ?_⟩
         have hjj0' : alg l2 (braunSp 1) ≠ j0 := hjj0
         have hrunj : runAlgorithm 4 alg (braunPrefixSp 1) (alg l2 (braunSp 1)) = step (m := 4) alg l2 (braunSp 1) (alg l2 (braunSp 1)) := by
           dsimp only [braunPrefixSp, braunLayerBlock, runAlgorithm, l2]
@@ -2525,40 +2600,820 @@ lemma braun_layer1_forcing (alg : OnlineAlgorithm 4)
           _ = braunSumLS 1 + braunSp 1 := by rw [hid]
           _ ≤ algorithmMakespan 4 alg (braunPrefixSp 1) := hmk
 
+/-- Layer-1 forcing without the prefix certificate. -/
+lemma braun_layer1_forcing (alg : OnlineAlgorithm 4)
+    (h0 : ∀ i : Fin 4, runAlgorithm 4 alg (braunPrefixSp 0) i = braunSumLS 0) :
+    (∃ σ : JobSequence,
+       Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ) ∨
+    (∀ i : Fin 4, braunSumLS 1 ≤ runAlgorithm 4 alg (braunPrefixSp 1) i) := by
+  rcases braun_layer1_forcing_pref alg h0 with h | h
+  · rcases h with ⟨σ, hpref, hb⟩
+    exact Or.inl ⟨σ, hb⟩
+  · exact Or.inr h
+
+/-! ### Theorem 1, general r: the per-layer forced induction (Table 3) -/
+
+/-- Placing job `p` on machine `i` (local copy; `AdvTree.place` is not imported).
+    Additive form: keeps the contribution of every placement visible. -/
+def braunPlace (loads : Loads 4) (p : ℝ) (i : Fin 4) : Loads 4 :=
+  fun j => loads j + (if j = i then p else 0)
+
+/-- Four placements in a row. -/
+def braunPlace4 (loads : Loads 4) (x : ℝ) (m1 m2 m3 m4 : Fin 4) : Loads 4 :=
+  braunPlace (braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3) x m4
+
+/-- `step` is `braunPlace` at the algorithm's choice. -/
+lemma step_eq_braunPlace (alg : OnlineAlgorithm 4) (loads : Loads 4) (x : ℝ) :
+    step (m := 4) alg loads x = braunPlace loads x (alg loads x) := by
+  ext i
+  dsimp [step, braunPlace]
+  by_cases h : i = alg loads x <;> simp [h]
+
+/-- Four pairwise distinct machines exhaust Fin 4. -/
+lemma braun_four_distinct_univ (m1 m2 m3 m4 : Fin 4)
+    (hd : m1 ≠ m2 ∧ m1 ≠ m3 ∧ m1 ≠ m4 ∧ m2 ≠ m3 ∧ m2 ≠ m4 ∧ m3 ≠ m4) :
+    ({m1, m2, m3, m4} : Finset (Fin 4)) = Finset.univ := by
+  refine Finset.eq_univ_of_card (s := ({m1, m2, m3, m4} : Finset (Fin 4))) ?_
+  rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem,
+    Finset.card_insert_of_notMem, Finset.card_singleton, Fintype.card_fin]
+  · simp only [Finset.mem_singleton]
+    exact hd.2.2.2.2.2
+  · simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
+    exact ⟨hd.2.2.2.1, hd.2.2.2.2.1⟩
+  · simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
+    exact ⟨hd.1, hd.2.1, hd.2.2.1⟩
+
+/-- Placing four jobs on pairwise distinct machines gives each machine exactly
+    one of them. -/
+lemma braun_place4_loads_distinct (loads : Loads 4) (x : ℝ) (m1 m2 m3 m4 : Fin 4) (i : Fin 4)
+    (hd : m1 ≠ m2 ∧ m1 ≠ m3 ∧ m1 ≠ m4 ∧ m2 ≠ m3 ∧ m2 ≠ m4 ∧ m3 ≠ m4) :
+    braunPlace4 loads x m1 m2 m3 m4 i = loads i + x := by
+  have huniv := braun_four_distinct_univ m1 m2 m3 m4 hd
+  have hmem : i ∈ ({m1, m2, m3, m4} : Finset (Fin 4)) := by
+    rw [huniv]
+    simp
+  simp only [Finset.mem_insert, Finset.mem_singleton] at hmem
+  rcases hmem with h1 | h2 | h3 | h4
+  · dsimp [braunPlace4, braunPlace]
+    rw [if_pos h1]
+    rw [if_neg (show i ≠ m2 by intro h; exact hd.1 (h1.symm.trans h))]
+    rw [if_neg (show i ≠ m3 by intro h; exact hd.2.1 (h1.symm.trans h))]
+    rw [if_neg (show i ≠ m4 by intro h; exact hd.2.2.1 (h1.symm.trans h))]
+    ring
+  · dsimp [braunPlace4, braunPlace]
+    rw [if_pos h2]
+    rw [if_neg (show i ≠ m1 by intro h; exact hd.1 (h.symm.trans h2))]
+    rw [if_neg (show i ≠ m3 by intro h; exact hd.2.2.2.1 (h2.symm.trans h))]
+    rw [if_neg (show i ≠ m4 by intro h; exact hd.2.2.2.2.1 (h2.symm.trans h))]
+    ring
+  · dsimp [braunPlace4, braunPlace]
+    rw [if_pos h3]
+    rw [if_neg (show i ≠ m1 by intro h; exact hd.2.1 (h.symm.trans h3))]
+    rw [if_neg (show i ≠ m2 by intro h; exact hd.2.2.2.1 (h.symm.trans h3))]
+    rw [if_neg (show i ≠ m4 by intro h; exact hd.2.2.2.2.2 (h3.symm.trans h))]
+    ring
+  · dsimp [braunPlace4, braunPlace]
+    rw [if_pos h4]
+    rw [if_neg (show i ≠ m1 by intro h; exact hd.2.2.1 (h.symm.trans h4))]
+    rw [if_neg (show i ≠ m2 by intro h; exact hd.2.2.2.2.1 (h.symm.trans h4))]
+    rw [if_neg (show i ≠ m3 by intro h; exact hd.2.2.2.2.2 (h.symm.trans h4))]
+    ring
+
+/-- Four identical jobs on 4 machines: either some machine gets two and its
+    load reaches `loads i + 2x`, or every machine gets exactly one. -/
+lemma braun_place4_either (loads : Loads 4) (x : ℝ) (hxpos : 0 ≤ x)
+    (m1 m2 m3 m4 : Fin 4) :
+    (∀ i : Fin 4, braunPlace4 loads x m1 m2 m3 m4 i = loads i + x) ∨
+    ∃ i : Fin 4, loads i + 2 * x ≤ braunPlace4 loads x m1 m2 m3 m4 i := by
+  by_cases h12 : m1 = m2
+  · right
+    refine ⟨m1, ?_⟩
+    dsimp [braunPlace4, braunPlace]
+    rw [if_pos rfl, if_pos h12]
+    split_ifs
+    all_goals nlinarith
+  · by_cases h13 : m1 = m3
+    · right
+      refine ⟨m1, ?_⟩
+      dsimp [braunPlace4, braunPlace]
+      rw [if_pos rfl, if_pos h13]
+      split_ifs
+      all_goals nlinarith
+    · by_cases h14 : m1 = m4
+      · right
+        refine ⟨m1, ?_⟩
+        dsimp [braunPlace4, braunPlace]
+        rw [if_pos rfl, if_pos h14]
+        split_ifs
+        all_goals nlinarith
+      · by_cases h23 : m2 = m3
+        · right
+          refine ⟨m2, ?_⟩
+          dsimp [braunPlace4, braunPlace]
+          rw [if_pos rfl, if_pos h23]
+          split_ifs
+          all_goals nlinarith
+        · by_cases h24 : m2 = m4
+          · right
+            refine ⟨m2, ?_⟩
+            dsimp [braunPlace4, braunPlace]
+            rw [if_pos rfl, if_pos h24]
+            split_ifs
+            all_goals nlinarith
+          · by_cases h34 : m3 = m4
+            · right
+              refine ⟨m3, ?_⟩
+              dsimp [braunPlace4, braunPlace]
+              rw [if_pos rfl, if_pos h34]
+              split_ifs
+              all_goals nlinarith
+            · left
+              intro i
+              exact braun_place4_loads_distinct loads x m1 m2 m3 m4 i
+                ⟨h12, h13, h14, h23, h24, h34⟩
+
+/-- Three pairwise distinct machines leave one machine free. -/
+lemma braun_three_distinct_exists_untouched (m1 m2 m3 : Fin 4)
+    (h12 : m1 ≠ m2) (h13 : m1 ≠ m3) (h23 : m2 ≠ m3) :
+    ∃ j0 : Fin 4, j0 ≠ m1 ∧ j0 ≠ m2 ∧ j0 ≠ m3 := by
+  by_contra h
+  push_neg at h
+  have hsub : (Finset.univ : Finset (Fin 4)) ⊆ ({m1, m2, m3} : Finset (Fin 4)) := by
+    intro j hj
+    by_cases hj1 : j = m1
+    · simp only [Finset.mem_insert, Finset.mem_singleton]
+      exact Or.inl hj1
+    · by_cases hj2 : j = m2
+      · simp only [Finset.mem_insert, Finset.mem_singleton]
+        exact Or.inr (Or.inl hj2)
+      · have hcases := h j
+        simp only [Finset.mem_insert, Finset.mem_singleton]
+        exact Or.inr (Or.inr (hcases hj1 hj2))
+  have hcard := Finset.card_le_card hsub
+  have huniv : (Finset.univ : Finset (Fin 4)).card = 4 := by
+    rw [Finset.card_univ, Fintype.card_fin]
+  have hcard3 : ({m1, m2, m3} : Finset (Fin 4)).card = 3 := by
+    rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem, Finset.card_singleton]
+    · simp only [Finset.mem_singleton]
+      exact h23
+    · simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
+      exact ⟨h12, h13⟩
+  rw [huniv, hcard3] at hcard
+  norm_num at hcard
+
+/-- Three placements on three pairwise distinct machines: the untouched machine
+    keeps its load, the others gain exactly `x`. -/
+lemma braun_place3_loads_distinct (loads : Loads 4) (x : ℝ) (m1 m2 m3 : Fin 4)
+    (h12 : m1 ≠ m2) (h13 : m1 ≠ m3) (h23 : m2 ≠ m3) :
+    ∃ j0 : Fin 4,
+      braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3 j0 = loads j0 ∧
+      ∀ i : Fin 4, i ≠ j0 → braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3 i = loads i + x := by
+  rcases braun_three_distinct_exists_untouched m1 m2 m3 h12 h13 h23 with ⟨j0, hj01, hj02, hj03⟩
+  have huniv : ({j0, m1, m2, m3} : Finset (Fin 4)) = Finset.univ := by
+    refine Finset.eq_univ_of_card (s := ({j0, m1, m2, m3} : Finset (Fin 4))) ?_
+    rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem,
+      Finset.card_insert_of_notMem, Finset.card_singleton, Fintype.card_fin]
+    · simp only [Finset.mem_singleton]
+      exact h23
+    · simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
+      exact ⟨h12, h13⟩
+    · simp only [Finset.mem_insert, Finset.mem_singleton, not_or]
+      exact ⟨hj01, hj02, hj03⟩
+  refine ⟨j0, ?_, ?_⟩
+  · dsimp [braunPlace]
+    rw [if_neg hj01, if_neg hj02, if_neg hj03]
+    ring
+  · intro i hi
+    have hi' : i ∈ ({j0, m1, m2, m3} : Finset (Fin 4)) := by
+      rw [huniv]
+      simp
+    simp only [Finset.mem_insert, Finset.mem_singleton] at hi'
+    rcases hi' with hij0 | hrest
+    · exfalso
+      exact hi hij0
+    · dsimp [braunPlace]
+      rcases hrest with h1 | h2 | h3
+      · have hne2 : i ≠ m2 := by intro h; exact h12 (h1.symm.trans h)
+        have hne3 : i ≠ m3 := by intro h; exact h13 (h1.symm.trans h)
+        rw [if_pos h1, if_neg hne2, if_neg hne3]
+        ring
+      · have hne1 : i ≠ m1 := by intro h; exact h12 (h.symm.trans h2)
+        have hne3 : i ≠ m3 := by intro h; exact h23 (h2.symm.trans h)
+        rw [if_neg hne1, if_pos h2, if_neg hne3]
+        ring
+      · have hne1 : i ≠ m1 := by intro h; exact h13 (h.symm.trans h3)
+        have hne2 : i ≠ m2 := by intro h; exact h23 (h.symm.trans h3)
+        rw [if_neg hne1, if_neg hne2, if_pos h3]
+        ring
+
+/-- Four identical jobs of size `x` on top of loads bounded below by `base`:
+    either the makespan reaches `base + 2x`, or every machine gains exactly
+    one job. -/
+lemma braun_layer_separation_lb (alg : OnlineAlgorithm 4) (base x : ℝ) (hxpos : 0 < x)
+    (loads : Loads 4) (hlb : ∀ i : Fin 4, base ≤ loads i) :
+    let loads_after := (List.replicate 4 x).foldl (step (m := 4) alg) loads
+    makespan 4 loads_after ≥ base + 2 * x ∨
+    (∀ i : Fin 4, loads_after i = loads i + x) := by
+  intro loads_after
+  let m1 : Fin 4 := alg loads x
+  let m2 : Fin 4 := alg (step (m := 4) alg loads x) x
+  let m3 : Fin 4 := alg (step (m := 4) alg (step (m := 4) alg loads x) x) x
+  let m4 : Fin 4 := alg (step (m := 4) alg (step (m := 4) alg (step (m := 4) alg loads x) x) x) x
+  have hfold : loads_after = braunPlace4 loads x m1 m2 m3 m4 := by
+    dsimp only [loads_after, m1, m2, m3, m4, List.foldl, List.replicate]
+    simp only [step_eq_braunPlace]
+    dsimp only [braunPlace4]
+  rcases braun_place4_either loads x (le_of_lt hxpos) m1 m2 m3 m4 with hall | htwo
+  · right
+    intro i
+    rw [hfold]
+    exact hall i
+  · left
+    rcases htwo with ⟨i, hi⟩
+    have hge : base + 2 * x ≤ braunPlace4 loads x m1 m2 m3 m4 i := by
+      nlinarith [hlb i, hi]
+    rw [hfold]
+    exact le_trans hge (makespan_ge_each (m := 4) (braunPlace4 loads x m1 m2 m3 m4) i)
+
+/-- Three identical jobs of size `x` on top of loads bounded below by `base`:
+    either some machine gets two and the makespan reaches `base + 2x`, or three
+    distinct machines gain `x` and one machine is untouched. -/
+lemma braun_three_from_lb (alg : OnlineAlgorithm 4) (base x : ℝ) (hxpos : 0 < x)
+    (loads : Loads 4) (hlb : ∀ i : Fin 4, base ≤ loads i) :
+    let loads_after := (List.replicate 3 x).foldl (step (m := 4) alg) loads
+    makespan 4 loads_after ≥ base + 2 * x ∨
+    (∃ j0 : Fin 4, loads_after j0 = loads j0 ∧ ∀ i : Fin 4, i ≠ j0 → loads_after i = loads i + x) := by
+  intro loads_after
+  let m1 : Fin 4 := alg loads x
+  let m2 : Fin 4 := alg (step (m := 4) alg loads x) x
+  let m3 : Fin 4 := alg (step (m := 4) alg (step (m := 4) alg loads x) x) x
+  have hfold : loads_after = braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3 := by
+    dsimp only [loads_after, m1, m2, m3, List.foldl, List.replicate]
+    simp only [step_eq_braunPlace]
+  by_cases h12 : m1 = m2
+  · left
+    have hge : base + 2 * x ≤ braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3 m1 := by
+      dsimp [braunPlace]
+      rw [if_pos rfl, if_pos h12]
+      split_ifs
+      all_goals nlinarith [hlb m1, hxpos]
+    rw [hfold]
+    exact le_trans hge (makespan_ge_each (m := 4) (braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3) m1)
+  · by_cases h13 : m1 = m3
+    · left
+      have hge : base + 2 * x ≤ braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3 m1 := by
+        dsimp [braunPlace]
+        rw [if_pos rfl, if_pos h13]
+        split_ifs
+        all_goals nlinarith [hlb m1, hxpos]
+      rw [hfold]
+      exact le_trans hge (makespan_ge_each (m := 4) (braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3) m1)
+    · by_cases h23 : m2 = m3
+      · left
+        have hge : base + 2 * x ≤ braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3 m2 := by
+          dsimp [braunPlace]
+          rw [if_pos rfl, if_pos h23]
+          split_ifs
+          all_goals nlinarith [hlb m2, hxpos]
+        rw [hfold]
+        exact le_trans hge (makespan_ge_each (m := 4) (braunPlace (braunPlace (braunPlace loads x m1) x m2) x m3) m2)
+      · right
+        rcases braun_place3_loads_distinct loads x m1 m2 m3 h12 h13 h23 with ⟨j0, htouch, hothers⟩
+        refine ⟨j0, ?_, ?_⟩
+        · rw [hfold]
+          exact htouch
+        · intro i hi
+          rw [hfold]
+          exact hothers i hi
+
+/-! ### The L_k and S_k trap inequalities (general k) -/
+
+/-- α · (S⁺_{k−1} + L_{k−1} + L_k) = q^{k−1} · (15α + 11) (k ≥ 2). -/
+lemma braun_SpL_pred_add_mul_alpha (k : ℕ) (hk : 2 ≤ k) :
+    braunα * (braunSp (k - 1) + braunL (k - 1) + braunL k) =
+      braunQ ^ (k - 1) * (15 * braunα + 11) := by
+  have hk1 : 1 ≤ k - 1 := by omega
+  have hα2 : braunα ^ 2 = 2 * braunα + 2 := by nlinarith [braun_poly2]
+  have hα3 : braunα ^ 3 = 6 * braunα + 4 := by
+    calc
+      braunα ^ 3 = braunα * braunα ^ 2 := by rw [pow_succ']
+      _ = braunα * (2 * braunα + 2) := by rw [hα2]
+      _ = 2 * braunα ^ 2 + 2 * braunα := by ring
+      _ = 6 * braunα + 4 := by rw [hα2]; ring
+  have hqk : braunQ ^ k = braunQ ^ (k - 1) * braunQ := by
+    conv_lhs => rw [← Nat.sub_add_cancel (show 1 ≤ k by omega)]
+    rw [pow_succ]
+  rw [braunSp_closed (k - 1) hk1]
+  dsimp only [braunL]
+  rw [hqk]
+  have hαinv : braunα * (braunα + 1 / braunα) = braunα ^ 2 + 1 := by
+    field_simp [ne_of_gt braunα_pos]
+  calc
+    braunα * (braunQ ^ (k - 1) * (braunα + 1 / braunα) + braunQ ^ (k - 1) + braunQ ^ (k - 1) * braunQ)
+        = braunQ ^ (k - 1) * (braunα * (braunα + 1 / braunα) + braunα + braunα * braunQ) := by ring
+    _ = braunQ ^ (k - 1) * (braunα ^ 2 + 1 + braunα + braunα * braunQ) := by rw [hαinv]
+    _ = braunQ ^ (k - 1) * (15 * braunα + 11) := by
+          congr 1
+          dsimp [braunQ]
+          ring_nf
+          nlinarith [hα2, hα3]
+
+/-- The coefficient identity driving the L_k trap:
+    (α−1)(15α+11) − α(3−α)q − 2αq = 3 − 2α. -/
+lemma braun_trap_Lk_coef :
+    (braunα - 1) * (15 * braunα + 11) - (3 - braunα) * braunα * braunQ - 2 * braunα * braunQ
+      = 3 - 2 * braunα := by
+  have hα2 : braunα ^ 2 = 2 * braunα + 2 := by nlinarith [braun_poly2]
+  have hα3 : braunα ^ 3 = 6 * braunα + 4 := by
+    calc
+      braunα ^ 3 = braunα * braunα ^ 2 := by rw [pow_succ']
+      _ = braunα * (2 * braunα + 2) := by rw [hα2]
+      _ = 2 * braunα ^ 2 + 2 * braunα := by ring
+      _ = 6 * braunα + 4 := by rw [hα2]; ring
+  have hα4 : braunα ^ 4 = 16 * braunα + 12 := by
+    calc
+      braunα ^ 4 = braunα * braunα ^ 3 := by rw [pow_succ']
+      _ = braunα * (6 * braunα + 4) := by rw [hα3]
+      _ = 6 * braunα ^ 2 + 4 * braunα := by ring
+      _ = 16 * braunα + 12 := by rw [hα2]; ring
+  dsimp [braunQ]
+  ring_nf
+  nlinarith [hα2, hα3, hα4]
+
+/-- L_k trap (k ≥ 2): two L_k jobs on one machine beat the additive bound, with
+    witness OPT ≤ S⁺_{k−1} + L_{k−1} + L_k. The proof reduces the difference to
+    q^{k−1}·(3/α − 2) ≤ 0; the constant (3−2α)/α is negative since α > 2. -/
+lemma braun_trap_Lk (k : ℕ) (hk : 2 ≤ k) :
+    Real.sqrt 3 * (braunSp (k - 1) + braunL (k - 1) + braunL k) - (2 - Real.sqrt 3)
+      ≤ braunSumLS (k - 1) + 2 * braunL k := by
+  have hs3 : Real.sqrt 3 = braunα - 1 := by dsimp [braunα]; ring
+  have hqk : braunQ ^ k = braunQ ^ (k - 1) * braunQ := by
+    conv_lhs => rw [← Nat.sub_add_cancel (show 1 ≤ k by omega)]
+    rw [pow_succ]
+  have hc0 : (1 + braunα) / (braunQ - 1) = 3 - braunα := by
+    have h : (3 - braunα) * (braunQ - 1) = 1 + braunα := by
+      dsimp [braunQ]
+      nlinarith [braun_poly2]
+    rw [← h]
+    field_simp [braunQ_sub_one_ne_zero]
+  have hquot : (1 + braunα) * ((braunQ ^ k - 1) / (braunQ - 1)) = (3 - braunα) * (braunQ ^ k - 1) := by
+    calc
+      (1 + braunα) * ((braunQ ^ k - 1) / (braunQ - 1))
+          = (1 + braunα) * (braunQ ^ k - 1) / (braunQ - 1) := by ring
+      _ = ((1 + braunα) / (braunQ - 1)) * (braunQ ^ k - 1) := by ring
+      _ = (3 - braunα) * (braunQ ^ k - 1) := by rw [hc0]
+  have hD : braunα * (Real.sqrt 3 * (braunSp (k - 1) + braunL (k - 1) + braunL k) - (2 - Real.sqrt 3)
+      - (braunSumLS (k - 1) + 2 * braunL k)) = braunQ ^ (k - 1) * (3 - 2 * braunα) := by
+    rw [braun_two_sub_sqrt3, hs3, braunSumLS_eq, braun_geom_sum]
+    rw [show (k - 1) + 1 = k by omega]
+    rw [hquot]
+    calc
+      braunα * ((braunα - 1) * (braunSp (k - 1) + braunL (k - 1) + braunL k) - (3 - braunα)
+          - ((3 - braunα) * (braunQ ^ k - 1) + 2 * braunL k))
+          = (braunα - 1) * (braunα * (braunSp (k - 1) + braunL (k - 1) + braunL k))
+            - (3 - braunα) * braunα * braunQ ^ k - 2 * braunα * braunL k := by
+              ring_nf
+      _ = (braunα - 1) * (braunQ ^ (k - 1) * (15 * braunα + 11))
+            - (3 - braunα) * braunα * (braunQ ^ (k - 1) * braunQ) - 2 * braunα * (braunQ ^ (k - 1) * braunQ) := by
+              rw [braun_SpL_pred_add_mul_alpha k hk]
+              dsimp only [braunL]
+              rw [hqk]
+      _ = braunQ ^ (k - 1) * ((braunα - 1) * (15 * braunα + 11) - (3 - braunα) * braunα * braunQ - 2 * braunα * braunQ) := by
+              ring
+      _ = braunQ ^ (k - 1) * (3 - 2 * braunα) := by rw [braun_trap_Lk_coef]
+  have hnonpos : braunα * (Real.sqrt 3 * (braunSp (k - 1) + braunL (k - 1) + braunL k) - (2 - Real.sqrt 3)
+      - (braunSumLS (k - 1) + 2 * braunL k)) ≤ 0 := by
+    rw [hD]
+    exact mul_nonpos_of_nonneg_of_nonpos (pow_nonneg (le_of_lt braunQ_pos) (k - 1))
+      (by nlinarith [braunα_gt_two])
+  have hαDle : braunα * (Real.sqrt 3 * (braunSp (k - 1) + braunL (k - 1) + braunL k) - (2 - Real.sqrt 3)
+      - (braunSumLS (k - 1) + 2 * braunL k)) ≤ braunα * 0 := by
+    simpa using hnonpos
+  have hle := le_of_mul_le_mul_left hαDle braunα_pos
+  linarith
+
+/-- S_k trap (k ≥ 1): two S_k jobs on one machine beat the additive bound, with
+    witness OPT ≤ S_k + L_k. The identity (√3−2)S + √3·L = L collapses the
+    claim to 0 ≤ Φ_{k−1} + (2−√3). -/
+lemma braun_trap_Sk (k : ℕ) (hk : 1 ≤ k) :
+    Real.sqrt 3 * (braunS k + braunL k) - (2 - Real.sqrt 3) ≤
+      braunSumLS (k - 1) + braunL k + 2 * braunS k := by
+  have hs3 : Real.sqrt 3 = braunα - 1 := by dsimp [braunα]; ring
+  have hα2 : braunα ^ 2 = 2 * braunα + 2 := by nlinarith [braun_poly2]
+  have hid : (Real.sqrt 3 - 2) * braunS k + Real.sqrt 3 * braunL k = braunL k := by
+    rw [hs3]
+    dsimp [braunS, braunL]
+    calc
+      (braunα - 1 - 2) * (braunα * braunQ ^ k) + (braunα - 1) * braunQ ^ k
+          = (braunα ^ 2 - 2 * braunα - 1) * braunQ ^ k := by ring
+      _ = braunQ ^ k := by
+            have hα2' : braunα ^ 2 - 2 * braunα - 1 = 1 := by nlinarith [hα2]
+            rw [hα2']
+            ring
+  have hnonneg : 0 ≤ braunSumLS (k - 1) + (2 - Real.sqrt 3) := by
+    apply add_nonneg
+    · dsimp [braunSumLS]
+      apply Finset.sum_nonneg
+      intro i hi
+      exact add_nonneg (le_of_lt (braunL_pos i)) (le_of_lt (braunS_pos i))
+    · have hs3lt2 : Real.sqrt 3 < 2 := by
+        have h : Real.sqrt 3 < Real.sqrt 4 :=
+          Real.sqrt_lt_sqrt (by norm_num : (0 : ℝ) ≤ 3) (by norm_num : (3 : ℝ) < 4)
+        rwa [show Real.sqrt 4 = 2 by
+          rw [show (4 : ℝ) = 2 ^ 2 by norm_num, Real.sqrt_sq_eq_abs, abs_of_nonneg (by norm_num : (0 : ℝ) ≤ 2)]] at h
+      nlinarith
+  calc
+    Real.sqrt 3 * (braunS k + braunL k) - (2 - Real.sqrt 3)
+        = braunL k + 2 * braunS k - (2 - Real.sqrt 3) := by nlinarith [hid]
+    _ ≤ braunSumLS (k - 1) + braunL k + 2 * braunS k := by nlinarith [hnonneg]
+
+/-! ### OPT witness bounds for the general-k traps -/
+
+/-- The L_k-trap witness sequence: prefix through S⁺_{k−1}, then L_k×4. -/
+def braunLkTrapWitness (k : ℕ) : JobSequence :=
+  braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k)
+
+/-- The S_k-trap witness sequence: prefix through S⁺_{k−1}, then L_k×4, S_k×3. -/
+def braunSkTrapWitness (k : ℕ) : JobSequence :=
+  braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k) ++ List.replicate 3 (braunS k)
+
+/-- Assignment of the L_k-trap witness: the Table-6 packing of the prefix plus
+    one L_k on each machine. -/
+noncomputable def braunLkTrapAssign (k : ℕ) :
+    Fin (braunLkTrapWitness k).length → Fin 4 :=
+  appendAssign (m := 4) (braunPrefixSp (k - 1)) (List.replicate 4 (braunL k))
+    (braunPrefixAssign (k - 1)) (diagAssignReplicate (m := 4) (braunL k))
+
+/-- OPT of the L_k-trap witness is at most S⁺_{k−1} + L_{k−1} + L_k (k ≥ 2). -/
+lemma braun_opt_Lk_trap_le (k : ℕ) (hk : 2 ≤ k) :
+    optMakespan (m := 4) (braunLkTrapWitness k) ≤ braunSp (k - 1) + braunL (k - 1) + braunL k := by
+  have hk1 : 1 ≤ k - 1 := by omega
+  have hle := optMakespan_le_of_schedule (m := 4) (braunLkTrapWitness k)
+    (scheduleLoads (m := 4) (braunLkTrapWitness k) (braunLkTrapAssign k)) (braunLkTrapAssign k) rfl
+  refine le_trans hle ?_
+  dsimp only [makespan]
+  refine Finset.sup'_le _ _ (fun j hj => ?_)
+  have hdec (j : Fin 4) :
+      scheduleLoads (m := 4) (braunLkTrapWitness k) (braunLkTrapAssign k) j =
+        scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (braunPrefixAssign (k - 1)) j + braunL k := by
+    dsimp only [braunLkTrapWitness, braunLkTrapAssign]
+    rw [scheduleLoads_append (m := 4) (braunPrefixSp (k - 1)) (List.replicate 4 (braunL k))
+      (braunPrefixAssign (k - 1)) (diagAssignReplicate (m := 4) (braunL k)) j]
+    rw [scheduleLoads_replicate_diag (m := 4) (braunL k)]
+  rw [hdec j]
+  have hpref : scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (braunPrefixAssign (k - 1)) j ≤
+      braunSp (k - 1) + braunL (k - 1) :=
+    le_trans (makespan_ge_each (m := 4) (scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (braunPrefixAssign (k - 1))) j)
+      (braunPrefixAssign_makespan_le (k - 1) hk1)
+  nlinarith
+
+/-- Total load of the prefix through S⁺_{k−1} fits in a single S_k slot (k ≥ 1). -/
+lemma braun_prefix_total_le_S (k : ℕ) (hk : 1 ≤ k) :
+    totalLoad (braunPrefixSp (k - 1)) ≤ braunS k := by
+  rw [braunPrefixSp_total (k - 1), braun_total_work (k - 1)]
+  have hcpos : 0 < (4 + 6 * braunα) / (braunQ - 1) := by
+    have hnum : 0 < 4 + 6 * braunα := by nlinarith [braunα_pos]
+    have hden : 0 < braunQ - 1 := by linarith [braunQ_gt_one]
+    positivity
+  have hα2 : braunα ^ 2 = 2 * braunα + 2 := by nlinarith [braun_poly2]
+  have hα3 : braunα ^ 3 = 6 * braunα + 4 := by
+    calc
+      braunα ^ 3 = braunα * braunα ^ 2 := by rw [pow_succ']
+      _ = braunα * (2 * braunα + 2) := by rw [hα2]
+      _ = 2 * braunα ^ 2 + 2 * braunα := by ring
+      _ = 6 * braunα + 4 := by rw [hα2]; ring
+  have h3F : 3 * braunF (k - 1) ≤ braunS k := by
+    have hqk : braunQ ^ k = braunQ ^ (k - 1) * braunQ := by
+      conv_lhs => rw [← Nat.sub_add_cancel hk]
+      rw [pow_succ]
+    have hcoef : 6 * braunα ≤ 2 * braunα ^ 3 := by nlinarith [hα3, braunα_pos]
+    have hmul := mul_le_mul_of_nonneg_right hcoef (pow_nonneg (le_of_lt braunQ_pos) (k - 1))
+    dsimp [braunF, braunS, braunL]
+    rw [hqk]
+    dsimp [braunQ] at hmul ⊢
+    nlinarith [hmul]
+  nlinarith [h3F, hcpos]
+
+/-- The S_k-trap assignment: the prefix goes to machine 3, the L_k layer
+    diagonally, the three S_k jobs to machines 0, 1, 2. -/
+noncomputable def braunSkTrapAssign (k : ℕ) :
+    Fin (braunSkTrapWitness k).length → Fin 4 :=
+  appendAssign (m := 4) (braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k)) (List.replicate 3 (braunS k))
+    (appendAssign (m := 4) (braunPrefixSp (k - 1)) (List.replicate 4 (braunL k))
+      (fun _ => 3) (diagAssignReplicate (m := 4) (braunL k)))
+    (fun i : Fin 3 => ⟨i.1, by omega⟩)
+
+/-- Loads of the S_k-trap assignment: machines 0–2 get L_k + S_k, machine 3
+    gets the whole prefix plus one L_k. -/
+lemma braunSkTrapAssign_loads (k : ℕ) :
+    scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 0 = braunL k + braunS k ∧
+    scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 1 = braunL k + braunS k ∧
+    scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 2 = braunL k + braunS k ∧
+    scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 3 = totalLoad (braunPrefixSp (k - 1)) + braunL k := by
+  have hdec (j : Fin 4) :
+      scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) j =
+        scheduleLoads (m := 4) (braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k))
+          (appendAssign (m := 4) (braunPrefixSp (k - 1)) (List.replicate 4 (braunL k))
+            (fun _ => 3) (diagAssignReplicate (m := 4) (braunL k))) j +
+        scheduleLoads (m := 4) (List.replicate 3 (braunS k)) (fun i : Fin 3 => ⟨i.1, by omega⟩) j := by
+    dsimp only [braunSkTrapWitness, braunSkTrapAssign]
+    rw [scheduleLoads_append (m := 4) (braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k))
+      (List.replicate 3 (braunS k))
+      (appendAssign (m := 4) (braunPrefixSp (k - 1)) (List.replicate 4 (braunL k))
+        (fun _ => 3) (diagAssignReplicate (m := 4) (braunL k)))
+      (fun i : Fin 3 => ⟨i.1, by omega⟩) j]
+  have hdec2 (j : Fin 4) :
+      scheduleLoads (m := 4) (braunPrefixSp (k - 1) ++ List.replicate 4 (braunL k))
+        (appendAssign (m := 4) (braunPrefixSp (k - 1)) (List.replicate 4 (braunL k))
+          (fun _ => 3) (diagAssignReplicate (m := 4) (braunL k))) j =
+        scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (fun _ => 3) j +
+        scheduleLoads (m := 4) (List.replicate 4 (braunL k)) (diagAssignReplicate (m := 4) (braunL k)) j := by
+    rw [scheduleLoads_append (m := 4) (braunPrefixSp (k - 1)) (List.replicate 4 (braunL k))
+      (fun _ => 3) (diagAssignReplicate (m := 4) (braunL k)) j]
+  have hprefix (j : Fin 4) :
+      scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (fun _ : Fin (braunPrefixSp (k - 1)).length => (3 : Fin 4)) j =
+        (if j = 3 then totalLoad (braunPrefixSp (k - 1)) else 0) := by
+    by_cases hj : j = 3
+    · subst hj
+      have hsum := sum_scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (fun _ => 3)
+      have h3 := fin4_sum_extract3 (fun j' => scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (fun _ => 3) j')
+      rw [h3, hsum]
+      have hz0 : scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (fun _ => 3) 0 = 0 := by
+        apply scheduleLoads_zero_of_forall_ne
+        intro i
+        decide
+      have hz1 : scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (fun _ => 3) 1 = 0 := by
+        apply scheduleLoads_zero_of_forall_ne
+        intro i
+        decide
+      have hz2 : scheduleLoads (m := 4) (braunPrefixSp (k - 1)) (fun _ => 3) 2 = 0 := by
+        apply scheduleLoads_zero_of_forall_ne
+        intro i
+        decide
+      rw [hz0, hz1, hz2]
+      simp
+    · have hne : ∀ i : Fin (braunPrefixSp (k - 1)).length, (3 : Fin 4) ≠ j := by
+        intro i
+        intro h
+        exact hj h.symm
+      have hz := scheduleLoads_zero_of_forall_ne (braunPrefixSp (k - 1)) (fun _ => 3) j hne
+      rw [hz]
+      simp [hj]
+  have hLpart (j : Fin 4) :
+      scheduleLoads (m := 4) (List.replicate 4 (braunL k)) (diagAssignReplicate (m := 4) (braunL k)) j = braunL k := by
+    rw [scheduleLoads_replicate_diag (m := 4) (braunL k)]
+  have hS0 : scheduleLoads (m := 4) (List.replicate 3 (braunS k)) (fun i : Fin 3 => ⟨i.1, by omega⟩) 0 = braunS k := by
+    dsimp only [scheduleLoads]
+    change (∑ i : Fin 3, if (⟨i.1, by omega⟩ : Fin 4) = 0 then (List.replicate 3 (braunS k))[i] else 0) = braunS k
+    rw [Fin.sum_univ_three]
+    simp
+  have hS1 : scheduleLoads (m := 4) (List.replicate 3 (braunS k)) (fun i : Fin 3 => ⟨i.1, by omega⟩) 1 = braunS k := by
+    dsimp only [scheduleLoads]
+    change (∑ i : Fin 3, if (⟨i.1, by omega⟩ : Fin 4) = 1 then (List.replicate 3 (braunS k))[i] else 0) = braunS k
+    rw [Fin.sum_univ_three]
+    simp
+  have hS2 : scheduleLoads (m := 4) (List.replicate 3 (braunS k)) (fun i : Fin 3 => ⟨i.1, by omega⟩) 2 = braunS k := by
+    dsimp only [scheduleLoads]
+    change (∑ i : Fin 3, if (⟨i.1, by omega⟩ : Fin 4) = 2 then (List.replicate 3 (braunS k))[i] else 0) = braunS k
+    rw [Fin.sum_univ_three]
+    simp
+  have hS3 : scheduleLoads (m := 4) (List.replicate 3 (braunS k)) (fun i : Fin 3 => ⟨i.1, by omega⟩) 3 = 0 := by
+    dsimp only [scheduleLoads]
+    change (∑ i : Fin 3, if (⟨i.1, by omega⟩ : Fin 4) = 3 then (List.replicate 3 (braunS k))[i] else 0) = 0
+    rw [Fin.sum_univ_three]
+    simp
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · rw [hdec 0, hdec2 0, hLpart 0, hS0, hprefix 0]
+    simp
+  · rw [hdec 1, hdec2 1, hLpart 1, hS1, hprefix 1]
+    simp
+  · rw [hdec 2, hdec2 2, hLpart 2, hS2, hprefix 2]
+    simp
+  · rw [hdec 3, hdec2 3, hLpart 3, hS3, hprefix 3]
+    simp
+
+/-- OPT of the S_k-trap witness is at most S_k + L_k (k ≥ 1). -/
+lemma braun_opt_Sk_trap_le (k : ℕ) (hk : 1 ≤ k) :
+    optMakespan (m := 4) (braunSkTrapWitness k) ≤ braunS k + braunL k := by
+  have hle := optMakespan_le_of_schedule (m := 4) (braunSkTrapWitness k)
+    (scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k)) (braunSkTrapAssign k) rfl
+  refine le_trans hle ?_
+  dsimp only [makespan]
+  refine Finset.sup'_le _ _ (fun j hj => ?_)
+  rcases braunSkTrapAssign_loads k with ⟨h0, h1, h2, h3⟩
+  fin_cases j
+  · change scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 0 ≤ braunS k + braunL k
+    nlinarith [h0]
+  · change scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 1 ≤ braunS k + braunL k
+    nlinarith [h1]
+  · change scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 2 ≤ braunS k + braunL k
+    nlinarith [h2]
+  · change scheduleLoads (m := 4) (braunSkTrapWitness k) (braunSkTrapAssign k) 3 ≤ braunS k + braunL k
+    nlinarith [h3, braun_prefix_total_le_S k hk]
+
+/-! ### Layer-k forcing step (k ≥ 2) -/
+
+/-- Layer-k forcing (k ≥ 2): from loads ≥ Φ_{k−1} after `braunPrefixSp (k−1)`,
+    the block {L_k×4, S_k×3, S⁺_k} either yields a witness achieving the additive
+    bound (a prefix of `braunPrefixSp k`), or leaves every machine at load ≥ Φ_k. -/
+lemma braun_layerk_forcing_pref (k : ℕ) (hk : 2 ≤ k) (alg : OnlineAlgorithm 4)
+    (hinv : ∀ i : Fin 4, braunSumLS (k - 1) ≤ runAlgorithm 4 alg (braunPrefixSp (k - 1)) i) :
+    (∃ σ : JobSequence, List.IsPrefix σ (braunPrefixSp k) ∧
+        Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ) ∨
+    (∀ i : Fin 4, braunSumLS k ≤ runAlgorithm 4 alg (braunPrefixSp k) i) := by
+  have hkpos : 1 ≤ k := by omega
+  rcases braun_layer_separation_lb alg (braunSumLS (k - 1)) (braunL k) (braunL_pos k)
+      (runAlgorithm 4 alg (braunPrefixSp (k - 1))) hinv with hLbad | hLgood
+  · left
+    refine ⟨braunLkTrapWitness k, braun_L_witness_prefix k hkpos, ?_⟩
+    have hmk : braunSumLS (k - 1) + 2 * braunL k ≤ algorithmMakespan 4 alg (braunLkTrapWitness k) := by
+      dsimp only [algorithmMakespan, runAlgorithm, braunLkTrapWitness]
+      rw [List.foldl_append]
+      exact hLbad
+    have hopt := braun_opt_Lk_trap_le k hk
+    have hsq : Real.sqrt 3 * optMakespan (m := 4) (braunLkTrapWitness k) ≤
+        Real.sqrt 3 * (braunSp (k - 1) + braunL (k - 1) + braunL k) :=
+      mul_le_mul_of_nonneg_left hopt (le_of_lt (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 3)))
+    calc
+      Real.sqrt 3 * optMakespan (m := 4) (braunLkTrapWitness k) - (2 - Real.sqrt 3)
+          ≤ Real.sqrt 3 * (braunSp (k - 1) + braunL (k - 1) + braunL k) - (2 - Real.sqrt 3) := by linarith
+      _ ≤ braunSumLS (k - 1) + 2 * braunL k := braun_trap_Lk k hk
+      _ ≤ algorithmMakespan 4 alg (braunLkTrapWitness k) := hmk
+  · have hLgood' : ∀ i : Fin 4, braunSumLS (k - 1) + braunL k ≤
+        ((List.replicate 4 (braunL k)).foldl (step (m := 4) alg) (runAlgorithm 4 alg (braunPrefixSp (k - 1)))) i := by
+      intro i
+      rw [hLgood i]
+      nlinarith [hinv i]
+    rcases braun_three_from_lb alg (braunSumLS (k - 1) + braunL k) (braunS k) (braunS_pos k)
+        ((List.replicate 4 (braunL k)).foldl (step (m := 4) alg) (runAlgorithm 4 alg (braunPrefixSp (k - 1)))) hLgood'
+        with hSbad | hSgood
+    · left
+      refine ⟨braunSkTrapWitness k, braun_S_witness_prefix k hkpos, ?_⟩
+      have hmk : braunSumLS (k - 1) + braunL k + 2 * braunS k ≤
+          algorithmMakespan 4 alg (braunSkTrapWitness k) := by
+        dsimp only [algorithmMakespan, runAlgorithm, braunSkTrapWitness]
+        rw [List.foldl_append, List.foldl_append]
+        exact hSbad
+      have hopt := braun_opt_Sk_trap_le k hkpos
+      have hsq : Real.sqrt 3 * optMakespan (m := 4) (braunSkTrapWitness k) ≤
+          Real.sqrt 3 * (braunS k + braunL k) :=
+        mul_le_mul_of_nonneg_left hopt (le_of_lt (Real.sqrt_pos.mpr (by norm_num : (0 : ℝ) < 3)))
+      calc
+        Real.sqrt 3 * optMakespan (m := 4) (braunSkTrapWitness k) - (2 - Real.sqrt 3)
+            ≤ Real.sqrt 3 * (braunS k + braunL k) - (2 - Real.sqrt 3) := by linarith
+        _ ≤ braunSumLS (k - 1) + braunL k + 2 * braunS k := braun_trap_Sk k hkpos
+        _ ≤ algorithmMakespan 4 alg (braunSkTrapWitness k) := hmk
+    · rcases hSgood with ⟨j0, hj0base, hj0rest⟩
+      let l2 : Loads 4 := (List.replicate 3 (braunS k)).foldl (step (m := 4) alg)
+        ((List.replicate 4 (braunL k)).foldl (step (m := 4) alg) (runAlgorithm 4 alg (braunPrefixSp (k - 1))))
+      have hj0base' : braunSumLS (k - 1) + braunL k ≤ l2 j0 := by
+        dsimp only [l2]
+        rw [hj0base]
+        rw [hLgood j0]
+        nlinarith [hinv j0]
+      have hj0rest' : ∀ i : Fin 4, i ≠ j0 → braunSumLS (k - 1) + braunL k + braunS k ≤ l2 i := by
+        intro i hi
+        dsimp only [l2]
+        rw [hj0rest i hi]
+        rw [hLgood i]
+        nlinarith [hinv i]
+      have hsumk : braunSumLS k = braunSumLS (k - 1) + (braunL k + braunS k) := by
+        rw [show braunSumLS k = (∑ x ∈ Finset.range k, (braunL x + braunS x)) + (braunL k + braunS k) by
+          dsimp [braunSumLS]
+          rw [Finset.sum_range_succ]]
+        rw [show (∑ x ∈ Finset.range k, (braunL x + braunS x)) = braunSumLS (k - 1) by
+          dsimp [braunSumLS]
+          rw [show (k - 1) + 1 = k by omega]]
+      by_cases hjj0 : alg l2 (braunSp k) = j0
+      · right
+        intro i
+        have hrun : runAlgorithm 4 alg (braunPrefixSp k) i = step (m := 4) alg l2 (braunSp k) i := by
+          conv_lhs => rw [show k = (k - 1) + 1 by omega]
+          dsimp only [braunPrefixSp, braunLayerBlock, runAlgorithm, l2]
+          rw [show (k - 1) + 1 = k by omega]
+          simp only [List.foldl_append, List.foldl_cons, List.foldl_nil]
+        rw [hrun]
+        by_cases hij0 : i = j0
+        · dsimp only [step]
+          rw [if_pos (by rw [hij0]; exact hjj0.symm)]
+          rw [hij0]
+          have hle : braunSumLS k ≤ braunSumLS (k - 1) + braunL k + braunSp k := by
+            rw [hsumk]
+            nlinarith [braunS_le_braunSp k]
+          exact le_trans hle (by nlinarith [hj0base'])
+        · dsimp only [step]
+          rw [if_neg (by
+            intro h
+            have : i = j0 := by rw [h, hjj0]
+            exact hij0 this)]
+          rw [hsumk]
+          nlinarith [hj0rest' i hij0]
+      · left
+        refine ⟨braunPrefixSp k, braun_isPrefix_refl (braunPrefixSp k), ?_⟩
+        have hjj0' : alg l2 (braunSp k) ≠ j0 := hjj0
+        have hrunj : runAlgorithm 4 alg (braunPrefixSp k) (alg l2 (braunSp k)) = step (m := 4) alg l2 (braunSp k) (alg l2 (braunSp k)) := by
+          conv_lhs => rw [show k = (k - 1) + 1 by omega]
+          dsimp only [braunPrefixSp, braunLayerBlock, runAlgorithm, l2]
+          rw [show (k - 1) + 1 = k by omega]
+          simp only [List.foldl_append, List.foldl_cons, List.foldl_nil]
+        have hloadj : braunSumLS k + braunSp k ≤ runAlgorithm 4 alg (braunPrefixSp k) (alg l2 (braunSp k)) := by
+          rw [hrunj]
+          dsimp only [step]
+          rw [if_pos rfl]
+          rw [hsumk]
+          nlinarith [hj0rest' (alg l2 (braunSp k)) hjj0']
+        have hmk : braunSumLS k + braunSp k ≤ algorithmMakespan 4 alg (braunPrefixSp k) := by
+          dsimp only [algorithmMakespan]
+          exact le_trans hloadj (makespan_ge_each (m := 4) (runAlgorithm 4 alg (braunPrefixSp k)) (alg l2 (braunSp k)))
+        have hid := braun_prefix_additive_identity k hkpos
+        have hoptS := braun_opt_prefix_Sp k hkpos
+        calc
+          Real.sqrt 3 * optMakespan (m := 4) (braunPrefixSp k) - (2 - Real.sqrt 3)
+              = Real.sqrt 3 * (braunSp k + braunL k) - (2 - Real.sqrt 3) := by rw [hoptS]
+          _ = braunSumLS k + braunSp k := by rw [hid]
+          _ ≤ algorithmMakespan 4 alg (braunPrefixSp k) := hmk
+
+/-! ### The full induction over layers 0..r -/
+
+/-- The general-r forced induction: either some layer deviates and yields a
+    witness prefix of `braunPrefixSp r` achieving the additive bound, or the
+    algorithm follows the Table 3 schedule and every machine ends at ≥ Φ_r. -/
+lemma braun_force_general_pref (r : ℕ) (alg : OnlineAlgorithm 4) :
+    (∃ σ : JobSequence, List.IsPrefix σ (braunPrefixSp r) ∧
+        Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ) ∨
+    (∀ i : Fin 4, braunSumLS r ≤ runAlgorithm 4 alg (braunPrefixSp r) i) := by
+  rcases braun_base_forcing_pref alg with hb | hb0
+  · rcases hb with ⟨σ, hpref, hbound⟩
+    exact Or.inl ⟨σ, braun_isPrefix_trans hpref (braun_prefix_mono (Nat.zero_le r)), hbound⟩
+  · revert hb0
+    induction r with
+    | zero =>
+        intro hb0
+        right
+        intro i
+        exact le_of_eq (hb0 i).symm
+    | succ r ih =>
+        intro hb0
+        rcases ih hb0 with hwit | hinv
+        · rcases hwit with ⟨σ, hpref, hb⟩
+          exact Or.inl ⟨σ, braun_isPrefix_trans hpref (braun_prefix_step r), hb⟩
+        · by_cases hr : r = 0
+          · subst hr
+            rcases braun_layer1_forcing_pref alg hb0 with hw | hc
+            · exact Or.inl hw
+            · right
+              intro i
+              exact hc i
+          · have hge : 2 ≤ r + 1 := by omega
+            rcases braun_layerk_forcing_pref (r + 1) hge alg hinv with hw | hc
+            · exact Or.inl hw
+            · right
+              intro i
+              exact hc i
+
+/-- Theorem 1 for the full parameter family (adaptive adversary): for every r
+    and every deterministic online algorithm on 4 machines there is a prefix of
+    σ_r (n = 8r+9 jobs) whose makespan reaches √3·OPT − (2−√3). The adversary
+    runs the paper's Table 3 forced-schedule induction: a deviation at any L_k
+    or S_k layer stops with the corresponding trap, a deviation at S⁺_k stops
+    with the exact additive trap, and a clean schedule is finished off by F. -/
+theorem braun_asymptotic_lower_bound_general (r : ℕ) (alg : OnlineAlgorithm 4) :
+    ∃ σ : JobSequence, List.IsPrefix σ (braunSeq r) ∧
+      Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ := by
+  rcases braun_force_general_pref r alg with hwit | hclean
+  · rcases hwit with ⟨σ, hpref, hb⟩
+    exact ⟨σ, braun_isPrefix_trans hpref (braun_prefix_seq r), hb⟩
+  · refine ⟨braunSeq r, braun_isPrefix_refl (braunSeq r), ?_⟩
+    have hload : braunSumLS r + braunF r ≤ algorithmMakespan 4 alg (braunSeq r) := by
+      have hseq : braunSeq r = braunPrefixSp r ++ [braunF r] := by
+        dsimp only [braunSeq]
+        rw [← braunPrefixSp_eq_flat r]
+      dsimp only [algorithmMakespan]
+      rw [hseq, runAlgorithm, List.foldl_append]
+      simp only [List.foldl_cons, List.foldl_nil]
+      let j : Fin 4 := alg (runAlgorithm 4 alg (braunPrefixSp r)) (braunF r)
+      have hstepj : braunSumLS r + braunF r ≤
+          step (m := 4) alg (runAlgorithm 4 alg (braunPrefixSp r)) (braunF r) j := by
+        dsimp only [step]
+        rw [if_pos rfl]
+        nlinarith [hclean j]
+      exact le_trans hstepj (makespan_ge_each (m := 4) (step (m := 4) alg (runAlgorithm 4 alg (braunPrefixSp r)) (braunF r)) j)
+    have hid := braun_additive_identity r
+    have hoptF := braun_opt_eq_F r
+    calc
+      Real.sqrt 3 * optMakespan (m := 4) (braunSeq r) - (2 - Real.sqrt 3)
+          = Real.sqrt 3 * braunF r - (2 - Real.sqrt 3) := by rw [hoptF]
+      _ = braunForcedMakespan r := by rw [hid]
+      _ = braunSumLS r + braunF r := by rfl
+      _ ≤ algorithmMakespan 4 alg (braunSeq r) := hload
+
 /-- Theorem 1 (Braun–Chung–Graham 2025): for every deterministic online algorithm
-    on 4 machines there is a task sequence with makespan ≥ √3·OPT − (2−√3).
-    The witness is one of the prefixes of the r = 1 instance σ₁ (n = 17 jobs):
-    a deviation at L₀/S₀/L₁/S₁ stops with a prefix achieving the bound, a clean
-    schedule through S⁺₁ is finished off by the final job F. -/
+    on 4 machines there is a task sequence with makespan ≥ √3·OPT − (2−√3)
+    (the r = 1 instance of the general adaptive adversary). -/
 theorem braun_asymptotic_lower_bound (alg : OnlineAlgorithm 4) :
     ∃ σ : JobSequence,
       Real.sqrt 3 * optMakespan (m := 4) σ - (2 - Real.sqrt 3) ≤ algorithmMakespan 4 alg σ := by
-  rcases braun_base_forcing alg with hb | hb0
-  · exact hb
-  rcases braun_layer1_forcing alg hb0 with h1 | h1
-  · exact h1
-  refine ⟨braunSeq 1, ?_⟩
-  have hload : braunSumLS 1 + braunF 1 ≤ algorithmMakespan 4 alg (braunSeq 1) := by
-    have hseq : braunSeq 1 = braunPrefixSp 1 ++ [braunF 1] := by
-      dsimp only [braunSeq]
-      rw [← braunPrefixSp_eq_flat 1]
-    dsimp only [algorithmMakespan]
-    rw [hseq, runAlgorithm, List.foldl_append]
-    simp only [List.foldl_cons, List.foldl_nil]
-    let j : Fin 4 := alg (runAlgorithm 4 alg (braunPrefixSp 1)) (braunF 1)
-    have hstepj : braunSumLS 1 + braunF 1 ≤
-        step (m := 4) alg (runAlgorithm 4 alg (braunPrefixSp 1)) (braunF 1) j := by
-      dsimp only [step]
-      rw [if_pos rfl]
-      nlinarith [h1 j]
-    exact le_trans hstepj (makespan_ge_each (m := 4) (step (m := 4) alg (runAlgorithm 4 alg (braunPrefixSp 1)) (braunF 1)) j)
-  have hid := braun_additive_identity 1
-  have hoptF := braun_opt_eq_F 1
-  calc
-    Real.sqrt 3 * optMakespan (m := 4) (braunSeq 1) - (2 - Real.sqrt 3)
-        = Real.sqrt 3 * braunF 1 - (2 - Real.sqrt 3) := by rw [hoptF]
-    _ = braunForcedMakespan 1 := by rw [hid]
-    _ = braunSumLS 1 + braunF 1 := by rfl
-    _ ≤ algorithmMakespan 4 alg (braunSeq 1) := hload
+  rcases braun_asymptotic_lower_bound_general 1 alg with ⟨σ, hpref, hb⟩
+  exact ⟨σ, hb⟩
 
 end

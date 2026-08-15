@@ -18,7 +18,7 @@
 | LowerBounds/PseudoLowerBoundM6.lean | 940 | 0 | ✅ 完成（m=6） |
 | LowerBounds/PseudoLowerBoundGeneral.lean | 3135 | 0 | ✅ 完成（Tan & Li 2015 通用 m，5 阶段 adversary） |
 | LowerBounds/Rudin.lean | 51 | 0 | ✅ 完成（m=4 下界为真证明；余 1 条渐近 1.88 存在性 axiom 属设计） |
-| LowerBounds/BraunGraham2025.lean | 2560 | 0 | ✅ 完成（Braun–Chung–Graham 2025 Theorem 1：m=4 加性下界 √3·OPT−(2−√3)，自适应对抗 r=1 实例） |
+| LowerBounds/BraunGraham2025.lean | 3080 | 0 | ✅ 完成（Braun–Chung–Graham 2025 Theorem 1：m=4 加性下界 √3·OPT−(2−√3)，r=1 自适应对抗 + 一般 r 全参数族逐层强制归纳 `braun_asymptotic_lower_bound_general`） |
 | Models/BinStretching.lean | 38 | 0 | ✅ 完成 |
 | Models/Decreasing.lean | 46 | 0 | ✅ 完成 |
 | Models/GradeOfService.lean | 61 | 0 | ✅ 完成 |
