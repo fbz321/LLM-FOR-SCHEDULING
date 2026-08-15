@@ -175,6 +175,56 @@ lemma braunAbsCR1_fixedpoint :
     braunAbsCR1 = (braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1) / braunAbsF1 braunAbsCR1 :=
   (braunAbs_cubic braunAbsCR1 braunAbsCR1_ne_two braunAbsCR1_3c5_ne braunAbsF1_CR1_ne).mpr braunAbsCR1_root
 
+/-! ### Rational bounds on c₁ -/
+
+/-- c₁ < 7/4. -/
+lemma braunAbsCR1_lt_seven_quarters : braunAbsCR1 < 7 / 4 := by
+  have hfac : ∀ c : ℝ,
+      6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13 - (6 * (7 / 4) ^ 3 - 28 * (7 / 4) ^ 2 + 38 * (7 / 4) - 13)
+        = (c - 7 / 4) * (6 * c ^ 2 - (35 / 2) * c + 59 / 8) := by
+    intro c
+    ring
+  have hdiff : (braunAbsCR1 - 7 / 4) * (6 * braunAbsCR1 ^ 2 - (35 / 2) * braunAbsCR1 + 59 / 8) = 3 / 32 := by
+    calc
+      (braunAbsCR1 - 7 / 4) * (6 * braunAbsCR1 ^ 2 - (35 / 2) * braunAbsCR1 + 59 / 8)
+          = 6 * braunAbsCR1 ^ 3 - 28 * braunAbsCR1 ^ 2 + 38 * braunAbsCR1 - 13
+            - (6 * (7 / 4) ^ 3 - 28 * (7 / 4) ^ 2 + 38 * (7 / 4) - 13) := by rw [hfac braunAbsCR1]
+      _ = 0 - (-(3 / 32)) := by rw [braunAbsCR1_root]; norm_num
+      _ = 3 / 32 := by norm_num
+  have hquad : 6 * braunAbsCR1 ^ 2 - (35 / 2) * braunAbsCR1 + 59 / 8 < 0 := by
+    nlinarith [braunAbsCR1_lo, braunAbsCR1_hi]
+  have hprod : 0 < (braunAbsCR1 - 7 / 4) * (6 * braunAbsCR1 ^ 2 - (35 / 2) * braunAbsCR1 + 59 / 8) := by
+    rw [hdiff]
+    norm_num
+  rcases mul_pos_iff.mp hprod with hpos | hneg
+  · exfalso
+    nlinarith [hpos.2, hquad]
+  · nlinarith [hneg.1]
+
+/-- 12/7 < c₁. -/
+lemma braunAbsCR1_gt_12_7 : (12 / 7 : ℝ) < braunAbsCR1 := by
+  have hfac : ∀ c : ℝ,
+      6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13 - (6 * (12 / 7) ^ 3 - 28 * (12 / 7) ^ 2 + 38 * (12 / 7) - 13)
+        = (c - 12 / 7) * (6 * c ^ 2 - (124 / 7) * c + 374 / 49) := by
+    intro c
+    ring
+  have hdiff : (braunAbsCR1 - 12 / 7) * (6 * braunAbsCR1 ^ 2 - (124 / 7) * braunAbsCR1 + 374 / 49) = -(29 / 343) := by
+    calc
+      (braunAbsCR1 - 12 / 7) * (6 * braunAbsCR1 ^ 2 - (124 / 7) * braunAbsCR1 + 374 / 49)
+          = 6 * braunAbsCR1 ^ 3 - 28 * braunAbsCR1 ^ 2 + 38 * braunAbsCR1 - 13
+            - (6 * (12 / 7) ^ 3 - 28 * (12 / 7) ^ 2 + 38 * (12 / 7) - 13) := by rw [hfac braunAbsCR1]
+      _ = 0 - (29 / 343) := by rw [braunAbsCR1_root]; norm_num
+      _ = -(29 / 343) := by norm_num
+  have hquad : 6 * braunAbsCR1 ^ 2 - (124 / 7) * braunAbsCR1 + 374 / 49 < 0 := by
+    nlinarith [braunAbsCR1_lo, braunAbsCR1_hi]
+  have hprod : (braunAbsCR1 - 12 / 7) * (6 * braunAbsCR1 ^ 2 - (124 / 7) * braunAbsCR1 + 374 / 49) < 0 := by
+    rw [hdiff]
+    norm_num
+  rcases mul_neg_iff.mp hprod with hpos | hneg
+  · nlinarith [hpos.1]
+  · exfalso
+    nlinarith [hneg.2, hquad]
+
 /-! ### Trap ratios (multiplicative) -/
 
 /-- L₀ trap: `c·1 ≤ 2` whenever `c ≤ 2`. -/
@@ -192,6 +242,64 @@ lemma braunAbs_S0_trap_ratio (c : ℝ) (h2 : c ≠ 2) :
 lemma braunAbs_F_trap_ratio :
     braunAbsCR1 * braunAbsF1 braunAbsCR1 = braunAbsLayerSum1 braunAbsCR1 + braunAbsF1 braunAbsCR1 := by
   exact (eq_div_iff braunAbsF1_CR1_ne).mp braunAbsCR1_fixedpoint
+
+/-- L₁ trap (slack): `c₁·(1+S₀+L₁) ≤ 1+S₀+2·L₁`. -/
+lemma braunAbs_L1_slack_identity :
+    (2 - braunAbsCR1) * (3 * braunAbsCR1 - 5) *
+      ((1 + braunAbsS0 braunAbsCR1 + 2 * braunAbsL1 braunAbsCR1) - braunAbsCR1 * (1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1))
+      = 3 * braunAbsCR1 ^ 3 - 14 * braunAbsCR1 ^ 2 + 17 * braunAbsCR1 - 3 := by
+  dsimp [braunAbsS0, braunAbsL1]
+  ring_nf
+  have h2 : 2 - braunAbsCR1 ≠ 0 := sub_ne_zero.mpr (Ne.symm braunAbsCR1_ne_two)
+  have h3 : -5 + braunAbsCR1 * 3 ≠ 0 := by
+    have h := braunAbsCR1_3c5_ne
+    ring_nf at h
+    exact h
+  field_simp [h2, h3]
+  ring
+
+lemma braunAbs_L1_trap :
+    braunAbsCR1 * (1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1) ≤
+      1 + braunAbsS0 braunAbsCR1 + 2 * braunAbsL1 braunAbsCR1 := by
+  have hid := braunAbs_L1_slack_identity
+  have hpos : 0 < (2 - braunAbsCR1) * (3 * braunAbsCR1 - 5) := by
+    have h2 : 0 < 2 - braunAbsCR1 := by nlinarith [braunAbsCR1_hi]
+    have h3 : 0 < 3 * braunAbsCR1 - 5 := by nlinarith [braunAbsCR1_lo]
+    exact mul_pos h2 h3
+  have hslack : 0 ≤ 3 * braunAbsCR1 ^ 3 - 14 * braunAbsCR1 ^ 2 + 17 * braunAbsCR1 - 3 := by
+    nlinarith [braunAbsCR1_root, braunAbsCR1_lt_seven_quarters]
+  have hdiff_nonneg : 0 ≤ (1 + braunAbsS0 braunAbsCR1 + 2 * braunAbsL1 braunAbsCR1) - braunAbsCR1 * (1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1) := by
+    exact (mul_le_mul_iff_of_pos_left hpos).mp (by rw [hid]; simpa [mul_zero] using hslack)
+  nlinarith [hdiff_nonneg]
+
+/-- S₁ trap (slack): `c₁·(S₁+L₁) ≤ 1+S₀+L₁+2·S₁`. -/
+lemma braunAbs_S1_slack_identity :
+    (2 - braunAbsCR1) * (3 * braunAbsCR1 - 5) *
+      ((1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 + 2 * braunAbsS1 braunAbsCR1) - braunAbsCR1 * (braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1))
+      = 6 * braunAbsCR1 ^ 3 - 22 * braunAbsCR1 ^ 2 + 26 * braunAbsCR1 - 10 := by
+  dsimp [braunAbsS0, braunAbsL1, braunAbsS1]
+  ring_nf
+  have h2 : 2 - braunAbsCR1 ≠ 0 := sub_ne_zero.mpr (Ne.symm braunAbsCR1_ne_two)
+  have h3 : -5 + braunAbsCR1 * 3 ≠ 0 := by
+    have h := braunAbsCR1_3c5_ne
+    ring_nf at h
+    exact h
+  field_simp [h2, h3]
+  ring
+
+lemma braunAbs_S1_trap :
+    braunAbsCR1 * (braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1) ≤
+      1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 + 2 * braunAbsS1 braunAbsCR1 := by
+  have hid := braunAbs_S1_slack_identity
+  have hpos : 0 < (2 - braunAbsCR1) * (3 * braunAbsCR1 - 5) := by
+    have h2 : 0 < 2 - braunAbsCR1 := by nlinarith [braunAbsCR1_hi]
+    have h3 : 0 < 3 * braunAbsCR1 - 5 := by nlinarith [braunAbsCR1_lo]
+    exact mul_pos h2 h3
+  have hslack : 0 ≤ 6 * braunAbsCR1 ^ 3 - 22 * braunAbsCR1 ^ 2 + 26 * braunAbsCR1 - 10 := by
+    nlinarith [braunAbsCR1_root, braunAbsCR1_gt_12_7]
+  have hdiff_nonneg : 0 ≤ (1 + braunAbsS0 braunAbsCR1 + braunAbsL1 braunAbsCR1 + 2 * braunAbsS1 braunAbsCR1) - braunAbsCR1 * (braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1) := by
+    exact (mul_le_mul_iff_of_pos_left hpos).mp (by rw [hid]; simpa [mul_zero] using hslack)
+  nlinarith [hdiff_nonneg]
 
 /-- S⁺₁ trap is exact: `c·(S⁺₁+L₁) = Σ + S⁺₁` for all `c ≠ 2, 3c−5 ≠ 0`
     (this is the defining equation of `L₁`). -/
