@@ -301,6 +301,36 @@ lemma braunAbs_S1_trap :
     exact (mul_le_mul_iff_of_pos_left hpos).mp (by rw [hid]; simpa [mul_zero] using hslack)
   nlinarith [hdiff_nonneg]
 
+/-! ### OPT upper bounds (packings) -/
+
+/-- Feasibility of the S₁ packing: `4 + 4·S₀ ≤ S₁`. -/
+lemma braunAbs_S1_ge_4_4S0 : 4 + 4 * braunAbsS0 braunAbsCR1 ≤ braunAbsS1 braunAbsCR1 := by
+  have hid : (2 - braunAbsCR1) * (3 * braunAbsCR1 - 5) * (braunAbsS1 braunAbsCR1 - 4 - 4 * braunAbsS0 braunAbsCR1)
+      = -3 * braunAbsCR1 ^ 2 - 4 * braunAbsCR1 + 17 := by
+    dsimp [braunAbsS0, braunAbsS1]
+    ring_nf
+    have h2 : 2 - braunAbsCR1 ≠ 0 := sub_ne_zero.mpr (Ne.symm braunAbsCR1_ne_two)
+    have h3 : -5 + braunAbsCR1 * 3 ≠ 0 := by
+      have h := braunAbsCR1_3c5_ne
+      ring_nf at h
+      exact h
+    field_simp [h2, h3]
+    ring
+  have hpos : 0 < (2 - braunAbsCR1) * (3 * braunAbsCR1 - 5) := by
+    have h2 : 0 < 2 - braunAbsCR1 := by nlinarith [braunAbsCR1_hi]
+    have h3 : 0 < 3 * braunAbsCR1 - 5 := by nlinarith [braunAbsCR1_lo]
+    exact mul_pos h2 h3
+  have hslack : 0 ≤ -3 * braunAbsCR1 ^ 2 - 4 * braunAbsCR1 + 17 := by
+    have hfac : -3 * braunAbsCR1 ^ 2 - 4 * braunAbsCR1 + 17 =
+        (7 / 4 - braunAbsCR1) * (3 * braunAbsCR1 + 37 / 4) + 13 / 16 := by ring
+    rw [hfac]
+    have h1 : 0 < 7 / 4 - braunAbsCR1 := by nlinarith [braunAbsCR1_lt_seven_quarters]
+    have h2 : 0 < 3 * braunAbsCR1 + 37 / 4 := by nlinarith [braunAbsCR1_lo]
+    nlinarith [mul_pos h1 h2]
+  have hdiff : 0 ≤ braunAbsS1 braunAbsCR1 - 4 - 4 * braunAbsS0 braunAbsCR1 := by
+    exact (mul_le_mul_iff_of_pos_left hpos).mp (by rw [hid]; simpa [mul_zero] using hslack)
+  nlinarith [hdiff]
+
 /-- S⁺₁ trap is exact: `c·(S⁺₁+L₁) = Σ + S⁺₁` for all `c ≠ 2, 3c−5 ≠ 0`
     (this is the defining equation of `L₁`). -/
 lemma braunAbs_Sp1_trap_ratio (c : ℝ) (h2 : c ≠ 2) (h3 : 3 * c - 5 ≠ 0) :
@@ -377,6 +407,142 @@ lemma braunAbs_opt_L1 (c : ℝ) :
       simp only [List.sum_replicate, nsmul_eq_mul]
       nlinarith
     rwa [htot] at hge
+
+/-! ### OPT upper bounds for the layer-1 trap witnesses (r = 1) -/
+
+/-- S₀ ≥ 2 (feasibility of the S⁺₁ packing). -/
+lemma braunAbsS0_ge_2 : 2 ≤ braunAbsS0 braunAbsCR1 := by
+  have h2 : 0 < 2 - braunAbsCR1 := by nlinarith [braunAbsCR1_hi]
+  have hid : (2 - braunAbsCR1) * (braunAbsS0 braunAbsCR1 - 2) = 3 * braunAbsCR1 - 5 := by
+    dsimp [braunAbsS0]
+    field_simp [sub_ne_zero.mpr (Ne.symm braunAbsCR1_ne_two)]
+    ring
+  have hpos : 0 < (2 - braunAbsCR1) * (braunAbsS0 braunAbsCR1 - 2) := by
+    rw [hid]
+    nlinarith [braunAbsCR1_lo]
+  have hS0 : 0 < braunAbsS0 braunAbsCR1 - 2 := (mul_pos_iff_of_pos_left h2).mp hpos
+  nlinarith [hS0]
+
+/-- S₁ = 3·S₀ + 2·L₁ + 2 (identity for all admissible c, used in the F packing). -/
+lemma braunAbs_S1_eq_3S0_2L1_2 (c : ℝ) (h2 : c ≠ 2) (h3 : 3 * c - 5 ≠ 0) :
+    braunAbsS1 c = 3 * braunAbsS0 c + 2 * braunAbsL1 c + 2 := by
+  dsimp [braunAbsS0, braunAbsL1, braunAbsS1]
+  have h3' : -5 + c * 3 ≠ 0 := by
+    have h := h3
+    ring_nf at h
+    exact h
+  field_simp [h2, h3']
+  ring
+
+/-- The S₁ trap witness (15 jobs). -/
+def braunAbsS1Witness (c : ℝ) : JobSequence :=
+  List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c) ++
+  List.replicate 4 (braunAbsL1 c) ++ List.replicate 3 (braunAbsS1 c)
+
+/-- Diagonal assignment of a 3-block to machines 0,1,2. -/
+noncomputable def braunAbsDiagAssign3 : Fin 3 → Fin 4 :=
+  fun i => ⟨i.1, by omega⟩
+
+/-- Load of a 4-replicate block under the constant assignment to machine `k`. -/
+lemma braunAbs_scheduleLoads_replicate4_const (k : Fin 4) (x : ℝ) (j : Fin 4) :
+    scheduleLoads (m := 4) (List.replicate 4 x) (fun _ : Fin 4 => k) j =
+      if j = k then 4 * x else 0 := by
+  dsimp only [scheduleLoads]
+  change (∑ i : Fin 4, if (fun _ : Fin 4 => k) i = j then (List.replicate 4 x)[i] else 0) =
+    if j = k then 4 * x else 0
+  rw [Fin.sum_univ_four]
+  fin_cases j <;> fin_cases k <;> simp [List.getElem_replicate] <;> ring
+
+/-- Load of a 3-replicate block under the diagonal assignment to 0,1,2. -/
+lemma braunAbs_scheduleLoads_replicate3_diag (x : ℝ) (j : Fin 4) :
+    scheduleLoads (m := 4) (List.replicate 3 x) braunAbsDiagAssign3 j =
+      if j.1 < 3 then x else 0 := by
+  dsimp only [scheduleLoads]
+  change (∑ i : Fin 3, if braunAbsDiagAssign3 i = j then (List.replicate 3 x)[i] else 0) =
+    if j.1 < 3 then x else 0
+  rw [Fin.sum_univ_three]
+  fin_cases j <;> simp [braunAbsDiagAssign3, List.getElem_replicate] <;> ring
+
+/-- Assignment for the S₁ packing (Table 11): L₀,S₀ → machine 3; L₁ diagonal;
+    S₁ → machines 0,1,2. -/
+noncomputable def braunAbsAssign3S1 (c : ℝ) :
+    Fin (braunAbsS1Witness c).length → Fin 4 :=
+  appendAssign (m := 4)
+    (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c) ++ List.replicate 4 (braunAbsL1 c))
+    (List.replicate 3 (braunAbsS1 c))
+    (appendAssign (m := 4)
+      (List.replicate 4 (1 : ℝ) ++ List.replicate 4 (braunAbsS0 c))
+      (List.replicate 4 (braunAbsL1 c))
+      (appendAssign (m := 4)
+        (List.replicate 4 (1 : ℝ))
+        (List.replicate 4 (braunAbsS0 c))
+        (fun _ => (3 : Fin 4)) (fun _ => (3 : Fin 4)))
+      (diagAssignReplicate (m := 4) (braunAbsL1 c)))
+    braunAbsDiagAssign3
+
+/-- Loads of the S₁-trap witness packing. -/
+lemma braunAbsAssign3S1_loads (c : ℝ) :
+    scheduleLoads (m := 4) (braunAbsS1Witness c) (braunAbsAssign3S1 c) 0 = braunAbsL1 c + braunAbsS1 c ∧
+    scheduleLoads (m := 4) (braunAbsS1Witness c) (braunAbsAssign3S1 c) 1 = braunAbsL1 c + braunAbsS1 c ∧
+    scheduleLoads (m := 4) (braunAbsS1Witness c) (braunAbsAssign3S1 c) 2 = braunAbsL1 c + braunAbsS1 c ∧
+    scheduleLoads (m := 4) (braunAbsS1Witness c) (braunAbsAssign3S1 c) 3 = 4 + 4 * braunAbsS0 c + braunAbsL1 c := by
+  have hdecomp (j : Fin 4) :
+      scheduleLoads (m := 4) (braunAbsS1Witness c) (braunAbsAssign3S1 c) j =
+        scheduleLoads (m := 4) (List.replicate 4 (1 : ℝ)) (fun _ : Fin 4 => (3 : Fin 4)) j +
+        scheduleLoads (m := 4) (List.replicate 4 (braunAbsS0 c)) (fun _ : Fin 4 => (3 : Fin 4)) j +
+        scheduleLoads (m := 4) (List.replicate 4 (braunAbsL1 c)) (diagAssignReplicate (m := 4) (braunAbsL1 c)) j +
+        scheduleLoads (m := 4) (List.replicate 3 (braunAbsS1 c)) braunAbsDiagAssign3 j := by
+    dsimp only [braunAbsS1Witness, braunAbsAssign3S1]
+    rw [scheduleLoads_append (m := 4), scheduleLoads_append (m := 4), scheduleLoads_append (m := 4)]
+    rfl
+  constructor
+  · rw [hdecomp 0, braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (1 : ℝ) 0,
+      braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (braunAbsS0 c) 0,
+      scheduleLoads_replicate_diag (m := 4) (braunAbsL1 c), braunAbs_scheduleLoads_replicate3_diag (braunAbsS1 c) 0]
+    simp <;> ring
+  constructor
+  · rw [hdecomp 1, braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (1 : ℝ) 1,
+      braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (braunAbsS0 c) 1,
+      scheduleLoads_replicate_diag (m := 4) (braunAbsL1 c), braunAbs_scheduleLoads_replicate3_diag (braunAbsS1 c) 1]
+    simp <;> ring
+  constructor
+  · rw [hdecomp 2, braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (1 : ℝ) 2,
+      braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (braunAbsS0 c) 2,
+      scheduleLoads_replicate_diag (m := 4) (braunAbsL1 c), braunAbs_scheduleLoads_replicate3_diag (braunAbsS1 c) 2]
+    simp <;> ring
+  · rw [hdecomp 3, braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (1 : ℝ) 3,
+      braunAbs_scheduleLoads_replicate4_const (3 : Fin 4) (braunAbsS0 c) 3,
+      scheduleLoads_replicate_diag (m := 4) (braunAbsL1 c), braunAbs_scheduleLoads_replicate3_diag (braunAbsS1 c) 3]
+    simp <;> ring
+
+/-- OPT of the S₁ trap witness ≤ S₁ + L₁ (Table 11). -/
+lemma braunAbs_opt_S1_le :
+    optMakespan (m := 4) (braunAbsS1Witness braunAbsCR1) ≤
+      braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1 := by
+  have hle := optMakespan_le_of_schedule (m := 4) (braunAbsS1Witness braunAbsCR1)
+    (scheduleLoads (m := 4) (braunAbsS1Witness braunAbsCR1) (braunAbsAssign3S1 braunAbsCR1))
+    (braunAbsAssign3S1 braunAbsCR1) rfl
+  refine le_trans hle ?_
+  dsimp only [makespan]
+  refine Finset.sup'_le _ _ (fun j hj => ?_)
+  rcases braunAbsAssign3S1_loads braunAbsCR1 with ⟨h0, h1, h2, h3⟩
+  fin_cases j
+  · change scheduleLoads (m := 4) (braunAbsS1Witness braunAbsCR1) (braunAbsAssign3S1 braunAbsCR1) 0 ≤
+      braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1
+    rw [h0]
+    nlinarith
+  · change scheduleLoads (m := 4) (braunAbsS1Witness braunAbsCR1) (braunAbsAssign3S1 braunAbsCR1) 1 ≤
+      braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1
+    rw [h1]
+    nlinarith
+  · change scheduleLoads (m := 4) (braunAbsS1Witness braunAbsCR1) (braunAbsAssign3S1 braunAbsCR1) 2 ≤
+      braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1
+    rw [h2]
+    nlinarith
+  · change scheduleLoads (m := 4) (braunAbsS1Witness braunAbsCR1) (braunAbsAssign3S1 braunAbsCR1) 3 ≤
+      braunAbsS1 braunAbsCR1 + braunAbsL1 braunAbsCR1
+    rw [h3]
+    nlinarith [braunAbs_S1_ge_4_4S0]
 
 end
 
