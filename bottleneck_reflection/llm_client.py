@@ -11,6 +11,25 @@ import time
 from typing import Optional
 
 
+def build_deepseek_payload(model: str, messages: list, max_tokens: int,
+                           temperature: float) -> dict:
+    """Build the DeepSeek chat-completions request body.
+
+    deepseek-reasoner is a reasoning model: it must not receive `temperature`
+    or `thinking`. v4 models disable thinking; chat keeps temperature only.
+    """
+    payload = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": max_tokens,
+    }
+    if "reasoner" not in model:
+        payload["temperature"] = temperature
+    if "v4" in model:
+        payload["thinking"] = {"type": "disabled"}
+    return payload
+
+
 class LLMClient:
     """Client for calling LLM APIs to generate Lean proofs."""
 
@@ -121,15 +140,9 @@ class LLMClient:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}",
         }
-        payload = {
-            "model": self.model,
-            "messages": messages,
-            "max_tokens": self.max_tokens,
-            "temperature": self.temperature,
-        }
-        # V4 Pro: use non-thinking mode for code generation (faster, cheaper)
-        if "v4" in self.model:
-            payload["thinking"] = {"type": "disabled"}
+        payload = build_deepseek_payload(
+            self.model, messages, self.max_tokens, self.temperature
+        )
         resp = requests.post(
             "https://api.deepseek.com/v1/chat/completions",
             headers=headers,

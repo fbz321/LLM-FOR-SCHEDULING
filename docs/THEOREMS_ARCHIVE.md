@@ -247,6 +247,52 @@
 | theorem | `known_sum_m2_optimal_ratio` | ✅ | theorem known_sum_m2_optimal_ratio : True := by    trivial  /-- Result for m=3: improved bound. -/ |
 | theorem | `known_sum_m3_optimal_ratio` | ✅ | theorem known_sum_m3_optimal_ratio : True := by    trivial  end OnlineScheduling |
 
+## LowerBounds/BraunGraham2025.lean（Braun–Chung–Graham 2025，m=4 加性下界；0 sorry）
+
+> Theorem 1：对任意确定性在线算法，存在序列使 makespan ≥ √3·OPT − (2−√3)。
+> 构造：α = 1+√3，q = 2α²，L_k = q^k，S_k = αq^k，S⁺_k = S_k+2S_{k−1}，F = 2S_r。
+> 主定理用 r=1 实例（17 作业）的自适应对抗：L₀/S₀/L₁/S₁ 偏离触发比率陷阱
+> （2、√3、1.800、1.781），S⁺₁ 陷阱由前缀加性恒等式精确给出，clean 路径由
+> F 收尾（braun_additive_identity + braun_opt_eq_F）。
+> 全参数族（RESEARCH_PLAN 0.2b）：`braun_asymptotic_lower_bound_general` 对任意 r
+> 给出 σ_r（n=8r+9）的前缀 witness——论文 Table 3 的逐层强制归纳（非均匀不变式
+> ∀i, Φ_k ≤ load_i），一般 k 陷阱（braun_trap_Lk/Sk）与一般 OPT witness
+> （braun_opt_Lk/Sk_trap_le），r=1 定理为其推论。
+
+| 类型 | 名称 | 状态 | 签名 |
+|------|------|:--:|------|
+| theorem | `braun_additive_identity` | ✅ | braunForcedMakespan r = √3·braunF r − (2−√3) |
+| theorem | `braun_opt_eq_F` | ✅ | optMakespan (m:=4) (braunSeq r) = braunF r |
+| theorem | `braun_opt_prefix_Sp` | ✅ | optMakespan (m:=4) (braunPrefixSp k) = braunSp k + braunL k |
+| lemma | `braun_prefix_additive_identity` | ✅ | braunSumLS k + braunSp k = √3·(braunSp k + braunL k) − (2−√3) |
+| lemma | `braun_layer_separation_from_base` | ✅ | 均匀 base 上 4 个相同作业：makespan ≥ base+2x 或全机 base+x |
+| lemma | `braun_three_from_base` | ✅ | 均匀 base 上 3 个相同作业：makespan ≥ base+2x 或 3 机 base+x、1 机 base |
+| lemma | `braun_layer_separation_lb` | ✅ | 非均匀下界 base（∀i, base ≤ load_i）上 4 个相同作业：makespan ≥ base+2x 或每机恰 +x |
+| lemma | `braun_three_from_lb` | ✅ | 非均匀下界 base 上 3 个相同作业：makespan ≥ base+2x 或 3 机 +x、1 机不动 |
+| lemma | `braunLayerBlock_makespan_ge` | ✅ | 任意分配下 block {S⁺_k,S_k³,L_k⁴} 的 makespan ≥ S⁺_k+L_k |
+| lemma | `braun_trap_Lk` | ✅ | (k≥2) √3(S⁺_{k−1}+L_{k−1}+L_k) − d ≤ Φ_{k−1} + 2L_k |
+| lemma | `braun_trap_Sk` | ✅ | (k≥1) √3(S_k+L_k) − d ≤ Φ_{k−1} + L_k + 2S_k |
+| lemma | `braun_opt_Lk_trap_le` | ✅ | (k≥2) OPT(prefix(k−1) ++ L_k×4) ≤ S⁺_{k−1}+L_{k−1}+L_k |
+| lemma | `braun_opt_Sk_trap_le` | ✅ | (k≥1) OPT(prefix(k−1) ++ L_k×4 ++ S_k×3) ≤ S_k+L_k |
+| lemma | `braun_prefix_total_le_S` | ✅ | (k≥1) totalLoad(braunPrefixSp (k−1)) ≤ braunS k |
+| theorem | `braun_asymptotic_lower_bound` | ✅ | ∀ alg : OnlineAlgorithm 4, ∃ σ, algorithmMakespan 4 alg σ ≥ √3·optMakespan (m:=4) σ − (2−√3) |
+| theorem | `braun_asymptotic_lower_bound_general` | ✅ | ∀ r, ∀ alg, ∃ σ ≤ σ_r（List.IsPrefix）, algorithmMakespan 4 alg σ ≥ √3·optMakespan (m:=4) σ − (2−√3) |
+
+## LowerBounds/AdversaryTree.lean + BraunGraham2025Tree.lean（对抗树认证层 + 树回放；0 sorry）
+
+> "模板 = 数据、证明零新增"的认证闭环：`AdvTree` 把自适应对手显式写成树
+> （节点=状态+释放作业，边=算法选机，叶=打包证书）；`AdvTree.sound` 只证一次
+> （∀m）：WellFormed + rootOK + Certified ⇒ ∀alg ∃σ 比率达标。Braun 实例降级为
+> 纯数据——枚举放置分支 + 逐叶证书（层分离引理 + OPT 打包）。
+> Braun r=0（9 作业）为冒烟测试；r=1（17 作业，L₀/S₀/L₁/S₁×3/S⁺₁/F 六阶段）
+> 回放主定理实例，证明"新实例 = 新数据、零新证明"。
+
+| 类型 | 名称 | 状态 | 签名 |
+|------|------|:--:|------|
+| theorem | `AdvTree.sound` | ✅ | WellFormed T → rootOK T → Certified ρ d T → ∀ alg, ∃ σ, ρ·OPT(σ)−d ≤ τ_A(σ) |
+| theorem | `braun_tree_lower_bound` | ✅ | (r=0) ∀ alg : OnlineAlgorithm 4, ∃ σ, √3·optMakespan σ −(2−√3) ≤ algorithmMakespan 4 alg σ |
+| theorem | `braun_tree_r1_lower_bound` | ✅ | (r=1) ∀ alg : OnlineAlgorithm 4, ∃ σ, √3·optMakespan σ −(2−√3) ≤ algorithmMakespan 4 alg σ |
+
 ---
 | 统计 | 数量 |
 |------|:--:|
