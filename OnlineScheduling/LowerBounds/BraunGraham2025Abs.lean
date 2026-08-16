@@ -225,6 +225,64 @@ lemma braunAbsCR1_gt_12_7 : (12 / 7 : ℝ) < braunAbsCR1 := by
   · exfalso
     nlinarith [hneg.2, hquad]
 
+/-- The cubic `6c³ − 28c² + 38c − 13` is strictly decreasing on (5/3, 2). -/
+lemma braunAbs_cubic_strictAntiOn :
+    StrictAntiOn (fun c : ℝ => 6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13) (Set.Ioo (5 / 3 : ℝ) 2) := by
+  intro c hc d hd hcd
+  rw [← sub_lt_zero]
+  have hdiff : (6 * d ^ 3 - 28 * d ^ 2 + 38 * d - 13) - (6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13)
+      = (d - c) * (6 * (c ^ 2 + c * d + d ^ 2) - 28 * (c + d) + 38) := by ring
+  rw [hdiff]
+  have hdc : 0 < d - c := sub_pos.mpr hcd
+  have hQ : 6 * (c ^ 2 + c * d + d ^ 2) - 28 * (c + d) + 38 < 0 := by
+    let u := 2 - c
+    let v := 2 - d
+    have hu : 0 < u := by dsimp [u]; linarith [hc.2]
+    have hv : 0 < v := by dsimp [v]; linarith [hd.2]
+    have hul : u ≤ 1 / 3 := by dsimp [u]; linarith [hc.1]
+    have hvl : v ≤ 1 / 3 := by dsimp [v]; linarith [hd.1]
+    have hQ' : 6 * (c ^ 2 + c * d + d ^ 2) - 28 * (c + d) + 38
+        = -8 * u - 8 * v + (6 * u ^ 2 + 6 * u * v + 6 * v ^ 2) - 2 := by
+      dsimp [u, v]
+      ring
+    rw [hQ']
+    have hu2 : 6 * u ^ 2 ≤ 2 * u := by
+      have : u * u ≤ u * (1 / 3) := mul_le_mul_of_nonneg_left hul (le_of_lt hu)
+      nlinarith [this]
+    have hv2 : 6 * v ^ 2 ≤ 2 * v := by
+      have : v * v ≤ v * (1 / 3) := mul_le_mul_of_nonneg_left hvl (le_of_lt hv)
+      nlinarith [this]
+    have huv : 6 * u * v ≤ u + v := by
+      have h1 : 6 * u * v ≤ 2 * u := by
+        have : u * v ≤ u * (1 / 3) := mul_le_mul_of_nonneg_left hvl (le_of_lt hu)
+        nlinarith [this]
+      have h2 : 6 * u * v ≤ 2 * v := by
+        have : v * u ≤ v * (1 / 3) := mul_le_mul_of_nonneg_left hul (le_of_lt hv)
+        nlinarith [this]
+      nlinarith [h1, h2]
+    nlinarith [hu2, hv2, huv, hu, hv]
+  exact mul_neg_of_pos_of_neg hdc hQ
+
+/-- Uniqueness of the root: any `c ∈ (5/3, 2)` with `6c³ − 28c² + 38c − 13 = 0`
+    equals `braunAbsCR1`. -/
+lemma braunAbsCR1_unique {c : ℝ} (hlo : (5 / 3 : ℝ) < c) (hhi : c < 2)
+    (hroot : 6 * c ^ 3 - 28 * c ^ 2 + 38 * c - 13 = 0) : c = braunAbsCR1 := by
+  let f : ℝ → ℝ := fun t => 6 * t ^ 3 - 28 * t ^ 2 + 38 * t - 13
+  have hcf : f c = 0 := hroot
+  have hrf : f braunAbsCR1 = 0 := by
+    dsimp [f]
+    exact braunAbsCR1_root
+  have hc_mem : c ∈ Set.Ioo (5 / 3 : ℝ) 2 := ⟨hlo, hhi⟩
+  have hr_mem : braunAbsCR1 ∈ Set.Ioo (5 / 3 : ℝ) 2 := ⟨braunAbsCR1_lo, braunAbsCR1_hi⟩
+  by_contra hne
+  rcases lt_or_gt_of_ne hne with hlt | hgt
+  · have hanti : f braunAbsCR1 < f c := braunAbs_cubic_strictAntiOn hc_mem hr_mem hlt
+    rw [hrf, hcf] at hanti
+    exact (lt_irrefl (0 : ℝ)) hanti
+  · have hanti : f c < f braunAbsCR1 := braunAbs_cubic_strictAntiOn hr_mem hc_mem hgt
+    rw [hrf, hcf] at hanti
+    exact (lt_irrefl (0 : ℝ)) hanti
+
 /-! ### Trap ratios (multiplicative) -/
 
 /-- L₀ trap: `c·1 ≤ 2` whenever `c ≤ 2`. -/
