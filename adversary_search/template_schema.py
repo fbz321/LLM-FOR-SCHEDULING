@@ -210,20 +210,20 @@ def validate(tpl):
 
 
 # ---------------------------------------------------------------- materialize
-def _emit_layer(emit_list, env):
+def _emit_layer(emit_list, env, check_positive=True):
     jobs = []
     for e in emit_list:
         r = int(eval_expr(e.get("repeat", 1), env))
         if r <= 0:
             raise TplError(f"repeat 必须为正: {e}")
         sz = eval_expr(e["size"], env)
-        if sz <= 0:
+        if check_positive and sz <= 0:
             raise TplError(f"作业尺寸必须为正: {e['size']} = {sz}")
         jobs.extend([sz] * r)
     return jobs
 
 
-def materialize(tpl):
+def materialize(tpl, check_positive=True):
     """模板 -> (Fraction 作业列表, meta)。"""
     errs = validate(tpl)
     if errs:
@@ -276,9 +276,9 @@ def materialize(tpl):
                 if k + 1 < len(states):
                     for nm, val in states[k + 1].items():
                         e2[nm + "_next"] = val
-                layers.append(_emit_layer(item["emit"], e2))
+                layers.append(_emit_layer(item["emit"], e2, check_positive))
         else:
-            layers.append(_emit_layer(item["emit"], env))
+            layers.append(_emit_layer(item["emit"], env, check_positive))
 
     if tpl.get("order", "fwd") == "rev":
         layers = layers[::-1]
@@ -294,7 +294,7 @@ def materialize(tpl):
     for e in tpl.get("final", []):
         r = int(eval_expr(e.get("repeat", 1), env_fin))
         sz = eval_expr(e["size"], env_fin)
-        if sz <= 0:
+        if check_positive and sz <= 0:
             raise TplError(f"final 尺寸必须为正: {e['size']}")
         jobs.extend([sz] * r)
 
