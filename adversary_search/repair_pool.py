@@ -15,9 +15,6 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import template_schema
 from generate import SYSTEM_PROMPT, call_qwen, extract_json_array
-import io
-if hasattr(sys.stdout, "buffer"):
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
 REPAIR_USER_TMPL = """以下是 {k} 个未通过验证的对抗模板及精确错误。请逐个修复，只输出 JSON 数组，
 每个元素是修复后的完整模板，name 保持原名加后缀 _r1。
