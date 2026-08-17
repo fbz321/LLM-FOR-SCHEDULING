@@ -133,7 +133,8 @@ def main():
     ap.add_argument("--n", type=int, default=10)
     ap.add_argument("--model", type=str, default=DEFAULT_MODEL)
     ap.add_argument("--temperature", type=float, default=1.0)
-    ap.add_argument("--max-tokens", type=int, default=8000)
+    ap.add_argument("--max-tokens", type=int, default=16000)
+    ap.add_argument("--per-call", type=int, default=8, help="单次 API 调用生成的模板数（防截断）")
     ap.add_argument("--no-think", action="store_true", help="关闭思考模式（更快）")
     ap.add_argument("--out", type=str,
                     default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "llm_pool"))
@@ -156,20 +157,30 @@ def main():
 
     os.makedirs(a.out, exist_ok=True)
     ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    t0 = time.time()
-    text, usage = call_qwen(api_key, a.model,
-                            [{"role": "system", "content": system},
-                             {"role": "user", "content": user}],
-                            a.temperature, a.max_tokens, a.no_think)
-    dt = time.time() - t0
-    print(f"API 调用 {dt:.1f}s, usage={usage}")
-
-    try:
-        tpls = extract_json_array(text)
-    except Exception as e:
-        bad = os.path.join(a.out, f"raw_{ts}.txt")
-        open(bad, "w", encoding="utf-8").write(text)
-        print(f"JSON 解析失败: {e}；原始回复存 {bad}")
+    tpls = []
+    batches = [a.per_call] * (a.n // a.per_call)
+    if a.n % a.per_call:
+        batches.append(a.n % a.per_call)
+    for bi, bn in enumerate(batches):
+        t0 = time.time()
+        try:
+            text, usage = call_qwen(api_key, a.model,
+                                    [{"role": "system", "content": system},
+                                     {"role": "user", "content": user_prompt(bn)}],
+                                    a.temperature, a.max_tokens, a.no_think)
+        except Exception as e:
+            print(f"批次 {bi + 1} API 失败: {e}")
+            continue
+        dt = time.time() - t0
+        print(f"批次 {bi + 1}/{len(batches)}: {dt:.1f}s, usage={usage}")
+        try:
+            tpls.extend(extract_json_array(text))
+        except Exception as e:
+            bad = os.path.join(a.out, f"raw_{ts}_b{bi}.txt")
+            open(bad, "w", encoding="utf-8").write(text)
+            print(f"  JSON 解析失败: {e}；原始回复存 {bad}（可手工抢救）")
+    if not tpls:
+        print("没有可用模板")
         sys.exit(1)
 
     n_ok, n_bad = 0, 0
