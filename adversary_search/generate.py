@@ -7,7 +7,7 @@ pool_screen.py 粗筛。API key 读环境变量 DASHSCOPE_API_KEY。
 用法：
   python generate.py --dry-run                 # 只看 prompt，不调 API
   python generate.py --n 10                    # 生成 10 个模板到 llm_pool/
-  python generate.py --n 10 --model qwen-max   # 换模型
+  python generate.py --n 10 --model qwen-max   # 换模型（默认 qwen3.8-max，Token Plan 网关）
   python generate.py --n 10 --temperature 1.1  # 加多样性
 """
 
@@ -28,8 +28,8 @@ if hasattr(sys.stdout, 'buffer'):
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import template_schema
 
-API_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"
-DEFAULT_MODEL = "qwen3-max"
+API_URL = os.environ.get("QWEN_BASE_URL", "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1").rstrip("/") + "/chat/completions"
+DEFAULT_MODEL = "qwen3.8-max"
 
 SYSTEM_PROMPT = """你是调度理论研究员，任务是为"在线 makespan 调度（P|online,list|Cmax）竞争比下界"设计对抗实例模板。
 只输出 JSON 数组（不要 markdown 代码块、不要解释文字）。
