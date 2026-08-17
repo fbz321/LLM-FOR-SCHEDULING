@@ -100,7 +100,7 @@ def main():
         for fn, tpl, err in chunk:
             blocks.append(f"### 模板（文件 {fn}）\n错误：{err}\n原模板 JSON：\n"
                           + json.dumps(tpl, ensure_ascii=False))
-        user = REPAIR_USER_TMPL.format(k=len(chunk), blocks="\n\n".join(blocks))
+        user = REPAIR_USER_TMPL.replace("{k}", str(len(chunk))).replace("{blocks}", "\n\n".join(blocks))
         print(f"\n修复批次 {bi // a.per_call + 1}（{len(chunk)} 个）...")
         try:
             text, usage = call_qwen(api_key, model,
