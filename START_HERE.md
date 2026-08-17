@@ -41,7 +41,7 @@ export DEEPSEEK_API_KEY=sk-...   # 或放 .env（已被 .gitignore 排除，勿�
 ```bash
 cd adversary_search
 python m4_search.py --m 4 --grid 207,500,1000 --depth 9 --play     # 复现 FKT 1.707
-python template_eval.py --seed fkt                                  # 模板求值冒烟（期望 1.707）
+python template_eval.py --seed fkt                                  # 模板求值冒烟（期望 1.707；模板=JSON，见 adversary_search/SCHEMA.md）
 python template_eval.py --seed braun                                # 期望 >= c1 ~ 1.731019
 python template_eval.py --seed rudin --eps 0.01 --order rev         # 期望 >= sqrt(3)-eps
 python template_eval.py --seed rudin --eps 0.0001 --order rev --check 1.731  # 深模板用阈值模式（省内存）
