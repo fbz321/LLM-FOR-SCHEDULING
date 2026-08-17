@@ -83,16 +83,39 @@ def user_prompt(n):
 只输出 JSON 数组。"""
 
 
-def call_qwen(api_key, model, messages, temperature, max_tokens):
+def call_qwen(api_key, model, messages, temperature, max_tokens, no_think=False):
+    """流式调用（reasoning 模型生成慢，流式可避免读超时）。"""
     headers = {"Authorization": f"Bearer {api_key}",
                "Content-Type": "application/json"}
     body = {"model": model, "messages": messages,
-            "temperature": temperature, "max_tokens": max_tokens}
-    r = requests.post(API_URL, headers=headers, json=body, timeout=300)
+            "temperature": temperature, "max_tokens": max_tokens,
+            "stream": True}
+    if no_think:
+        body["enable_thinking"] = False
+    r = requests.post(API_URL, headers=headers, json=body,
+                      timeout=(30, 1800), stream=True)
     if r.status_code != 200:
         raise RuntimeError(f"API {r.status_code}: {r.text[:300]}")
-    data = r.json()
-    return data["choices"][0]["message"]["content"], data.get("usage", {})
+    parts, usage = [], {}
+    for line in r.iter_lines(decode_unicode=True):
+        if not line or not line.startswith("data:"):
+            continue
+        payload = line[5:].strip()
+        if payload == "[DONE]":
+            break
+        try:
+            chunk = json.loads(payload)
+        except json.JSONDecodeError:
+            continue
+        if chunk.get("usage"):
+            usage = chunk["usage"]
+        ch = chunk.get("choices") or [{}]
+        delta = ch[0].get("delta") or {}
+        if delta.get("content"):
+            parts.append(delta["content"])
+            print(".", end="", flush=True)
+    print()
+    return "".join(parts), usage
 
 
 def extract_json_array(text):
@@ -111,6 +134,7 @@ def main():
     ap.add_argument("--model", type=str, default=DEFAULT_MODEL)
     ap.add_argument("--temperature", type=float, default=1.0)
     ap.add_argument("--max-tokens", type=int, default=8000)
+    ap.add_argument("--no-think", action="store_true", help="关闭思考模式（更快）")
     ap.add_argument("--out", type=str,
                     default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "llm_pool"))
     ap.add_argument("--dry-run", action="store_true")
@@ -136,7 +160,7 @@ def main():
     text, usage = call_qwen(api_key, a.model,
                             [{"role": "system", "content": system},
                              {"role": "user", "content": user}],
-                            a.temperature, a.max_tokens)
+                            a.temperature, a.max_tokens, a.no_think)
     dt = time.time() - t0
     print(f"API 调用 {dt:.1f}s, usage={usage}")
 
