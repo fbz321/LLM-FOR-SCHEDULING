@@ -81,7 +81,7 @@ def main():
     ap.add_argument("--dir", required=True)
     ap.add_argument("--popsize", type=int, default=15)
     ap.add_argument("--maxiter", type=int, default=80)
-    ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--workers", type=int, default=1)
     a = ap.parse_args()
 
     try:
