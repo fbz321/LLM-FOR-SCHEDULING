@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "name": "three-layer probe (4a+4b+4c+1)",
+  "description": "种子=FKT；变异点：加第三层 4xc。未优化尺寸的探针，测漏斗",
+  "m": 4,
+  "params": [
+    { "name": "a", "value": 0.15, "free": true, "bounds": [0.05, 0.4] },
+    { "name": "b", "value": 0.4, "free": true, "bounds": [0.2, 0.7] },
+    { "name": "c", "value": 0.8, "free": true, "bounds": [0.5, 1.0] }
+  ],
+  "layers": [
+    { "emit": [ { "repeat": 4, "size": "a" } ] },
+    { "emit": [ { "repeat": 4, "size": "b" } ] },
+    { "emit": [ { "repeat": 4, "size": "c" } ] }
+  ],
+  "final": [ { "repeat": 1, "size": "1" } ],
+  "order": "fwd"
+}

@@ -1,4 +1,4 @@
-﻿# START_HERE — 新机器/新会话接手指南
+# START_HERE — 新机器/新会话接手指南
 
 > 本仓库 = 在线调度竞争比下界研究：**Lean 4 机械化证明库** + **AI 辅助对抗搜索**。
 > 目标：把 P|online,list|Cmax 的下界从已知结果继续推进（m=4 间隙 [√3, 26/15]；渐近间隙 [1.88, 1.9201]）。
@@ -41,7 +41,7 @@ export DEEPSEEK_API_KEY=sk-...   # 或放 .env（已被 .gitignore 排除，勿�
 ```bash
 cd adversary_search
 python m4_search.py --m 4 --grid 207,500,1000 --depth 9 --play     # 复现 FKT 1.707
-python template_eval.py --seed fkt                                  # 模板求值冒烟（期望 1.707）
+python template_eval.py --seed fkt                                  # 模板求值冒烟（期望 1.707；模板=JSON，见 adversary_search/SCHEMA.md）
 python template_eval.py --seed braun                                # 期望 >= c1 ~ 1.731019
 python template_eval.py --seed rudin --eps 0.01 --order rev         # 期望 >= sqrt(3)-eps
 python template_eval.py --seed rudin --eps 0.0001 --order rev --check 1.731  # 深模板用阈值模式（省内存）
@@ -65,3 +65,24 @@ python run_router.py --target 1.89 --max-iterations 20              # LLM 循环
 - `.env` 含 API key，永不提交（gitignore 已排除）
 - 深模板精确求值吃内存（33 作业级需 64–128GB），优先用 `--check` 阈值模式
 - `adversary_search/RESULTS.md` 是所有搜索结果的唯一登记处，跑完实验必须记录
+
+
+## autodl 服务器踩坑实录（2026-08-17，已解决）
+
+1. **`elan-init.org` DNS 解析失败**（autodl 机房常见）：官方一键脚本用不了。
+   解法：从 GitHub release 直接装 elan 二进制：
+   ```bash
+   curl -sSfL -o /tmp/elan.tar.gz https://github.com/leanprover/elan/releases/latest/download/elan-x86_64-unknown-linux-gnu.tar.gz
+   cd /tmp && tar xzf elan.tar.gz && ./elan-init -y --default-toolchain none
+   echo 'export PATH=$HOME/.elan/bin:$PATH' >> ~/.bashrc
+   ```
+   之后 `lake` 首次运行会自动从 `releases.lean-lang.org` 装工具链（该域名可解析，无需代理）。
+2. **GitHub 克隆/下载慢**：先开学术加速 `source /etc/network_turbo`，
+   会设好 `http_proxy/https_proxy`。mathlib 全量克隆 13MB/min → 开代理后几分钟搞定。
+   每个非交互 shell（nohup/cron）里都要重新 source 一次。
+3. **Python**：镜像自带 miniconda 但不在非交互 PATH，用 `/root/miniconda3/bin/python`；
+   依赖只有 numpy/scipy。
+4. **仓库放数据盘**：`git clone ... /root/autodl-tmp/LLM-FOR-SCHEDULING`
+   （系统盘只有 30G，`.lake` 构建后 ~10G+）。
+5. 首次完整流程耗时参考（32 核实例）：工具链 ~5min，`lake exe cache get` ~8min（8679 文件），
+   `lake build` ~5min（8725 jobs，0 error）。

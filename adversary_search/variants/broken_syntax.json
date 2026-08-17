@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "name": "broken syntax test",
+  "description": "故意语法错误，验证第 1 级拦截",
+  "m": 4,
+  "params": [ { "name": "a", "value": 0.2 } ],
+  "layers": [ { "emit": [ { "repeat": 4, "size": "2*a +" } ] } ],
+  "final": [ { "repeat": 1, "size": "1" } ],
+  "order": "fwd"
+}

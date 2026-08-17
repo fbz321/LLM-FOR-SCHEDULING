@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "name": "FKT (Faigle-Kern-Turan, m=4)",
+  "description": "两层结构：4 个小作业 a + 4 个中作业 b + 终作业 1。已知最优 a~0.2071, b=0.5，值 1.707 = 1+sqrt(2)/2 的有理逼近。",
+  "m": 4,
+  "params": [
+    { "name": "a", "value": 0.207, "free": true, "bounds": [0.05, 0.5] },
+    { "name": "b", "value": 0.5, "free": true, "bounds": [0.3, 1.0] }
+  ],
+  "layers": [
+    { "emit": [ { "repeat": 4, "size": "a" } ] },
+    { "emit": [ { "repeat": 4, "size": "b" } ] }
+  ],
+  "final": [ { "repeat": 1, "size": "1" } ],
+  "order": "fwd",
+  "known_value": 1.707
+}
