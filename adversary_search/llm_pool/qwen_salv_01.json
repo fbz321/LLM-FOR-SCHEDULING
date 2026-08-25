@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "name": "FKT_Perturb_a",
+  "description": "种子=FKT1995；变异点=将第一层尺寸a参数化为c的函数以探索局部极值。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.708
+    }
+  ],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(c-1)/(c+1)"
+    },
+    {
+      "name": "b",
+      "expr": "1/2"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "c**2-2*c+1-0.001",
+      "guess": 1.707
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

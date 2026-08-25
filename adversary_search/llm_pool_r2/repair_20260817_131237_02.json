@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "name": "FKT_ThreeLayer_r1",
+  "description": "种子=FKT1995；变异点=增加中间过渡层以延迟终作业触发，尝试突破1.707。修复：更换方程为(c-1)*(2*c-1)=0的变形或直接使用标准FKT方程2*c**2-4*c+1=0保证a,b,d全正。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.707
+    }
+  ],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(c-1)/c"
+    },
+    {
+      "name": "b",
+      "expr": "(2-c)/2"
+    },
+    {
+      "name": "d",
+      "expr": "1-c+b"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "2*c**2-4*c+1",
+      "guess": 1.707
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "d"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

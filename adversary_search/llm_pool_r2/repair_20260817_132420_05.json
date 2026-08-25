@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "name": "Rudin_Terminal_Scale_r1",
+  "description": "种子=Rudin2004；变异点=终作业尺寸改为3*A_first以适应非对称负载。修复：同Rudin_Sqrt3_Std_r1，V/M由eps导出保证B>0；仅修改final系数，其余结构不变。",
+  "m": 4,
+  "params": [
+    {
+      "name": "eps",
+      "value": 0.001
+    }
+  ],
+  "defs": [
+    {
+      "name": "V",
+      "expr": "sqrt(3)-1-eps"
+    },
+    {
+      "name": "M",
+      "expr": "(3*V-2)/2"
+    }
+  ],
+  "recurrence": {
+    "init": {
+      "S": "1",
+      "A": "1/(2*V)",
+      "B": "(1-A-M*A)/3"
+    },
+    "step": {
+      "S": "M*A",
+      "A": "(A-2*B)/4",
+      "B": "(S-A-M*A)/3"
+    },
+    "until": "A/S >= V",
+    "max_iter": 60
+  },
+  "layers": [
+    {
+      "loop": {
+        "var": "i",
+        "from": 0,
+        "to": "n"
+      },
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "B"
+        },
+        {
+          "repeat": 3,
+          "size": "A"
+        },
+        {
+          "repeat": 1,
+          "size": "where(i==n, S-A, A+2*A_next)"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "3*A_first"
+    }
+  ],
+  "order": "rev"
+}

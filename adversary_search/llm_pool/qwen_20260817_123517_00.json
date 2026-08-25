@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "name": "FKT_Perturbed_4x2",
+  "description": "种子=FKT 1.707；变异点=将标准两层结构扩展为三层几何递减序列(a,b,c)并引入代数约束以打破对称性，迫使在线算法在中间层产生不可逆的负载不均。",
+  "m": 4,
+  "params": [
+    {
+      "name": "a",
+      "value": 0.22
+    },
+    {
+      "name": "b",
+      "value": 0.52
+    },
+    {
+      "name": "c",
+      "value": 0.85
+    }
+  ],
+  "defs": [
+    {
+      "name": "ratio_target",
+      "expr": "1.715"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "4*c**3 - 12*c**2 + 9*c - 2",
+      "guess": 0.85
+    }
+  ],
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "c"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

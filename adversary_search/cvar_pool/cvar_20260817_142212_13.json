@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "name": "cvar_rudin_eps0.005_fm2_bc2_rev",
+  "description": "受约束变异（Rudin 族，递推锁死）：eps=0.005, final_mult=2, big_coeff=2, order=rev。检验值对系数扰动的稳健性。",
+  "m": 4,
+  "params": [
+    {
+      "name": "eps",
+      "value": 0.005,
+      "free": true,
+      "bounds": [
+        0.0001,
+        0.009
+      ]
+    }
+  ],
+  "defs": [
+    {
+      "name": "V",
+      "expr": "sqrt(3)-1-eps"
+    },
+    {
+      "name": "M",
+      "expr": "(3*V-2)/2"
+    }
+  ],
+  "recurrence": {
+    "init": {
+      "S": "1",
+      "A": "1/(2*V)",
+      "B": "1 - A - M*A"
+    },
+    "step": {
+      "S": "M*A",
+      "A": "(A-2*B)/4",
+      "B": "where(A/S >= V, S-A, S-A-M*A)"
+    },
+    "until": "A/S >= V",
+    "max_iter": 60
+  },
+  "layers": [
+    {
+      "loop": {
+        "var": "i",
+        "from": 0,
+        "to": "n"
+      },
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "B"
+        },
+        {
+          "repeat": 3,
+          "size": "A"
+        },
+        {
+          "repeat": 1,
+          "size": "where(i==n, A, A+2*A_next)"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "2*A_first"
+    }
+  ],
+  "order": "rev",
+  "known_value_note": ">= sqrt(3)-eps；eps=0.01 时 >= 1.7220508",
+  "base_seed": "rudin",
+  "knobs": {
+    "eps": 0.005,
+    "final_mult": 2,
+    "big_coeff": 2,
+    "order": "rev"
+  }
+}
