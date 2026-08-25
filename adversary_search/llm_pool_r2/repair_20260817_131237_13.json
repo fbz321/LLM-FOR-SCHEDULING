@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "name": "FKT_Scaled_Final_r1",
+  "description": "种子=FKT1995；变异点=终作业尺寸缩放为c的线性函数而非固定1。修复：调整方程为c^3-3c^2+3c-1=0在(1,2)内的有效根附近取值，重定义a,b,f表达式保证正性。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.707
+    }
+  ],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(c-1)/2"
+    },
+    {
+      "name": "b",
+      "expr": "(3-c)/4"
+    },
+    {
+      "name": "f",
+      "expr": "abs(2*c-3)+0.001"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "c**3-3*c**2+3*c-1",
+      "guess": 1.707
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "f"
+    }
+  ],
+  "order": "fwd"
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "name": "Braun_Geometric_Shift",
+  "description": "种子=Braun c1≈1.7310；变异点=将原多项式6c³−28c²+38c−13替换为扰动版本以探索更高竞争比区域，同时调整层内作业数从4/4/4/3变为4/4/3/4模式。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.735
+    },
+    {
+      "name": "L0",
+      "value": 0.45
+    },
+    {
+      "name": "S0",
+      "value": 0.38
+    },
+    {
+      "name": "L1",
+      "value": 0.62
+    },
+    {
+      "name": "S1",
+      "value": 0.29
+    }
+  ],
+  "defs": [
+    {
+      "name": "S0",
+      "expr": "(c-1)/(2-c)"
+    },
+    {
+      "name": "L0",
+      "expr": "1-S0"
+    },
+    {
+      "name": "S1",
+      "expr": "S0*(c-1)/(2-c)"
+    },
+    {
+      "name": "L1",
+      "expr": "S0-S1"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "6*c**3-29*c**2+40*c-14",
+      "guess": 1.735
+    }
+  ],
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "L0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "S0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 3,
+          "size": "L1"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "S1"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

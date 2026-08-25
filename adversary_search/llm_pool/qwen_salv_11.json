@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "name": "Hybrid_FKT_Rudin",
+  "description": "种子=FKT1995+Rudin2004混合；变异点=FKT双层后接Rudin递推尾部。",
+  "m": 4,
+  "params": [
+    {
+      "name": "V",
+      "value": 0.73
+    }
+  ],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(V-0.5)/V"
+    },
+    {
+      "name": "M",
+      "expr": "(3*V-2)/2"
+    }
+  ],
+  "solve": [
+    {
+      "name": "V",
+      "equation": "2*V**3-5*V**2+2*V+1",
+      "guess": 0.73
+    }
+  ],
+  "recurrence": {
+    "init": {
+      "S": "1-4*a",
+      "A": "a/2",
+      "B": "(S-A-M*A)/3"
+    },
+    "step": {
+      "S": "M*A",
+      "A": "(A-2*B)/4",
+      "B": "(S-A-M*A)/3"
+    },
+    "until": "A/S >= V",
+    "max_iter": 30
+  },
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "loop": {
+        "var": "i",
+        "from": 0,
+        "to": "n"
+      },
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "B"
+        },
+        {
+          "repeat": 3,
+          "size": "A"
+        },
+        {
+          "repeat": 1,
+          "size": "where(i==n, S-A, A+2*A_next)"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "2*A_first"
+    }
+  ],
+  "order": "rev"
+}

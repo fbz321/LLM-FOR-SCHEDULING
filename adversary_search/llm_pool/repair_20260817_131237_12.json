@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "name": "Novel_Double_Final_r1",
+  "description": "种子=全新结构；变异点=双终作业触发机制，迫使调度器预留两台机器。修复：将代数约束替换为(c-1)^2*(2c-5)=0的非负根c=2.5附近的稳定构造，确保a,b>0且避免除零。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.75
+    }
+  ],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(c-1)/(3-c)"
+    },
+    {
+      "name": "b",
+      "expr": "1-a"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "c**3-6*c**2+11*c-6",
+      "guess": 1.75
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a*b"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    },
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

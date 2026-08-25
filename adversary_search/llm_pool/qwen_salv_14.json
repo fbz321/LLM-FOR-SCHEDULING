@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "name": "Novel_Double_Final",
+  "description": "种子=全新结构；变异点=双终作业触发机制，迫使调度器预留两台机器。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.725
+    }
+  ],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(c-1)/(2*c-3)"
+    },
+    {
+      "name": "b",
+      "expr": "1-a"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "2*c**3-9*c**2+12*c-5",
+      "guess": 1.725
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a*b"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    },
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

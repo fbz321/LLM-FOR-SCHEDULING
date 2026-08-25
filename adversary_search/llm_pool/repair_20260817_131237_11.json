@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "name": "Novel_Asymmetric_4_3_r1",
+  "description": "种子=全新结构；变异点=交替4/3作业数打破对称性，独立代数约束。修复：调整guess至1.732并增加y下限保护。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.732
+    }
+  ],
+  "defs": [
+    {
+      "name": "x",
+      "expr": "(c-1)/c"
+    },
+    {
+      "name": "y_raw",
+      "expr": "(2-c)/3"
+    },
+    {
+      "name": "y",
+      "expr": "where(y_raw > 1e-9, y_raw, 1e-9)"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "3*c**3-10*c**2+9*c-2",
+      "guess": 1.732
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "x"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 3,
+          "size": "y"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "1-x-y"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 3,
+          "size": "x*y"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

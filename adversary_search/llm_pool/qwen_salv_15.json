@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "name": "FKT_Scaled_Final",
+  "description": "种子=FKT1995；变异点=终作业尺寸缩放为c的线性函数而非固定1。",
+  "m": 4,
+  "params": [
+    {
+      "name": "c",
+      "value": 1.709
+    }
+  ],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(c-1)/(c+2)"
+    },
+    {
+      "name": "b",
+      "expr": "(3-c)/4"
+    },
+    {
+      "name": "f",
+      "expr": "2*c-3"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "c**3-4*c**2+4*c-1",
+      "guess": 1.709
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "f"
+    }
+  ],
+  "order": "fwd"
+}
