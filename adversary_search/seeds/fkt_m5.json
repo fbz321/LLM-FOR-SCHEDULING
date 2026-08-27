@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "name": "FKT m=5",
+  "description": "FKT 两层结构搬到 m=5：5xa + 5xb + 终作业 1。a~0.2071, b=0.5 时理论值 1+sqrt(2)/2~1.707。回归验证：真 OPT 语义下 m=5 基线。",
+  "m": 5,
+  "params": [
+    { "name": "a", "value": 0.2071, "free": true, "bounds": [0.05, 0.5] },
+    { "name": "b", "value": 0.5, "free": true, "bounds": [0.3, 1.0] }
+  ],
+  "layers": [
+    { "emit": [ { "repeat": 5, "size": "a" } ] },
+    { "emit": [ { "repeat": 5, "size": "b" } ] }
+  ],
+  "final": [ { "repeat": 1, "size": "1" } ],
+  "order": "fwd",
+  "known_value": 1.707
+}
