@@ -2,7 +2,7 @@
 """EXP-D：魔法常数自动发现闭环（优化 -> 猜代数 -> 精确验证）。
 
 族：几何层塔（终作业 = 1 固定，缩放不变性）
-  层 k = 0..L-1：4 个尺寸 s0*t^k 的作业；终作业 1。
+  层 k = 0..L-1：m 个尺寸 s0*t^k 的作业（默认 m=4）；终作业 1。
   FKT = L=2 特例（理论最优 t = 1+sqrt(2)，s0 = 1-sqrt(2)/2，值 1+sqrt(2)/2）。
 
 闭环：
@@ -36,29 +36,29 @@ def dec2frac(x):
     return Fraction(x).limit_denominator(DENOM_CAP)
 
 
-def build_geo_jobs(s0, t, L):
+def build_geo_jobs(s0, t, L, m=4):
     jobs = []
     sz = Decimal(s0)
     tt = Decimal(t)
     for _ in range(L):
-        jobs.extend([dec2frac(sz)] * 4)
+        jobs.extend([dec2frac(sz)] * m)
         sz = sz * tt
     jobs.append(Fraction(1))
     return jobs
 
 
-def eval_value(s0, t, L):
+def eval_value(s0, t, L, m=4):
     jobs = build_geo_jobs(s0, t, L)
-    val, states = template_eval.eval_sequence(jobs, 4)
+    val, states = template_eval.eval_sequence(jobs, m)
     return float(val), val, states
 
 
-def optimize(L, popsize, maxiter):
+def optimize(L, popsize, maxiter, m=4):
     from scipy.optimize import differential_evolution
 
     def obj(x):
         try:
-            v, _, _ = eval_value(x[0], x[1], L)
+            v, _, _ = eval_value(x[0], x[1], L, m)
         except Exception:
             return 1e6
         return -v
@@ -67,7 +67,7 @@ def optimize(L, popsize, maxiter):
     res = differential_evolution(obj, bounds, popsize=popsize, maxiter=maxiter,
                                  workers=1, updating="deferred", tol=1e-12,
                                  seed=0, polish=True)
-    v, val_frac, states = eval_value(res.x[0], res.x[1], L)
+    v, val_frac, states = eval_value(res.x[0], res.x[1], L, m)
     return res.x[0], res.x[1], v, val_frac, states
 
 
@@ -167,6 +167,7 @@ def identify_and_verify(x, L, other_param, is_t):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--L", type=str, default="2,3")
+    ap.add_argument("--m", type=int, default=4)
     ap.add_argument("--popsize", type=int, default=15)
     ap.add_argument("--maxiter", type=int, default=40)
     ap.add_argument("--out", type=str,
@@ -179,7 +180,7 @@ def main():
     for L in Ls:
         t0 = time.time()
         print(f"=== L={L} DE 优化 ===", flush=True)
-        s0, t, v, val_frac, states = optimize(L, a.popsize, a.maxiter)
+        s0, t, v, val_frac, states = optimize(L, a.popsize, a.maxiter, a.m)
         dt = time.time() - t0
         print(f"  数值最优: s0={s0:.9f} t={t:.9f} 值={v:.9f} states={states} "
               f"{dt:.0f}s", flush=True)
@@ -203,7 +204,7 @@ def main():
 
     # 报告
     rep = ["# EXP-D：魔法常数自动发现（几何层塔族）", "",
-           f"DE popsize={a.popsize} maxiter={a.maxiter}；"
+           f"DE popsize={a.popsize} maxiter={a.maxiter}；m={a.m}；"
            "族：4x(s0*t^k), k=0..L-1，终作业 1", "",
            "| L | s0* | t* | 值* | t 身份 | s0 身份 | 重建值(t) | 重建值(s0) | 耗时 |",
            "|---|---|---|---|---|---|---|---|---|"]

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "name": "pseudo_m5 (Tan-Li 2015, q=1)",
+  "description": "Tan & Li 2015 伪下界对抗, m=5, q=1, gamma=37/48=x_1^5。五阶段: 5xa + 5xb + 4x(1/2) + 1xd + 1x1，a=(1-g)(g-1/2)=143/2304, b=g(g-1/2)=481/2304, d=(4-g)/5=31/48。伪上界 85/48~1.7708；本模板在真 OPT 语义下求值，测真实下界值。种子来源: PseudoLowerBoundM5.lean。",
+  "m": 5,
+  "solve": [
+    { "name": "g", "equation": "48*g - 37", "guess": 0.77 }
+  ],
+  "defs": [
+    { "name": "a", "expr": "(1-g)*(g-1/2)" },
+    { "name": "b", "expr": "g*(g-1/2)" },
+    { "name": "d", "expr": "(4-g)/5" }
+  ],
+  "layers": [
+    { "emit": [ { "repeat": 5, "size": "a" } ] },
+    { "emit": [ { "repeat": 5, "size": "b" } ] },
+    { "emit": [ { "repeat": 4, "size": "1/2" } ] },
+    { "emit": [ { "repeat": 1, "size": "d" } ] }
+  ],
+  "final": [ { "repeat": 1, "size": "1" } ],
+  "order": "fwd",
+  "known_value": null
+}
