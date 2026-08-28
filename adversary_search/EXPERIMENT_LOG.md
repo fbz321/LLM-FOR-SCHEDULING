@@ -255,3 +255,14 @@ papers/_inbox/Improved_bounds_for_the_online.pdf，3.06MB 微缩胶片扫描件�
 1. check_m5 结果 → 若 PASS：m=5 构造获数值证书，进入有理化+Lean 形式化规划
 2. 若 FAIL：按层二分定位 OCR 错误/自适应分支问题
 3. m=6/m=7 序列种子（Table A3/A4）同法验证
+
+### 补充（12:30）：m=7 验证 **PASS** 🎉
+
+- 种子 seeds/rudin2001_m7.json（Table A4，57 作业 13 尺寸，×10^14 整数化）
+- check tau=1.7926675：**PASS**，memo=159 状态，viol=90，Phase 2 耗时 0.0s
+- 意义：Rudin 2001 的 m=7 下界 1.792667559 获独立数值验证；
+  验证管线语义（固定序列+前缀 max）与论文自适应构造完全吻合；
+  构造极紧（所有调度路径秒撞违例前缀）
+- 并行：m=5（tau=1.748334）、m=6（tau=1.7740979，Table A3 由 200dpi
+  页面图像人工核对重建，91 作业）Phase 1 进行中
+- 驱动通用化：check_rudin.py（--seed/--tau/--cache 参数化）
