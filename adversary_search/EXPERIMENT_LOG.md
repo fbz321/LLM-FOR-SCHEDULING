@@ -266,3 +266,12 @@ papers/_inbox/Improved_bounds_for_the_online.pdf，3.06MB 微缩胶片扫描件�
 - 并行：m=5（tau=1.748334）、m=6（tau=1.7740979，Table A3 由 200dpi
   页面图像人工核对重建，91 作业）Phase 1 进行中
 - 驱动通用化：check_rudin.py（--seed/--tau/--cache 参数化）
+
+### 补充（16:45）：m=5 验证 **PASS** + 目标升级
+
+- m=5：RESULT: PASS tau=1.748334（memo=6909, viol=4746, Phase 2 0.0s）——
+  Rudin 2001 m=5 下界获独立数值验证
+- m=6：Phase 1 至 prefix 77/91，尾部单前缀耗时 1337→2811s 递增，
+  串行超 12h 上限；缓存保 77 前缀；对策=前缀并行（未执行，待批）
+- 目标升级：超越论文（>1.74833497030641）。策略记录于
+  docs/research/M5_ADVERSARY_SKETCH.md v0.2 补遗（R1-R4 路线）
