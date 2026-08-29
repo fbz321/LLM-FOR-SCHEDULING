@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "name": "Rudin deeper (eps=0.0001)",
+  "description": "层递推构造：V=sqrt(3)-1-eps, M=(3V-2)/2。状态 (S,A,B) 递推，首个 A/S>=V 的层为终止层 n（终止层 B 夹逼为 S-A）。每层 = 4xB + 3xA + (顶层 A，否则 A+2*A_next)。层序 rev（论文顺序，层 n 在前；fwd 只有 5/3）。终作业 2*A_first。值 >= sqrt(3)-eps。",
+  "m": 4,
+  "params": [
+    {
+      "name": "eps",
+      "value": 0.0001,
+      "free": true,
+      "bounds": [
+        0.0001,
+        0.009
+      ]
+    }
+  ],
+  "defs": [
+    {
+      "name": "V",
+      "expr": "sqrt(3)-1-eps"
+    },
+    {
+      "name": "M",
+      "expr": "(3*V-2)/2"
+    }
+  ],
+  "recurrence": {
+    "init": {
+      "S": "1",
+      "A": "1/(2*V)",
+      "B": "1 - A - M*A"
+    },
+    "step": {
+      "S": "M*A",
+      "A": "(A-2*B)/4",
+      "B": "where(A/S >= V, S-A, S-A-M*A)"
+    },
+    "until": "A/S >= V",
+    "max_iter": 60
+  },
+  "layers": [
+    {
+      "loop": {
+        "var": "i",
+        "from": 0,
+        "to": "n"
+      },
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "B"
+        },
+        {
+          "repeat": 3,
+          "size": "A"
+        },
+        {
+          "repeat": 1,
+          "size": "where(i==n, A, A+2*A_next)"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "2*A_first"
+    }
+  ],
+  "order": "rev",
+  "known_value_note": ">= sqrt(3)-eps；eps=0.01 时 >= 1.7220508"
+}

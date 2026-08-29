@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "name": "Braun-Chung-Graham 2025 Theorem 2 r=1 (absolute ratio c1)",
+  "description": "17 作业：L0x4, S0x4, L1x4, S1x3, Sp1, F。c1 是 6c^3-28c^2+38c-13=0 在 [5/3,2] 的根（~1.731019），所有尺寸是 c1 的有理函数。值 = c1（自适应前缀取 max）。",
+  "m": 4,
+  "solve": [
+    { "name": "c", "equation": "6*c**3 - 28*c**2 + 38*c - 13", "guess": 1.73 }
+  ],
+  "defs": [
+    { "name": "L0", "expr": "1" },
+    { "name": "S0", "expr": "(c-1)/(2-c)" },
+    { "name": "L1", "expr": "3/(3*c-5) - (c-1)/(2-c)" },
+    { "name": "S1", "expr": "6/(3*c-5) + (3-c)/(2-c)" },
+    { "name": "Sp1", "expr": "S1 + 2*S0" },
+    { "name": "F", "expr": "2*S1" }
+  ],
+  "layers": [
+    { "emit": [ { "repeat": 4, "size": "L0" } ] },
+    { "emit": [ { "repeat": 4, "size": "S0" } ] },
+    { "emit": [ { "repeat": 4, "size": "L1" } ] },
+    { "emit": [ { "repeat": 3, "size": "S1" },
+                { "repeat": 1, "size": "Sp1" } ] }
+  ],
+  "final": [ { "repeat": 1, "size": "F" } ],
+  "order": "fwd",
+  "known_value": 1.7310194
+}
