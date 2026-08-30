@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "name": "Braun_c1_Std_r1",
+  "description": "种子=Braun2001；变异点=标准6次多项式根构造，验证c≈1.7310下界。修复：使用solve锁定c为6c^3-28c^2+38c-13=0在[1.73,1.74]的根，确保L0=(2-c)/(2-c)等表达式为正。",
+  "m": 4,
+  "params": [],
+  "defs": [
+    {
+      "name": "S0",
+      "expr": "(c-1)/(2-c)"
+    },
+    {
+      "name": "L0",
+      "expr": "1-S0"
+    },
+    {
+      "name": "L1",
+      "expr": "(2*c-3)/(2-c)"
+    },
+    {
+      "name": "S1",
+      "expr": "(3-2*c)/(2-c)"
+    },
+    {
+      "name": "Sp1",
+      "expr": "c-1"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "6*c**3-28*c**2+38*c-13",
+      "guess": 1.731
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "L0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "S0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "L1"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 3,
+          "size": "S1"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "Sp1"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

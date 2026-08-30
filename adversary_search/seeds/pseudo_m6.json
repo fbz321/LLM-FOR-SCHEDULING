@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "name": "pseudo_m6 (Tan-Li 2015, q=1)",
+  "description": "Tan & Li 2015 伪下界对抗, m=6, q=1, gamma=4/5=x_1^6。五阶段: 6xa + 6xb + 5x(1/2) + 1xd + 1x1，a=(1-g)(g-1/2)=3/50, b=g(g-1/2)=6/25, d=(5-g)/6=7/10。伪上界 9/5=1.8；本模板在真 OPT 语义下求值，测真实下界值。种子来源: PseudoLowerBoundM6.lean。",
+  "m": 6,
+  "solve": [
+    { "name": "g", "equation": "5*g - 4", "guess": 0.8 }
+  ],
+  "defs": [
+    { "name": "a", "expr": "(1-g)*(g-1/2)" },
+    { "name": "b", "expr": "g*(g-1/2)" },
+    { "name": "d", "expr": "(5-g)/6" }
+  ],
+  "layers": [
+    { "emit": [ { "repeat": 6, "size": "a" } ] },
+    { "emit": [ { "repeat": 6, "size": "b" } ] },
+    { "emit": [ { "repeat": 5, "size": "1/2" } ] },
+    { "emit": [ { "repeat": 1, "size": "d" } ] }
+  ],
+  "final": [ { "repeat": 1, "size": "1" } ],
+  "order": "fwd",
+  "known_value": null
+}

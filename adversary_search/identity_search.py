@@ -2,7 +2,7 @@
 """EXP-D：魔法常数自动发现闭环（优化 -> 猜代数 -> 精确验证）。
 
 族：几何层塔（终作业 = 1 固定，缩放不变性）
-  层 k = 0..L-1：4 个尺寸 s0*t^k 的作业；终作业 1。
+  层 k = 0..L-1：m 个尺寸 s0*t^k 的作业（默认 m=4）；终作业 1。
   FKT = L=2 特例（理论最优 t = 1+sqrt(2)，s0 = 1-sqrt(2)/2，值 1+sqrt(2)/2）。
 
 闭环：
@@ -36,29 +36,29 @@ def dec2frac(x):
     return Fraction(x).limit_denominator(DENOM_CAP)
 
 
-def build_geo_jobs(s0, t, L):
+def build_geo_jobs(s0, t, L, m=4):
     jobs = []
     sz = Decimal(s0)
     tt = Decimal(t)
     for _ in range(L):
-        jobs.extend([dec2frac(sz)] * 4)
+        jobs.extend([dec2frac(sz)] * m)
         sz = sz * tt
     jobs.append(Fraction(1))
     return jobs
 
 
-def eval_value(s0, t, L):
-    jobs = build_geo_jobs(s0, t, L)
-    val, states = template_eval.eval_sequence(jobs, 4)
+def eval_value(s0, t, L, m=4):
+    jobs = build_geo_jobs(s0, t, L, m)
+    val, states = template_eval.eval_sequence(jobs, m)
     return float(val), val, states
 
 
-def optimize(L, popsize, maxiter):
+def optimize(L, popsize, maxiter, m=4):
     from scipy.optimize import differential_evolution
 
     def obj(x):
         try:
-            v, _, _ = eval_value(x[0], x[1], L)
+            v, _, _ = eval_value(x[0], x[1], L, m)
         except Exception:
             return 1e6
         return -v
@@ -67,7 +67,7 @@ def optimize(L, popsize, maxiter):
     res = differential_evolution(obj, bounds, popsize=popsize, maxiter=maxiter,
                                  workers=1, updating="deferred", tol=1e-12,
                                  seed=0, polish=True)
-    v, val_frac, states = eval_value(res.x[0], res.x[1], L)
+    v, val_frac, states = eval_value(res.x[0], res.x[1], L, m)
     return res.x[0], res.x[1], v, val_frac, states
 
 
@@ -140,7 +140,7 @@ def newton_poly(coeffs, guess, prec_digits=55):
     return x
 
 
-def identify_and_verify(x, L, other_param, is_t):
+def identify_and_verify(x, L, other_param, is_t, m=4):
     """猜 x 的代数身份并精确重建验证。is_t: x 是 t（s0=other 固定）否则 x 是 s0。"""
     g = library_guess(x)
     src = "常数库"
@@ -157,9 +157,9 @@ def identify_and_verify(x, L, other_param, is_t):
     # 精确重建：多项式的根（取 x 附近）
     xr = newton_poly(rel, x)
     if is_t:
-        v2, vf2, st2 = eval_value(other_param, xr, L)
+        v2, vf2, st2 = eval_value(other_param, xr, L, m)
     else:
-        v2, vf2, st2 = eval_value(xr, other_param, L)
+        v2, vf2, st2 = eval_value(xr, other_param, L, m)
     return {"source": src, "desc": desc, "poly": rel, "match_err": err,
             "rebuild_value": v2, "rebuild_frac": str(vf2), "states": st2}
 
@@ -167,25 +167,28 @@ def identify_and_verify(x, L, other_param, is_t):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--L", type=str, default="2,3")
+    ap.add_argument("--m", type=int, default=4)
     ap.add_argument("--popsize", type=int, default=15)
     ap.add_argument("--maxiter", type=int, default=40)
     ap.add_argument("--out", type=str,
                     default=os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                          "identity_results.md"))
     a = ap.parse_args()
+    if a.m < 1:
+        ap.error("--m must be positive")
 
     Ls = [int(x) for x in a.L.split(",")]
     rows = []
     for L in Ls:
         t0 = time.time()
         print(f"=== L={L} DE 优化 ===", flush=True)
-        s0, t, v, val_frac, states = optimize(L, a.popsize, a.maxiter)
+        s0, t, v, val_frac, states = optimize(L, a.popsize, a.maxiter, a.m)
         dt = time.time() - t0
         print(f"  数值最优: s0={s0:.9f} t={t:.9f} 值={v:.9f} states={states} "
               f"{dt:.0f}s", flush=True)
 
-        idt = identify_and_verify(t, L, s0, is_t=True)
-        ids = identify_and_verify(s0, L, t, is_t=False)
+        idt = identify_and_verify(t, L, s0, is_t=True, m=a.m)
+        ids = identify_and_verify(s0, L, t, is_t=False, m=a.m)
         if idt:
             print(f"  t 身份[{idt['source']}]: {idt['desc']} poly={idt['poly']} "
                   f"(匹配误差 {idt['match_err']:.2e}); 重建值={idt['rebuild_value']:.9f}",
@@ -203,8 +206,8 @@ def main():
 
     # 报告
     rep = ["# EXP-D：魔法常数自动发现（几何层塔族）", "",
-           f"DE popsize={a.popsize} maxiter={a.maxiter}；"
-           "族：4x(s0*t^k), k=0..L-1，终作业 1", "",
+           f"DE popsize={a.popsize} maxiter={a.maxiter}；m={a.m}；"
+           f"族：{a.m}x(s0*t^k), k=0..L-1，终作业 1", "",
            "| L | s0* | t* | 值* | t 身份 | s0 身份 | 重建值(t) | 重建值(s0) | 耗时 |",
            "|---|---|---|---|---|---|---|---|---|"]
     for r in rows:

@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "name": "Braun_Geometric_Ratio",
+  "description": "种子=Braun2001；变异点=引入几何公比r替代固定有理函数，探索连续谱。",
+  "m": 4,
+  "params": [
+    {
+      "name": "r",
+      "value": 0.57
+    }
+  ],
+  "defs": [
+    {
+      "name": "c",
+      "expr": "1+r+r**2"
+    },
+    {
+      "name": "S0",
+      "expr": "r"
+    },
+    {
+      "name": "L0",
+      "expr": "1-r"
+    }
+  ],
+  "solve": [
+    {
+      "name": "r",
+      "equation": "r**3+2*r**2-r-1",
+      "guess": 0.57
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "L0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "S0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "L0*r"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 3,
+          "size": "S0*r"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

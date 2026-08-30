@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "name": "rudin2001_m7 (thesis Table A4, exact int scaling)",
+  "description": "Rudin 2001 dissertation Table A4: m=7 adversary, claimed ratio 1.792667559. Sizes = thesis decimals x 10^14 / gcd. Verify: min_scheduler max_prefix makespan/OPT >= tau.",
+  "m": 7,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 7,
+          "size": "1424066963336"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 7,
+          "size": "16663122228497"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 7,
+          "size": "149347021864893"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 7,
+          "size": "1072117176342860"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 7,
+          "size": "4739018012647130"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 7,
+          "size": "22857098434716900"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 6,
+          "size": "94787109086836500"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "104265145112131000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "211200000000000000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "213710387010566000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "217419968756443000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "383632162481932000"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "422400000000000000"
+    }
+  ],
+  "order": "fwd",
+  "known_value": 1.792667559
+}

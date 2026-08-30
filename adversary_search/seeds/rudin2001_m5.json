@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "name": "rudin2001_m5 (thesis Table A2, exact int scaling)",
+  "description": "Rudin 2001 dissertation Table A2: m=5 adversary, claimed ratio 1.74833497030641. Sizes = thesis decimals x 10^13 / gcd (exact integers, no float error). Verify: min_scheduler max_prefix makespan/OPT >= 1.748334.",
+  "m": 5,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "33286757562613"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "209660370171070"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "722411976904251"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "2870529837950900"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "8995969959499140"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "10440793913307600"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "41486868183551900"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "125874513561792000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "143866453480790000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "571658500412044000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "1732427455462720000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "1984176482586310000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "7884196246900500000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "23875437409762800000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "27340292320688200000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 5,
+          "size": "108637629765152000000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "328957400963689000000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "376708275783215000000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "950005033523561000000"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 1,
+          "size": "1389338500662620000000"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1900010067047120000000"
+    }
+  ],
+  "order": "fwd",
+  "known_value": 1.74833497030641
+}

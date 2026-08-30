@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "name": "pseudo_m4 (Tan-Li 2015, q=1)",
+  "description": "Tan & Li 2015 伪下界对抗, m=4, q=1, gamma=11/15=x_1^4。五阶段: 4xa + 4xb + 3x(1/2) + 1xd + 1x1，a=(1-g)(g-1/2), b=g(g-1/2), d=(3-g)/4。伪上界 26/15~1.7333；本模板在真 OPT 语义下求值（自适应停止=前缀取 max），测真实下界值。种子来源: PseudoLowerBound.lean。",
+  "m": 4,
+  "solve": [
+    { "name": "g", "equation": "15*g - 11", "guess": 0.73 }
+  ],
+  "defs": [
+    { "name": "a", "expr": "(1-g)*(g-1/2)" },
+    { "name": "b", "expr": "g*(g-1/2)" },
+    { "name": "d", "expr": "(3-g)/4" }
+  ],
+  "layers": [
+    { "emit": [ { "repeat": 4, "size": "a" } ] },
+    { "emit": [ { "repeat": 4, "size": "b" } ] },
+    { "emit": [ { "repeat": 3, "size": "1/2" } ] },
+    { "emit": [ { "repeat": 1, "size": "d" } ] }
+  ],
+  "final": [ { "repeat": 1, "size": "1" } ],
+  "order": "fwd",
+  "known_value": null
+}
