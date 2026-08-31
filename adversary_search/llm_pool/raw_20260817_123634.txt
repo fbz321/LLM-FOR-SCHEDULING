@@ -1,0 +1,1228 @@
+[
+  {
+    "schema_version": 1,
+    "name": "FKT_Base_m4",
+    "description": "种子=FKT1995；变异点=标准m=4基准构造，无代数扰动，用于校验下界1.707。",
+    "m": 4,
+    "params": [
+      {
+        "name": "a",
+        "value": 0.2071
+      },
+      {
+        "name": "b",
+        "value": 0.5
+      }
+    ],
+    "defs": [],
+    "solve": [],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "a"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "b"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "FKT_Perturb_a",
+    "description": "种子=FKT1995；变异点=将第一层尺寸a参数化为c的函数以探索局部极值。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.708
+      }
+    ],
+    "defs": [
+      {
+        "name": "a",
+        "expr": "(c-1)/(c+1)"
+      },
+      {
+        "name": "b",
+        "expr": "1/2"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "c**2-2*c+1-0.001",
+        "guess": 1.707
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "a"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "b"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "FKT_ThreeLayer",
+    "description": "种子=FKT1995；变异点=增加中间过渡层以延迟终作业触发，尝试突破1.707。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.71
+      }
+    ],
+    "defs": [
+      {
+        "name": "a",
+        "expr": "(c-1)/c"
+      },
+      {
+        "name": "b",
+        "expr": "(2-c)/2"
+      },
+      {
+        "name": "d",
+        "expr": "1-c+b"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "2*c**3-7*c**2+6*c-1",
+        "guess": 1.71
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "a"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "b"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "d"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "Rudin_Sqrt3_Std",
+    "description": "种子=Rudin2004；变异点=标准√3构造rev序，验证递推S'=M*A终止条件。",
+    "m": 4,
+    "params": [
+      {
+        "name": "V",
+        "value": 0.732
+      }
+    ],
+    "defs": [
+      {
+        "name": "M",
+        "expr": "(3*V-2)/2"
+      }
+    ],
+    "solve": [
+      {
+        "name": "V",
+        "equation": "V**2+2*V-2",
+        "guess": 0.732
+      }
+    ],
+    "recurrence": {
+      "init": {
+        "S": "1",
+        "A": "1/(2*V)",
+        "B": "(1-A-M*A)/3"
+      },
+      "step": {
+        "S": "M*A",
+        "A": "(A-2*B)/4",
+        "B": "(S-A-M*A)/3"
+      },
+      "until": "A/S >= V",
+      "max_iter": 60
+    },
+    "layers": [
+      {
+        "loop": {
+          "var": "i",
+          "from": 0,
+          "to": "n"
+        },
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "B"
+          },
+          {
+            "repeat": 3,
+            "size": "A"
+          },
+          {
+            "repeat": 1,
+            "size": "where(i==n, S-A, A+2*A_next)"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "2*A_first"
+      }
+    ],
+    "order": "rev"
+  },
+  {
+    "schema_version": 1,
+    "name": "Rudin_Modified_M",
+    "description": "种子=Rudin2004；变异点=修改乘数M为(V-1)形式以改变几何收缩率。",
+    "m": 4,
+    "params": [
+      {
+        "name": "V",
+        "value": 0.72
+      }
+    ],
+    "defs": [
+      {
+        "name": "M",
+        "expr": "V-0.5"
+      }
+    ],
+    "solve": [
+      {
+        "name": "V",
+        "equation": "4*V**3-12*V**2+9*V-2",
+        "guess": 0.72
+      }
+    ],
+    "recurrence": {
+      "init": {
+        "S": "1",
+        "A": "1/(2*V)",
+        "B": "(1-A-M*A)/3"
+      },
+      "step": {
+        "S": "M*A",
+        "A": "(A-2*B)/4",
+        "B": "(S-A-M*A)/3"
+      },
+      "until": "A/S >= V",
+      "max_iter": 60
+    },
+    "layers": [
+      {
+        "loop": {
+          "var": "i",
+          "from": 0,
+          "to": "n"
+        },
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "B"
+          },
+          {
+            "repeat": 3,
+            "size": "A"
+          },
+          {
+            "repeat": 1,
+            "size": "where(i==n, S-A, A+2*A_next)"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "2*A_first"
+      }
+    ],
+    "order": "rev"
+  },
+  {
+    "schema_version": 1,
+    "name": "Rudin_B_Collapse",
+    "description": "种子=Rudin2004；变异点=强制B层在特定深度坍缩为零，简化层结构。",
+    "m": 4,
+    "params": [
+      {
+        "name": "V",
+        "value": 0.73
+      }
+    ],
+    "defs": [
+      {
+        "name": "M",
+        "expr": "(3*V-2)/2"
+      }
+    ],
+    "solve": [
+      {
+        "name": "V",
+        "equation": "V**3-3*V+1",
+        "guess": 0.73
+      }
+    ],
+    "recurrence": {
+      "init": {
+        "S": "1",
+        "A": "1/(2*V)",
+        "B": "where(A>0.4, (1-A-M*A)/3, 0)"
+      },
+      "step": {
+        "S": "M*A",
+        "A": "(A-2*B)/4",
+        "B": "where(A>0.1, (S-A-M*A)/3, 0)"
+      },
+      "until": "A/S >= V",
+      "max_iter": 60
+    },
+    "layers": [
+      {
+        "loop": {
+          "var": "i",
+          "from": 0,
+          "to": "n"
+        },
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "B"
+          },
+          {
+            "repeat": 3,
+            "size": "A"
+          },
+          {
+            "repeat": 1,
+            "size": "where(i==n, S-A, A+2*A_next)"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "2*A_first"
+      }
+    ],
+    "order": "rev"
+  },
+  {
+    "schema_version": 1,
+    "name": "Rudin_Terminal_Scale",
+    "description": "种子=Rudin2004；变异点=终作业尺寸改为3*A_first以适应非对称负载。",
+    "m": 4,
+    "params": [
+      {
+        "name": "V",
+        "value": 0.732
+      }
+    ],
+    "defs": [
+      {
+        "name": "M",
+        "expr": "(3*V-2)/2"
+      }
+    ],
+    "solve": [
+      {
+        "name": "V",
+        "equation": "V**2+2*V-2",
+        "guess": 0.732
+      }
+    ],
+    "recurrence": {
+      "init": {
+        "S": "1",
+        "A": "1/(2*V)",
+        "B": "(1-A-M*A)/3"
+      },
+      "step": {
+        "S": "M*A",
+        "A": "(A-2*B)/4",
+        "B": "(S-A-M*A)/3"
+      },
+      "until": "A/S >= V",
+      "max_iter": 60
+    },
+    "layers": [
+      {
+        "loop": {
+          "var": "i",
+          "from": 0,
+          "to": "n"
+        },
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "B"
+          },
+          {
+            "repeat": 3,
+            "size": "A"
+          },
+          {
+            "repeat": 1,
+            "size": "where(i==n, S-A, A+2*A_next)"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "3*A_first"
+      }
+    ],
+    "order": "rev"
+  },
+  {
+    "schema_version": 1,
+    "name": "Braun_c1_Std",
+    "description": "种子=Braun2001；变异点=标准6次多项式根构造，验证c≈1.7310下界。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.731
+      }
+    ],
+    "defs": [
+      {
+        "name": "S0",
+        "expr": "(c-1)/(2-c)"
+      },
+      {
+        "name": "L0",
+        "expr": "1-S0"
+      },
+      {
+        "name": "L1",
+        "expr": "(2*c-3)/(2-c)"
+      },
+      {
+        "name": "S1",
+        "expr": "(3-2*c)/(2-c)"
+      },
+      {
+        "name": "Sp1",
+        "expr": "c-1"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "6*c**3-28*c**2+38*c-13",
+        "guess": 1.731
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "L0"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "S0"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "L1"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 3,
+            "size": "S1"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 1,
+            "size": "Sp1"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "Braun_Geometric_Ratio",
+    "description": "种子=Braun2001；变异点=引入几何公比r替代固定有理函数，探索连续谱。",
+    "m": 4,
+    "params": [
+      {
+        "name": "r",
+        "value": 0.57
+      }
+    ],
+    "defs": [
+      {
+        "name": "c",
+        "expr": "1+r+r**2"
+      },
+      {
+        "name": "S0",
+        "expr": "r"
+      },
+      {
+        "name": "L0",
+        "expr": "1-r"
+      }
+    ],
+    "solve": [
+      {
+        "name": "r",
+        "equation": "r**3+2*r**2-r-1",
+        "guess": 0.57
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "L0"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "S0"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "L0*r"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 3,
+            "size": "S0*r"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "Braun_Extended_Layers",
+    "description": "种子=Braun2001；变异点=扩展至6层结构以增加对抗序列长度。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.732
+      }
+    ],
+    "defs": [
+      {
+        "name": "x",
+        "expr": "(c-1)/(2-c)"
+      },
+      {
+        "name": "y",
+        "expr": "(3-c)/(2*c-3)"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "c**4-6*c**3+10*c**2-6*c+1",
+        "guess": 1.732
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "1-x"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "x"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "y"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "x*y"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 3,
+            "size": "(1-y)*x"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 1,
+            "size": "c-1"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "Braun_Reduced_Poly",
+    "description": "种子=Braun2001；变异点=降阶为4次多项式约束以测试低复杂度下界。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.72
+      }
+    ],
+    "defs": [
+      {
+        "name": "S0",
+        "expr": "(c-1)/(2-c)"
+      },
+      {
+        "name": "L1",
+        "expr": "2-c"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "c**4-5*c**3+8*c**2-5*c+1",
+        "guess": 1.72
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "1-S0"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "S0"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "L1"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 3,
+            "size": "1-L1"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "Hybrid_FKT_Rudin",
+    "description": "种子=FKT1995+Rudin2004混合；变异点=FKT双层后接Rudin递推尾部。",
+    "m": 4,
+    "params": [
+      {
+        "name": "V",
+        "value": 0.73
+      }
+    ],
+    "defs": [
+      {
+        "name": "a",
+        "expr": "(V-0.5)/V"
+      },
+      {
+        "name": "M",
+        "expr": "(3*V-2)/2"
+      }
+    ],
+    "solve": [
+      {
+        "name": "V",
+        "equation": "2*V**3-5*V**2+2*V+1",
+        "guess": 0.73
+      }
+    ],
+    "recurrence": {
+      "init": {
+        "S": "1-4*a",
+        "A": "a/2",
+        "B": "(S-A-M*A)/3"
+      },
+      "step": {
+        "S": "M*A",
+        "A": "(A-2*B)/4",
+        "B": "(S-A-M*A)/3"
+      },
+      "until": "A/S >= V",
+      "max_iter": 30
+    },
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "a"
+          }
+        ]
+      },
+      {
+        "loop": {
+          "var": "i",
+          "from": 0,
+          "to": "n"
+        },
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "B"
+          },
+          {
+            "repeat": 3,
+            "size": "A"
+          },
+          {
+            "repeat": 1,
+            "size": "where(i==n, S-A, A+2*A_next)"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "2*A_first"
+      }
+    ],
+    "order": "rev"
+  },
+  {
+    "schema_version": 1,
+    "name": "Hybrid_Braun_Rudin",
+    "description": "种子=Braun2001+Rudin2004混合；变异点=Braun前缀锁定状态后切换Rudin递推。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.73
+      }
+    ],
+    "defs": [
+      {
+        "name": "S0",
+        "expr": "(c-1)/(2-c)"
+      },
+      {
+        "name": "V",
+        "expr": "2-c"
+      },
+      {
+        "name": "M",
+        "expr": "(3*V-2)/2"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "c**3-4*c**2+5*c-2",
+        "guess": 1.73
+      }
+    ],
+    "recurrence": {
+      "init": {
+        "S": "1-S0",
+        "A": "S0/3",
+        "B": "(S-A-M*A)/3"
+      },
+      "step": {
+        "S": "M*A",
+        "A": "(A-2*B)/4",
+        "B": "(S-A-M*A)/3"
+      },
+      "until": "A/S >= V",
+      "max_iter": 40
+    },
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "S0"
+          }
+        ]
+      },
+      {
+        "loop": {
+          "var": "i",
+          "from": 0,
+          "to": "n"
+        },
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "B"
+          },
+          {
+            "repeat": 3,
+            "size": "A"
+          },
+          {
+            "repeat": 1,
+            "size": "where(i==n, S-A, A+2*A_next)"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "2*A_first"
+      }
+    ],
+    "order": "rev"
+  },
+  {
+    "schema_version": 1,
+    "name": "Novel_Asymmetric_4_3",
+    "description": "种子=全新结构；变异点=交替4/3作业数打破对称性，独立代数约束。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.715
+      }
+    ],
+    "defs": [
+      {
+        "name": "x",
+        "expr": "(c-1)/c"
+      },
+      {
+        "name": "y",
+        "expr": "(2-c)/3"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "3*c**3-10*c**2+9*c-2",
+        "guess": 1.715
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "x"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 3,
+            "size": "y"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "1-x-y"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 3,
+            "size": "x*y"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "Novel_Double_Final",
+    "description": "种子=全新结构；变异点=双终作业触发机制，迫使调度器预留两台机器。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.725
+      }
+    ],
+    "defs": [
+      {
+        "name": "a",
+        "expr": "(c-1)/(2*c-3)"
+      },
+      {
+        "name": "b",
+        "expr": "1-a"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "2*c**3-9*c**2+12*c-5",
+        "guess": 1.725
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "a"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "b"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "a*b"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "1"
+      },
+      {
+        "repeat": 1,
+        "size": "1"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "FKT_Scaled_Final",
+    "description": "种子=FKT1995；变异点=终作业尺寸缩放为c的线性函数而非固定1。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.709
+      }
+    ],
+    "defs": [
+      {
+        "name": "a",
+        "expr": "(c-1)/(c+2)"
+      },
+      {
+        "name": "b",
+        "expr": "(3-c)/4"
+      },
+      {
+        "name": "f",
+        "expr": "2*c-3"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation": "c**3-4*c**2+4*c-1",
+        "guess": 1.709
+      }
+    ],
+    "recurrence": null,
+    "layers": [
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "a"
+          }
+        ]
+      },
+      {
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "b"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "f"
+      }
+    ],
+    "order": "fwd"
+  },
+  {
+    "schema_version": 1,
+    "name": "Rudin_Init_Scale",
+    "description": "种子=Rudin2004；变异点=初始状态S缩放为V的二次函数以调整收敛速度。",
+    "m": 4,
+    "params": [
+      {
+        "name": "V",
+        "value": 0.731
+      }
+    ],
+    "defs": [
+      {
+        "name": "M",
+        "expr": "(3*V-2)/2"
+      },
+      {
+        "name": "S_init",
+        "expr": "V**2+0.1"
+      }
+    ],
+    "solve": [
+      {
+        "name": "V",
+        "equation": "V**3+V**2-2*V+0.5",
+        "guess": 0.731
+      }
+    ],
+    "recurrence": {
+      "init": {
+        "S": "S_init",
+        "A": "S_init/(2*V)",
+        "B": "(S_init-A-M*A)/3"
+      },
+      "step": {
+        "S": "M*A",
+        "A": "(A-2*B)/4",
+        "B": "(S-A-M*A)/3"
+      },
+      "until": "A/S >= V",
+      "max_iter": 60
+    },
+    "layers": [
+      {
+        "loop": {
+          "var": "i",
+          "from": 0,
+          "to": "n"
+        },
+        "emit": [
+          {
+            "repeat": 4,
+            "size": "B"
+          },
+          {
+            "repeat": 3,
+            "size": "A"
+          },
+          {
+            "repeat": 1,
+            "size": "where(i==n, S-A, A+2*A_next)"
+          }
+        ]
+      }
+    ],
+    "final": [
+      {
+        "repeat": 1,
+        "size": "2*A_first"
+      }
+    ],
+    "order": "rev"
+  },
+  {
+    "schema_version": 1,
+    "name": "Braun_Symmetric_Pairs",
+    "description": "种子=Braun2001；变异点=成对对称层结构(L,S)(S,L)增强周期性。",
+    "m": 4,
+    "params": [
+      {
+        "name": "c",
+        "value": 1.7305
+      }
+    ],
+    "defs": [
+      {
+        "name": "x",
+        "expr": "(c-1)/(2-c)"
+      },
+      {
+        "name": "y",
+        "expr": "1-x"
+      }
+    ],
+    "solve": [
+      {
+        "name": "c",
+        "equation":

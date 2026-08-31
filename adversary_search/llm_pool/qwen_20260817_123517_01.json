@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "name": "Rudin_Modified_Term",
+  "description": "种子=Rudin √3；变异点=修改终止条件为A/S >= V^2而非V，并在每层插入额外的微调作业以补偿递推误差，保持rev序但改变终作业系数。",
+  "m": 4,
+  "params": [
+    {
+      "name": "V",
+      "value": 0.72
+    },
+    {
+      "name": "M",
+      "value": 0.58
+    }
+  ],
+  "defs": [
+    {
+      "name": "V",
+      "expr": "sqrt(3)-1-0.005"
+    },
+    {
+      "name": "M",
+      "expr": "(3*V-2)/2 + 0.01"
+    }
+  ],
+  "recurrence": {
+    "init": {
+      "S": "1",
+      "A": "1/(2*V)"
+    },
+    "step": {
+      "S": "M*A",
+      "A": "(A-2*B)/4"
+    },
+    "until": "A/S >= V**2",
+    "max_iter": 60
+  },
+  "layers": [
+    {
+      "loop": {
+        "var": "i",
+        "from": 0,
+        "to": "n"
+      },
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "B"
+        },
+        {
+          "repeat": 3,
+          "size": "A"
+        },
+        {
+          "repeat": 1,
+          "size": "where(i==n, 0, A_next)"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "2.1*A_first"
+    }
+  ],
+  "order": "rev"
+}

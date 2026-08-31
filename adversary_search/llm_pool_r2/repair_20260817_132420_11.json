@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "name": "Rudin_Init_Scale_r1",
+  "description": "种子=Rudin2004；变异点=初始状态S缩放为V的二次函数以调整收敛速度。修复：V由eps导出V=sqrt(3)-1-eps，M=(3V-2)/2，S_init=V**2+0.1>0，B用where保护非负。",
+  "m": 4,
+  "params": [
+    {
+      "name": "eps",
+      "value": 1e-06
+    }
+  ],
+  "defs": [
+    {
+      "name": "V",
+      "expr": "sqrt(3)-1-eps"
+    },
+    {
+      "name": "M",
+      "expr": "(3*V-2)/2"
+    },
+    {
+      "name": "S_init",
+      "expr": "V**2+0.1"
+    }
+  ],
+  "solve": [],
+  "recurrence": {
+    "init": {
+      "S": "S_init",
+      "A": "S_init/(2*V)",
+      "B": "where((S_init-A-M*A)/3 > 1e-12, (S_init-A-M*A)/3, 1e-12)"
+    },
+    "step": {
+      "S": "M*A",
+      "A": "(A-2*B)/4",
+      "B": "where((S-A-M*A)/3 > 1e-12, (S-A-M*A)/3, 1e-12)"
+    },
+    "until": "A/S >= V",
+    "max_iter": 60
+  },
+  "layers": [
+    {
+      "loop": {
+        "var": "i",
+        "from": 0,
+        "to": "n"
+      },
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "B"
+        },
+        {
+          "repeat": 3,
+          "size": "A"
+        },
+        {
+          "repeat": 1,
+          "size": "where(i==n, S-A, A+2*A_next)"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "2*A_first"
+    }
+  ],
+  "order": "rev"
+}

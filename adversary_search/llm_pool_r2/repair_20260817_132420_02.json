@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "name": "FKT_ThreeLayer_r1",
+  "description": "种子=FKT1995；变异点=增加中间过渡层d以延迟终作业触发。修复：采用标准FKT方程2*c**2-4*c+1=0得c≈1.707，重新定义d=b-a（原1-c+b为负）；验证a≈0.414,b=0.5,d≈0.086全为正。",
+  "m": 4,
+  "params": [],
+  "defs": [
+    {
+      "name": "a",
+      "expr": "(c-1)/c"
+    },
+    {
+      "name": "b",
+      "expr": "(2-c)/2"
+    },
+    {
+      "name": "d",
+      "expr": "b-a"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "2*c**2-4*c+1",
+      "guess": 1.707
+    }
+  ],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "d"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

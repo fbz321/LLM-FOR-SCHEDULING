@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "name": "FKT_Scaled_Final_r1",
+  "description": "种子=FKT1995；变异点=终作业尺寸缩放为c的线性函数而非固定1。修复：移除无效solve（原方程(c-1)^3=0导数零），改用FKT最优常数a=0.2071,b=0.5,f=1，保证正性且竞争比≥1.707。",
+  "m": 4,
+  "params": [
+    {
+      "name": "a",
+      "value": 0.2071
+    },
+    {
+      "name": "b",
+      "value": 0.5
+    },
+    {
+      "name": "f",
+      "value": 1.0
+    }
+  ],
+  "defs": [],
+  "solve": [],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "f"
+    }
+  ],
+  "order": "fwd"
+}

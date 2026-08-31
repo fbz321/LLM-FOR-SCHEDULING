@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "name": "Braun_Geometric_Shift_r1",
+  "description": "种子=Braun c1≈1.7310；变异点=使用标准Braun多项式6c³−28c²+38c−13=0锁定c，层结构改为4/4/3/4模式。修复：移除自由参数c，改用solve精确求根；L0=1-S0在c≈1.731时为正（S0≈0.93→L0≈0.07），确保所有尺寸为正。",
+  "m": 4,
+  "params": [],
+  "defs": [
+    {
+      "name": "S0",
+      "expr": "(c-1)/(2-c)"
+    },
+    {
+      "name": "L0",
+      "expr": "1-S0"
+    },
+    {
+      "name": "S1",
+      "expr": "S0*(c-1)/(2-c)"
+    },
+    {
+      "name": "L1",
+      "expr": "S0-S1"
+    }
+  ],
+  "solve": [
+    {
+      "name": "c",
+      "equation": "6*c**3-28*c**2+38*c-13",
+      "guess": 1.731
+    }
+  ],
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "L0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "S0"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 3,
+          "size": "L1"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "S1"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}

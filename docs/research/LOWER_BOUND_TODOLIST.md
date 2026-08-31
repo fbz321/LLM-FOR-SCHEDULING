@@ -1,4 +1,6 @@
-# 下界实例与证明 — 待完成清单
+# 下界实例与证明 — 历史归档
+
+> 本文件已退休，不再是当前状态源。当前 Lean 状态以 [`../THEOREMS_ARCHIVE.md`](../THEOREMS_ARCHIVE.md) 为准，当前待办以 [`../ROADMAP.md`](../ROADMAP.md) 和 [`RESEARCH_PLAN.md`](RESEARCH_PLAN.md) 为准；下文保留历史任务与当时的状态快照。
 
 > 目标：覆盖所有"给出对抗实例并证明下界"的 axiom/trivial 占位。
 > 不含算法上界（ListScheduling 分析、M2 算法）。
@@ -22,7 +24,7 @@
 
 ### 1.1 P2||Cmax — 下界 3/2 ✅
 
-文件：[ClassicOnline.lean](OnlineScheduling/OnlineScheduling/LowerBounds/ClassicOnline.lean)
+文件：[ClassicOnline.lean](../../OnlineScheduling/LowerBounds/ClassicOnline.lean)
 
 | # | 状态 | 说明 |
 |---|:---:|------|
@@ -32,7 +34,7 @@
 
 ### 1.2 P3||Cmax — 下界 3/2 ✅
 
-文件：[ClassicOnline.lean](OnlineScheduling/OnlineScheduling/LowerBounds/ClassicOnline.lean)
+文件：[ClassicOnline.lean](../../OnlineScheduling/LowerBounds/ClassicOnline.lean)
 
 | # | 状态 | 说明 |
 |---|:---:|------|
@@ -44,7 +46,7 @@
 
 ### 1.3 P4||Cmax 及以上 — 见 Faigle / Rudin
 
-文件：[ClassicOnline.lean](OnlineScheduling/OnlineScheduling/LowerBounds/ClassicOnline.lean)
+文件：[ClassicOnline.lean](../../OnlineScheduling/LowerBounds/ClassicOnline.lean)
 
 P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rudin (`√3`, `1.88`) 覆盖。
 
@@ -52,7 +54,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 1.4 FKT 下界 — `1 + √2/2 ≈ 1.707` (m ≥ 4)
 
-文件：[Faigle.lean](OnlineScheduling/OnlineScheduling/LowerBounds/Faigle.lean)
+文件：[Faigle.lean](../../OnlineScheduling/LowerBounds/Faigle.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -68,7 +70,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 1.5 Rudin 下界
 
-文件：[Rudin.lean](OnlineScheduling/OnlineScheduling/LowerBounds/Rudin.lean)
+文件：[Rudin.lean](../../OnlineScheduling/LowerBounds/Rudin.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -83,7 +85,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.1 Bin-Stretching — 下界 4/3
 
-文件：[BinStretchingLowerBound.lean](OnlineScheduling/OnlineScheduling/LowerBounds/BinStretchingLowerBound.lean)
+文件：[BinStretchingLowerBound.lean](../../OnlineScheduling/LowerBounds/BinStretchingLowerBound.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -98,7 +100,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.2 Grade of Service — 下界 5/3 (m=2) ✅
 
-文件：[GoSLowerBound.lean](OnlineScheduling/OnlineScheduling/LowerBounds/GoSLowerBound.lean)
+文件：[GoSLowerBound.lean](../../OnlineScheduling/LowerBounds/GoSLowerBound.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -114,7 +116,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.3 Known Sum P2 — 下界 4/3
 
-文件：[KnownSumP3.lean](OnlineScheduling/OnlineScheduling/LowerBounds/KnownSumP3.lean)
+文件：[KnownSumP3.lean](../../OnlineScheduling/LowerBounds/KnownSumP3.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -131,7 +133,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.4 Known Sum P3 — 下界 `1 + (√19−2)/6 ≈ 1.3929`
 
-文件：[KnownSumP3Three.lean](OnlineScheduling/OnlineScheduling/LowerBounds/KnownSumP3Three.lean)
+文件：[KnownSumP3Three.lean](../../OnlineScheduling/LowerBounds/KnownSumP3Three.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -146,7 +148,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.5 Known Sum m=6 — 下界 3/2
 
-文件：[KnownSumM6.lean](OnlineScheduling/OnlineScheduling/LowerBounds/KnownSumM6.lean)
+文件：[KnownSumM6.lean](../../OnlineScheduling/LowerBounds/KnownSumM6.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -161,7 +163,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.6 Known Sum m=3,4,5 — 各一下界
 
-文件：[KnownSumSmallM.lean](OnlineScheduling/OnlineScheduling/LowerBounds/KnownSumSmallM.lean)
+文件：[KnownSumSmallM.lean](../../OnlineScheduling/LowerBounds/KnownSumSmallM.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -176,7 +178,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.7 Known Sum 通用 — 下界 4/3
 
-文件：[KnownSumLowerBound.lean](OnlineScheduling/OnlineScheduling/LowerBounds/KnownSumLowerBound.lean)
+文件：[KnownSumLowerBound.lean](../../OnlineScheduling/LowerBounds/KnownSumLowerBound.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -186,7 +188,7 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.8 Decreasing Job Sizes — 下界 7/6 (m=2), ~1.18 (m=3)
 
-文件：[DecreasingLowerBound.lean](OnlineScheduling/OnlineScheduling/LowerBounds/DecreasingLowerBound.lean)
+文件：[DecreasingLowerBound.lean](../../OnlineScheduling/LowerBounds/DecreasingLowerBound.lean)
 
 | # | 定理/引理 | 占位方式 | 说明 |
 |---|----------|:---:|------|
@@ -201,10 +203,10 @@ P4 的 LS 紧例子（7/4）已移除。通用下界由 FKT (`1+√2/2`) 和 Rud
 
 ### 2.9 伪下界 (Tan & Li 2015) — m=4 ✅ / m=5 ✅ / m=6 ✅ / 通用 m ✅
 
-文件：[PseudoLowerBound.lean](OnlineScheduling/OnlineScheduling/LowerBounds/PseudoLowerBound.lean)
-m=5：文件：[PseudoLowerBoundM5.lean](OnlineScheduling/OnlineScheduling/LowerBounds/PseudoLowerBoundM5.lean)
-m=6：文件：[PseudoLowerBoundM6.lean](OnlineScheduling/OnlineScheduling/LowerBounds/PseudoLowerBoundM6.lean)
-通用 m：文件：[PseudoLowerBoundGeneral.lean](OnlineScheduling/OnlineScheduling/LowerBounds/PseudoLowerBoundGeneral.lean)
+文件：[PseudoLowerBound.lean](../../OnlineScheduling/LowerBounds/PseudoLowerBound.lean)
+m=5：文件：[PseudoLowerBoundM5.lean](../../OnlineScheduling/LowerBounds/PseudoLowerBoundM5.lean)
+m=6：文件：[PseudoLowerBoundM6.lean](../../OnlineScheduling/LowerBounds/PseudoLowerBoundM6.lean)
+通用 m：文件：[PseudoLowerBoundGeneral.lean](../../OnlineScheduling/LowerBounds/PseudoLowerBoundGeneral.lean)
 
 > 只用弱下界（平均负载 LB1、最大作业 LB2，m=4 时 LB3 不生效）无法证明竞争比低于 1+γ_m。
 
@@ -219,7 +221,7 @@ m=6：文件：[PseudoLowerBoundM6.lean](OnlineScheduling/OnlineScheduling/Lower
 
 ## 3. 边界：Graham 紧例子
 
-文件：[ListScheduling.lean](OnlineScheduling/OnlineScheduling/Algorithms/ListScheduling.lean)
+文件：[ListScheduling.lean](../../OnlineScheduling/Algorithms/ListScheduling.lean)
 
 | # | 定理 | 占位方式 | 说明 |
 |---|-----|:---:|------|

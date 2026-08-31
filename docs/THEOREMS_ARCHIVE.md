@@ -1,8 +1,8 @@
 # OnlineScheduling Lean 手册
 
-> 169 个定理/引理 | 158 完整 | 11 待证
-
-> 说明: ⚠️ = 含 `sorry` 或 `*_proof_obligation` axiom
+> 顶部统计是按声明/引理条目计数；文件末尾的统计是按源码审计对象计数，两者口径不同，不应直接相加或比较。
+>
+> 说明：⚠️ 表示条目含 `sorry` 或 `*_proof_obligation` axiom；“可编译”不等于“无项目 axiom 依赖”。
 
 
 ## Algorithms/ListScheduling.lean (2/5)

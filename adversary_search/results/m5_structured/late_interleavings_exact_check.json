@@ -1,0 +1,13 @@
+{
+  "method": "all late Type-2/Type-3 multiset interleavings",
+  "pass_count": 0,
+  "passes": [],
+  "seconds": 21.47134017944336,
+  "state_range": [
+    72,
+    76
+  ],
+  "tau": "1748334970307/1000000000000",
+  "tested": 69300,
+  "version": 1
+}

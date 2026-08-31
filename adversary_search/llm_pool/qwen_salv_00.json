@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "name": "FKT_Base_m4",
+  "description": "种子=FKT1995；变异点=标准m=4基准构造，无代数扰动，用于校验下界1.707。",
+  "m": 4,
+  "params": [
+    {
+      "name": "a",
+      "value": 0.2071
+    },
+    {
+      "name": "b",
+      "value": 0.5
+    }
+  ],
+  "defs": [],
+  "solve": [],
+  "recurrence": null,
+  "layers": [
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "a"
+        }
+      ]
+    },
+    {
+      "emit": [
+        {
+          "repeat": 4,
+          "size": "b"
+        }
+      ]
+    }
+  ],
+  "final": [
+    {
+      "repeat": 1,
+      "size": "1"
+    }
+  ],
+  "order": "fwd"
+}
