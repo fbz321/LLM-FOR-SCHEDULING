@@ -1,179 +1,169 @@
-# m=4 下界自动对抗搜索工作流（AI 辅助）
+# m=4 自适应对抗搜索工作流（AI 辅助）
 
-> 目标：找到能把 4 台机在线调度**任意确定性算法**的竞争比逼到
-> ρ > √3 ≈ 1.73205 的对抗策略（自适应作业序列），目标区间 ρ ∈ (√3, 26/15 ≈ 1.73333]。
-> 产出物：① 经穷举验证的对抗策略（有限深度实例）；② 归纳出的参数化构造 + 数学证明；
-> ③ Lean 形式化（最终替换 / 扩充 `Rudin.lean` 里的 √3 定理）。
+> 目标：在 4 台相同机器的确定性在线 makespan 模型中，寻找严格超过 `sqrt(3)` 的有限自适应策略；目标区间为 `sqrt(3) < rho <= 26/15`。本文件描述方法，不把启发式结果或有限负搜索写成定理。
+>
+> 当前经典上下界、证据等级和项目复核状态见 [`CLASSIC_ONLINE_LOWER_BOUNDS_STATUS.md`](CLASSIC_ONLINE_LOWER_BOUNDS_STATUS.md)。
 
-## 0. 数学设定与归一化
+## 0. 模型、量词与规范化
 
-- **缩放不变性**：所有作业尺寸乘常数 c，makespan 与 OPT 同乘 c，竞争比不变。
-  归一化：最大作业尺寸 = 1（或停顿时 OPT ≈ 1）。
-- **作业尺寸离散化**：网格 G = {k/N}（等距）或几何网格 {(1+δ)^j}。
-  初始 N = 20，多轮细化到 N = 100+。
-- **深度上界** n_max：初始 15，逐步加到 25。
-- **状态**：4 机负载（排序元组 l1 ≤ l2 ≤ l3 ≤ l4）+ 已发作业多重集（算 OPT 用）。
-- **博弈**：对抗者（最大化收益）vs 调度器（最小化收益）的完美信息零和博弈。
-  对抗者每轮发一个作业，调度器把它放到某台机器；对抗者可随时停止，
-  收益 = makespan / OPT(当前前缀)。这正是"对任意确定性在线算法"的精确建模。
+- 作业必须立即、不可撤销地分配；调度器响应后，对抗者才能选择下一作业。
+- 整体缩放不改变竞争比。建议固定第一件正作业为 `1`，允许后续作业大于 `1`；不要把未知未来最大作业强制限制为 `1`。
+- 探索阶段可以使用有限有理动作集 `G`，但“没有策略”只对该 `G` 和给定深度成立。连续动作模型需要额外的结构定理。
+- 规范状态至少包含：
 
-## 1. 博弈树与 minimax
-
-递归式：
-
-```
-V(prefix) = max(  makespan(prefix)/OPT(prefix)            ← 停止选项
-               ,  max_{p∈G}  min_{i=1..4} V(prefix + p→机器i) )   ← 继续
+```text
+(m, sorted machine loads, sorted exact job multiset, remaining depth, action-menu id)
 ```
 
-- 深度到 n_max 强制停止（收益仍按真实 OPT 算）。
-- **alpha-beta 剪枝**；**对称剪枝**：负载相同的机器等价，调度器分支只保留不同负载值。
-- 收益依赖 OPT（即依赖作业历史），因此**不做全局状态记忆化**，以根为起点做有界深度搜索。
-- 先跑 §4 的快速近似（策略迭代 / MCTS）找方向，再用 §3/§5 的穷举树确认数值。
+  对整数状态可再除以所有 loads/jobs 的 gcd；只有在转移和 OPT 语义保持不变时才能合并缩放状态。
+- 固定序列与自适应策略必须分开：固定序列要求同一序列对所有调度器响应成立；自适应策略是状态到下一作业/停止的映射。
 
-## 2. OPT 用枚举计算（按要求）
+## 1. 阈值 OR–AND 搜索
 
-朴素枚举是全部 4^n 种指派，靠两类剪枝压到可用规模：
+目标是判断给定有理阈值 `tau` 是否可达，而不是优先计算完整 minimax 分数：
 
-1. **对称**：排序后负载向量相同 → 只保留一个。
-2. **支配**：负载向量 a 逐坐标 ≤ b（且 max(a) ≤ max(b)）时 a 支配 b，b 可剪
-   （在"最小化最大负载"的意义下永远不会更优）。
+```python
+def winning(state, tau):
+    key = canonical_key(state, tau)
+    if key in memo:
+        return memo[key]
 
-工程做法：按尺寸降序递归放置作业，当前 max(loads) ≥ 已知最优上界立即剪枝
-（经典装箱分支定界）；m=4、n ≤ 25 时足够快。
+    if makespan(state.loads) * tau.denominator >= \
+            tau.numerator * exact_opt(state.jobs):
+        memo[key] = True
+        return True
+    if state.remaining == 0:
+        memo[key] = False
+        return False
 
-**全程整数算术**：尺寸放大 N 倍用 int，或直接用 `Fraction`，杜绝浮点误差。
+    for p in ordered_actions(state):                 # adversary: OR
+        children = distinct_scheduler_children(state, p)
+        if all(winning(child, tau) for child in children):  # scheduler: AND
+            policy[key] = p
+            memo[key] = True
+            return True
 
-```
-def opt(jobs):                       # jobs: 降序排列的整数尺寸（×N 后）
-    best = sum(jobs)                 # 平凡上界
-    loads = [0, 0, 0, 0]
-    def dfs(i):
-        nonlocal best
-        if max(loads) >= best: return            # 剪枝
-        if i == len(jobs): best = max(loads); return
-        for l in sorted(set(loads)):             # 只对不同负载值试放
-            j = loads.index(l)
-            loads[j] += jobs[i]
-            dfs(i + 1)
-            loads[j] -= jobs[i]
-    dfs(0)
-    return best
+    memo[key] = False
+    return False
 ```
 
-优化：同一分支内 OPT 单调不减，可增量维护；不同分支按作业多重集缓存。
+- 达到阈值即可停止；调度器找到一条逃逸边即可使当前作业失败。
+- `canonical_key` 必须包含完整作业多重集；不能只用 `loads`，因为相同负载可能来自不同历史并有不同 OPT。
+- `tau` 在一次搜索中固定时可作为 run metadata，而不是每个 key 的字段；不同阈值的缓存不得混用。
+- 对称性只删除相同负载值的机器响应。未经证明不得使用 majorization 或“负载逐坐标支配”剪枝。
+- 可选用 proof-number search、AO* 或 alpha-beta，但剪枝必须保留 OR–AND 量词语义。
 
-## 3. 主搜索（minimax + 多轮细化）
+## 2. Exact OPT 服务
 
+OPT 是独立的、内容寻址的服务，而不是递归中任意近似函数：
+
+```text
+key = (m, sorted exact job multiset)
+value = exact OPT + method + optional packing witness
 ```
-def value(loads, jobs, depth):
-    r = makespan(loads) / opt(jobs)              # 立即停止的收益
-    if depth == n_max: return r
-    best = r                                     # 对抗者可以停在当前前缀
-    for p in grid:                               # 对抗者选作业尺寸
-        worst = min( value(loads+p·e_i, jobs+[p], depth+1)
-                     for i in distinct_load_indices(loads) )
-        best = max(best, worst)
-    return best
+
+分层实现：
+
+1. `LB = max(largest job, ceil(total/m), stronger safe bounds)`，并用 LPT 或其他构造给上界；若上下界相等，直接返回。
+2. 对容量 `C` 做精确 bin-feasibility decision，在上下界间二分；利用相同作业/机器对称、subset-sum 或 meet-in-the-middle。
+3. 仅对前两层无法解决的前缀运行 branch-and-bound。
+
+缓存应绑定精确多重集，支持原子写入、失败恢复和单 key in-flight 去重。下界只能用于安全排除：若用 `LB <= OPT` 的分母证明调度器存在低于 `tau` 的逃逸，该候选可拒绝；用 LB 得到的“对抗者 PASS”必须标记为 unresolved，不能作为真实下界。
+
+## 3. 搜索阶段与动作生成
+
+不要从 `N=20` 直接扩大到 `N=100` 并进行全网格深搜。推荐漏斗：
+
+### Stage A：校准
+
+- `m=2` 精确复现 `3/2`；
+- `m=4` 复现 FKT 的约 `1.707`；
+- 以 Rudin 参数作为 seed，检查 `sqrt(3)-epsilon`，不要求有限深度恰好达到 `sqrt(3)`。
+
+### Stage B：启发式发现
+
+使用 beam、MCTS、double-oracle 或 LLM 产生候选动作。所有估值输入完整历史特征（loads、job multiset、OPT/packing 摘要、深度）；启发式不能合并语义不同的状态，也不能承担证明。
+
+### Stage C：状态相关动作集
+
+每个状态先生成少量有理候选：
+
+- 使 `load_i + p` 接近 `tau * D` 的临界尺寸；
+- 现有尺寸、尺寸差、`OPT - load_i` 等结构关系；
+- 已知 packing 的余量和整数/有理关系；
+- 上轮策略动作附近的有理扰动。
+
+采用 progressive widening：瓶颈状态才扩大动作集。动作菜单、顺序、随机种子和候选生成规则必须写入 manifest。
+
+### Stage D：CEGIS / escape-guided refinement
+
+1. 在当前有限动作集搜索候选策略；
+2. 独立 checker 找最弱 scheduler escape；
+3. 从该状态的 loads、packing 和阈值余量提取封堵所需的临界动作；
+4. 将动作加入菜单并重跑；
+5. 直到获得完整证书、预算耗尽或证明当前有限菜单无解。
+
+## 4. 证书策略 DAG
+
+正结果保存 canonical DAG，而不是只保存一条路径或庞大树：
+
+```json
+{
+  "schema_version": 1,
+  "m": 4,
+  "tau": "17321/10000",
+  "root": "state-hash",
+  "states": {
+    "state-hash": {
+      "loads": ["..."],
+      "jobs": ["..."],
+      "remaining": 12,
+      "action": "...",
+      "responses": {"load-class-0": "child-hash"}
+    }
+  }
+}
 ```
 
-实际工程：alpha-beta + 对称/支配剪枝 + 并行（子分支独立，多进程分片）+ 时间盒。
+独立 checker 必须确认：root、每个正有理作业、所有不等价响应、状态转移、最大深度、DAG 无非法循环，以及每个前缀的 exact OPT 或可独立验证的 packing/OPT 证书。成功时输出一条完整 winning policy；失败时保存 scheduler escape witness 和 unresolved 原因。
 
-每轮流程：
+## 5. 证据等级和负结果
 
-1. 给定网格 G、深度 n_max、目标 ρ，跑 alpha-beta，记录根值 V*。
-2. 若 V* ≥ ρ：进入验证（§5），成功后做结构归纳（§6）。
-3. 否则：在最优首步附近加密网格、加大 n_max、换更粗启发式，迭代。
-4. 负结果也记录：某 (G, n_max) 下无策略超过 √3，说明该模型类到此为止。
+统一使用以下标签：
 
-## 4. 可扩展替代（穷举树太大时）
+```text
+heuristic candidate
+exact restricted-game PASS
+independent finite-policy certificate
+parameterized mathematical theorem
+Lean-kernel theorem
+```
 
-- **策略迭代（fictitious play）**：
-  1. 固定一个调度策略（LS 变体或上轮最优响应），用单智能体搜索
-     （DP / 束搜索 / OR-tools）找最优对抗序列；
-  2. 固定该序列，用博弈树算调度器最优响应下的收益；
-  3. 交替直到收敛（有限博弈收敛到鞍点 = 博弈值）。
-- **强化学习 / MCTS**：表格或神经网络评估 V(loads)，用于加细网格、加大深度后的搜索。
-- 注意：这些输出仍是**候选**，最终必须过 §5 的穷举验证。
+- `exact restricted-game PASS` 只说明指定动作集/深度中的策略通过。
+- 有限动作集或有限深度无解，只能说明该受限搜索空间无解。
+- 启发式“最好值”、MCTS 估值和局部网格负结果不能写成结构族全局最优或连续模型不可能。
+- `fictitious play` 的经验最佳响应可能循环；其混合策略收敛结论不等于纯自适应策略证书。因此只用于发现，不能假定收敛到所需鞍点。
+- 固定序列的最佳响应不能替代 state-dependent adversary。
 
-## 5. 验证（独立、穷举、精确）
+## 6. 结构提炼与 Lean 交接
 
-- 独立 checker：给定对抗策略（状态 → 作业选择 + 停止条件），穷举所有调度器响应
-  （状态 → 机器选择，对称剪枝），用精确算术断言最小收益 ≥ ρ。
-- **收益必须对真实 OPT 断言**，不能对比经典 LB——这正是 Tan–Li 2015 伪界失效的原因
-  （其序列满足 C*(J¹²) > LB¹²，所以伪界转不成真下界）。
-- 双实现交叉验证（搜索器与 checker 用不同语言/写法）。
-- 记录：策略状态表、ρ、n_max、网格参数、验证结果，存档（findings）。
+对 winning DAG 自动提取：尺寸重数、层/深度、紧前缀、调度器分支、exact OPT、packing witness、近等式和尺寸比。再进行 rational reconstruction、PSLQ 和 packing signature 聚类。LLM 只阅读这些结构化摘要，提出参数族和证明分解，不直接从原始日志猜公式。
 
-## 6. 结构归纳 → 参数化构造
+Lean 交接顺序：
 
-- 用 LLM 分析策略状态表：聚类作业尺寸、识别分层模式（每层 4 个作业？层类型？
-  阈值？），提出参数族（V、M、S、A、B 的推广，对应 Rudin 2003 §2–3）。
-- 对照 Rudin 2001 博士论文的渐近构造（更多层类型），定位"√3 天花板从哪来、
-  新结构如何绕过它"。
-- 输出：参数化构造 + 证明草稿（终止性、强制分摊、OPT 打包上界、终作业引理）。
+1. 先独立重放有限策略 DAG；
+2. 再证明 packing、强制响应和终止性；
+3. 最后抽象为参数族/`forall epsilon` 命题。
 
-## 7. Lean 形式化
+## 7. 验收与复现
 
-- 复用 `Rudin.lean`：adversary wrapper（`rudin_m4_adversary_exists` 的结构）、
-  `rudin_opt_nonneg`、√2/√3 有理界、层分隔引理。
-- 需要新 OPT 界时：先在 `Basic.lean` 补经典第三条（最大若干作业之和 ≤ OPT，LB³），
-  必要时加第四条。
-- 构造超出当前框架时：新建文件（如 `LowerBounds/Rudin4Improved.lean`），
-  单文件 `lean-check` 迭代 → 全量 `lake build` → `find-gaps` 检查无新 axiom。
-- 目标命题：∀ε>0，∀alg，∃σ，algorithmMakespan 4 alg σ ≥ (ρ−ε)·OPT σ。
+一次可发布的突破必须同时满足：
 
-## 8. 验收与记录
+- `tau > sqrt(3)` 且为严格有理比较；
+- 全部策略分支通过独立 checker；
+- 每个 OPT 由独立 exact solver 或可检查 packing 证书确认；
+- clean-cache 重放结果一致；
+- manifest 记录代码版本/哈希、动作菜单、深度、随机种子、缓存统计和证据等级；
+- 通过 `lake build` 与 axiom/sorry 审计后，才可声称 Lean 结果。
 
-- 定义完成：策略经独立穷举验证 → 参数族 + 证明 → Lean 真证明 → docs/task_plan 更新 → 提交。
-- 负结果同样有价值：记录"该类构造的上限"，缩小后续搜索方向。
-- 冒烟测试：搜索应能**复现 √3**（用 Rudin 层参数作种子），作为正确性检查。
-
-## 参数速查表（初始值）
-
-| 参数 | 初始值 | 说明 |
-| --- | --- | --- |
-| m | 4 | 固定 |
-| 网格 | k/N，N = 20 → 100 | 多轮细化 |
-| n_max | 15 → 25 | 作业数 / 深度上界 |
-| ρ_target | 1.7330 | 落在 (√3, 26/15) 内 |
-| 算术 | int（×N）或 Fraction | 禁浮点 |
-| 预算 | 每轮 1–24 h | 并行 alpha-beta |
-| 验证 | 独立 checker，双实现 | 真实 OPT |
-
-## 风险与对策
-
-- **伪界陷阱**：任何收益断言必须对真实 OPT；checker 强制保证。
-- **离散化**：搜索找到的是网格实例上的精确下界；"∀ε"要靠参数族完成，
-  搜索只负责发现结构。
-- **搜索爆炸**：降级到策略迭代 / MCTS；负结果同样记录。
-- **与 √3 的关系**：复现 √3 是冒烟测试；若搜索无法超过 √3，
-  说明需要更多层类型 / 更长的作业列表，而不是参数微调。
-
-## 参考：Gormley et al. 2000 的做法（生成对抗者的先例）
-
-论文：T. Gormley, N. Reingold, E. Torng, J. Westbrook,
-*Generating adversaries for request-answer games*,
-SODA 2000, pp. 564–565（仅 2 页扩展摘要，公开渠道未找到完整版）。
-以下要点据公开摘要 / 索引文本（Mendeley 记录、academia.edu 全文索引、Zbl 0962.91001）：
-
-- **建模**：request-answer game——每个请求必须被在线算法立即处理；
-  在线调度 / 负载均衡是其特例。
-- **对抗策略 = 游戏树**，两类节点：对抗者请求节点（根，非叶）与在线移动节点；
-  请求节点的孩子 = "合理"在线响应各一个分支；移动节点非叶则只有一个请求孩子。
-  这等价于本工作流 §1 的 minimax；"合理响应"对应我们的对称 / 支配剪枝
-  （只考虑放到不同负载值的机器）。
-- **可处理性条件**：生成程序仅适用于满足 "linearizability" 约束的问题子类
-  （"许多问题满足"，含负载均衡）；该定义在摘要正文中推迟给出，公开文本没有细节。
-- **理论完备性**：程序保证能找到"对抗策略 + 度量空间"使任何算法不 k-competitive，
-  从而证明 k-server 猜想的补集递归可枚举（存在反例则程序最终能找到）。
-- **结果**：修改版程序对 m ≥ 80 台相同机器找到 1.85358 下界
-  （改进 Albers 的 1.852），被 Tan–Li 2015 与 Fleischer–Wahl 2000 引为
-  "计算机穷举得到的真下界"。
-- **对我们的启示**：
-  1. 思路同构，直接照搬"游戏树 + 合理移动剪枝"；
-  2. 他们的目标是大 m 渐近（m ≥ 80），不是 m=4，方法可移植但无现成 m=4 结果；
-  3. linearizability 是他们的可处理性条件，我们对应的结构是
-     "状态 = 负载向量 + OPT 的 divisor / 打包上界"；
-  4. 若需要完全公开可读的细节蓝本，Chen–Ye–Zhang 2013（arXiv:1302.3946）
-     的 Best Response Dynamics 是同源方法的完整出版版（见 §4 的"策略迭代"）。
+对文献方法的借鉴（如 request-answer game、best-response dynamics）应标为方法启发；若主要依据摘要或索引而未核对原论文/程序细节，不应把其数值或完备性表述为已验证事实。

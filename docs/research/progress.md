@@ -1,5 +1,7 @@
 # Progress Log
 
+> 历史时间线：条目中的“进行中/待办”只描述记录当日状态，不代表当前状态。当前结论以对应专题文档为准。
+
 ## Session 2026-08-15（Theorem 2 r=1 完成：主定理 braun_absolute_lower_bound_1，0 sorry）
 
 ### 完成：Braun–Chung–Graham 2025 Theorem 2 的 r=1 实例（绝对竞争比 c₁）全部形式化

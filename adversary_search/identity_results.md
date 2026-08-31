@@ -1,5 +1,7 @@
 # EXP-D：魔法常数自动发现（几何层塔族）
 
+> **Generated artifact**：由 `identity_search.py` 生成；解释性结论和证据等级以 `EXPERIMENT_LOG.md` 为准，可由脚本重建。
+
 DE popsize=15 maxiter=40；族：4x(s0*t^k), k=0..L-1，终作业 1
 
 | L | s0* | t* | 值* | t 身份 | s0 身份 | 重建值(t) | 重建值(s0) | 耗时 |

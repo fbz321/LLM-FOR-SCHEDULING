@@ -275,3 +275,333 @@ papers/_inbox/Improved_bounds_for_the_online.pdf，3.06MB 微缩胶片扫描件�
   串行超 12h 上限；缓存保 77 前缀；对策=前缀并行（未执行，待批）
 - 目标升级：超越论文（>1.74833497030641）。策略记录于
   docs/research/M5_ADVERSARY_SKETCH.md v0.2 补遗（R1-R4 路线）
+
+---
+
+## EXP-2026-08-28-E: Rudin 2001 finite-sequence validation (m=5,6,7)
+
+**Purpose**: independently evaluate fixed sequences from dissertation Tables A2--A4 using exact integer job sizes, exact OPT for every prefix, and the scheduler-side minimax recursion.
+
+**Method**
+1. Transcribe each table to a JSON seed and scale all decimal sizes to integers.
+2. Compute and persist `OPT(prefix i)` for every prefix.
+3. Check whether every scheduler response reaches the rational threshold at some prefix; cache symmetric sorted load states.
+
+**Results**
+- m=5: 71/71 prefix OPTs; `tau=1.748334`; **PASS**; 6,909 states.
+- m=7: 57/57 prefix OPTs; `tau=1.7926675`; **PASS**; 159 states.
+- m=6: 81/91 prefix OPTs; stopped after prefix 81 (8,083 seconds for that prefix); **incomplete, no lower-bound claim**.
+
+Late prefix OPT computation dominates runtime. The resumable m=6 cache is preserved but is named `.partial.json`, and `check_rudin.py --cache-only` reports the ten missing prefixes without accidentally restarting the run. See [`RUDIN2001_RESULTS.md`](RUDIN2001_RESULTS.md) for the authoritative report.
+
+**Invalidated side experiment**: the first m=5 geometric-tower run did not pass `m` into job construction or algebraic identity rebuilding. Its reported values therefore mixed m=4 and m=5 semantics and are excluded. The propagation bug is fixed and regression-tested; no new m=5 identity is claimed.
+
+---
+
+## EXP-2026-08-31-F: m=5 singleton-position neighborhood
+
+**Purpose**: test a small, interpretable structural neighborhood around Rudin Table A2 before changing any job sizes. In each of the six `4+1` mixed blocks, move the singleton to any of the five positions while preserving every block and the complete job multiset.
+
+**Method**
+- Exhaustive configurations: `5^6 = 15,625`.
+- Exact threshold:
+  `1748334970307/1000000000000 = 1.748334970307`, strictly above Rudin's displayed `1.74833497030641`.
+- Prefix OPT values keyed by `(m, sorted exact integer prefix)` so a cached value is reused only for the identical prefix multiset.
+- All 71 baseline prefix OPT values were imported from the independently verified Rudin cache; 24 additional altered-prefix multisets were solved exactly.
+
+**Result**
+- `pass_count = 0`; state counts ranged from 72 to 208.
+- The unchanged ordering also fails at this above-bound threshold, as expected.
+- Artifact: `results/m5_structured/singleton_permutations_above_rudin.json`.
+
+**Scope of the negative result**: this rules out only singleton reordering inside the six existing blocks. It says nothing about altered sizes, split/merged layers, terminal multipliers, or additional Type-3 layers. The next search must change a genuine structural interface rather than order alone.
+
+---
+
+## EXP-2026-08-31-G: m=5 late-interface exact shortlist
+
+**Purpose**: test whether small, coupled size changes at Rudin Table A2's last
+four interfaces can cross the displayed bound without changing the earlier
+layer structure. The four multipliers control the last Type-2 singleton, the
+four equal Type-3 base jobs as one group, the Type-3 singleton, and the final
+job.
+
+**Method**
+- Enumerated 6,560 non-identity multiplier configurations on the exact grid
+  `[0.999, 1.001]`.
+- Used necessary lower-bound and representative-path screens only to rank the
+  grid; these screens were explicitly non-certifying.
+- Selected ten finalists and computed all 60 distinct candidate-specific exact
+  prefix OPT values at lengths 65--71. The work completed locally; no paid
+  server was started.
+- Ran the exact fixed-sequence threshold game at
+  `1748334970307/1000000000000 = 1.748334970307`.
+
+**Result**
+- Exact finalists: 10; PASS: **0**.
+- Every exact check terminated after 72 memoized states with a scheduler escape
+  path through all 71 jobs and no threshold-violating state on that path.
+- The strongest explicit escape path among the ten reaches only
+  `1.7478110647740217` (at prefix 71), below Rudin's displayed value.
+- Artifacts:
+  `results/m5_structured/late_interface_opt_results.json` and
+  `results/m5_structured/late_interface_exact_check.json`.
+
+**Scope of the negative result**: this certifies failure only for the ten exact
+finalists. A subsequent full-grid safe-denominator certification, recorded
+below as EXP-K, closes the other 6,550 configurations. Combined with EXP-F, the
+result indicates that the next useful neighborhood should change the layer
+mechanism itself rather than only reorder or rescale the existing suffix.
+
+---
+
+## EXP-2026-08-31-K: complete late-interface multiplier grid
+
+**Purpose**: close the scope gap in EXP-G for every one of the 6,560 coupled
+suffix-rescaling configurations without paying for unnecessary final-prefix
+OPT computations.
+
+**Method**
+- A basic-lower-bound least-loaded path rejects 6,061 of 6,560 candidates.
+- Accumulated content-addressed exact OPT values mixed with safe basic lower
+  bounds reject another 218, leaving 281 candidates.
+- For each remaining candidate, run the complete scheduler-placement recursion
+  using exact OPT where cached and
+  `max(largest job, ceil(prefix sum / 5))` everywhere else.
+- These denominators never exceed exact OPT. Therefore this bounded game is
+  easier for the adversary than the true threshold game: a scheduler escape in
+  it is a rigorous escape in the true game. Conversely, a bounded-game PASS
+  would be treated only as unresolved.
+
+**Result**
+- Remaining bounded games: 281; scheduler escapes: **281**; unresolved: **0**.
+- State range: 75--172.
+- Largest ratio upper bound on any resulting escape path:
+  `125759586191744747937/71931059166370370000 =
+  1.7483349703064097...`, strictly below
+  `1748334970307/1000000000000 = 1.748334970307`.
+- Complete grid: 6,560 tested; PASS: **0**.
+- The 268-key final-prefix exact run was stopped because this stronger safe
+  certificate made it unnecessary.
+- Main artifact:
+  `results/m5_structured/late_interface_remaining_safe_game.json`.
+
+**Scope of the negative result**: every explicit point in the stated four-group
+`[0.999, 1.001]` grid is ruled out. This says nothing about a finer grid,
+larger perturbations, a coupled layer re-derivation, or a new packing mechanism.
+
+---
+
+## EXP-2026-08-31-H: two-Type-3-shaped scaled-copy pilot
+
+**Purpose**: perform a zero-heavy-OPT pilot on an explicit 76-job family before
+attempting to derive a full two-Type-3 tableau. Insert one rationally scaled
+copy of the published five-job Type-3 block immediately before the original.
+
+**Precision rule**: for `q=p/r>1`, multiply the whole published sequence by `p`
+and the inserted block by `r`. This represents relative scale `1/q` exactly and
+never rounds the inserted jobs independently.
+
+**Grid and result**
+- `q = 1001/1000, ..., 1100/1000`: 100 candidates.
+- All 100 have a certified least-loaded-machine escape path below
+  `1748334970307/1000000000000` using only the rigorous basic lower bound on
+  each prefix OPT; exact candidate-specific OPT computation was unnecessary.
+- Artifact: `results/m5_structured/two_type3_scaled_probe.json`.
+
+**Interpretation**: this family is deliberately labeled *Type-3-shaped*, not a
+Rudin two-Type-3 construction. The available dissertation transcription gives
+the reverse ratio map but not the full two-layer state transitions, mixed job
+rows, and packing certificates. Consequently this finite negative result does
+not test the theoretically meaningful two-Type-3 recurrence. Moreover, a close
+read of Table 13 corrects the earlier research premise: Rudin explicitly says
+that, for the optimized m=5/m=6 tableau, replacing a Type-2 layer with another
+Type-3 layer raises the late job sizes and gives an inferior solution. Table 14
+is only an R-recurrence layer-count limit, explicitly “not fully tested
+solutions.” A useful new Type-3 direction therefore needs a different packing
+mechanism, not merely one more published-style row.
+
+---
+
+## EXP-2026-08-31-I: exhaustive late-interface order surgery
+
+**Purpose**: close the remaining order-only gap around Rudin's last Type-2 and
+Type-3 interfaces before changing sizes. Keep jobs 1--60 fixed and enumerate
+all unique orders of the eleven-job multiset `XXXXtAAAAsf`.
+
+**Method and result**
+- Distinct orders: `11!/(4!4!) = 69,300`.
+- Content-addressed late prefixes: 199 distinct multisets; 19 cached and 180
+  newly solved exact OPT values.
+- Exact threshold:
+  `1748334970307/1000000000000 = 1.748334970307`.
+- **PASS: 0**; threshold-game state range 72--76; complete screen took about
+  21.5 seconds after prefix OPT preparation.
+- Artifact: `results/m5_structured/late_interleavings_exact_check.json`.
+
+**Scope**: this exhausts every ordering of the published final two blocks plus
+final job while preserving their multiset. Together with EXP-F it gives strong
+finite evidence that pure order surgery around Table A2 is exhausted. It does
+not address changed sizes, added/removed jobs, or a new offline packing
+mechanism.
+
+---
+
+## EXP-2026-08-31-J: single-job Type-2 4+1 size split
+
+**Purpose**: test a genuine size surgery rather than another order-only change.
+In one of the five Type-2 B blocks, select one of its five equal jobs and apply
+an exact multiplier `k/1000`, for `k=900..1100` excluding identity.
+
+**Result**
+- Candidates: `5 stages × 5 positions × 200 multipliers = 5,000`.
+- All 5,000 have a rigorous least-loaded-machine scheduler escape below
+  `1.748334970307`, even when exact OPT is replaced by its smaller basic lower
+  bound. Therefore no exact candidate-specific OPT work was necessary.
+- Artifact: `results/m5_structured/type2_split_probe.json`.
+
+**Scope**: this rules out only a one-job `5→4+1` split with all other sizes
+fixed. A meaningful next split must couple the B change to the following A and
+singleton values or derive a new exact packing identity.
+
+---
+
+## EXP-2026-08-31-L: coupled final Type-2 block grid
+
+**Purpose**: test the coupled size change suggested by EXP-J. Jointly perturb
+the final Type-2 block's five B jobs, four A jobs, and singleton while retaining
+the published Type-3 block and final forcing job.
+
+**Grid and method**
+- Each group multiplier ranges from `9950/10000` through `10050/10000` in steps
+  of `5/10000`; omit the all-identity point.
+- Candidates: `21^3 - 1 = 9,260`.
+- A least-loaded scheduler path with the safe basic OPT lower bound rejects
+  8,141 candidates, leaving 1,119.
+- Run the complete scheduler-placement recursion on every survivor, using
+  content-addressed exact OPT where already available and the basic lower bound
+  elsewhere. A bounded-game escape is rigorous because all denominators are at
+  most exact OPT; a bounded-game PASS would count only as unresolved.
+
+**Result**
+- Survivor games: 1,119; scheduler escapes: **1,119**; unresolved: **0**.
+- Complete grid: 9,260 tested; PASS: **0**.
+- State range: 75--192.
+- Largest escape ratio upper bound:
+  `125759586191744747937/71931059166370370000 =
+  1.7483349703064097...`, at the unchanged prefix 60 and strictly below the
+  target `1.748334970307`.
+- Artifact: `results/m5_structured/final_type2_coupled_safe_game.json`.
+- Earlier partial final-prefix OPT files are not needed by this certificate.
+
+**Scope**: this closes exactly the three-group local grid around the final
+Type-2 block. It does not cover a finer or wider parameter grid, simultaneous
+changes to earlier layers, or a formula-derived packing mechanism.
+
+---
+
+## EXP-2026-08-31-M: coupled grids across all Type-2 stages
+
+**Purpose**: determine whether the coupled B/A/singleton surgery from EXP-L can
+help at an earlier one of the five published Type-2 stages.
+
+**Precision and grid**
+- Perturb one stage at a time; multiply the full sequence by 10,000 and replace
+  the selected stage's group factors by exact integer numerators. This avoids
+  all per-job division or rounding.
+- Three group multipliers per stage, each in
+  `9950/10000, 9955/10000, ..., 10050/10000`; omit identity.
+- Candidates: `5 × (21^3 - 1) = 46,300`.
+
+**Result**
+- Basic-bound least-loaded scheduler escapes: 40,693.
+- Survivors: 5,607, split by stage as
+  `1,131, 1,119, 1,119, 1,119, 1,119`.
+- Complete mixed-bound scheduler games: 5,607; escapes: **5,607**;
+  unresolved: **0**; PASS: **0**.
+- State range: 6,945--12,299.
+- Largest exact path-ratio upper bound:
+  `1054856925963865625/603349440398708736 =
+  1.7483349703064101...`, strictly below
+  `1748334970307/1000000000000`. The maximum occurs at the unchanged prefix 15,
+  before the first Type-2 stage can be affected.
+- Artifacts: `results/m5_structured/type2_coupled_grid.json`,
+  `type2_coupled_survivors.json`, and `type2_coupled_safe_game.json`.
+
+**Scope**: every point in each one-stage local grid is rigorously ruled out.
+This does not cover simultaneous changes to several stages, a finer/wider grid,
+or a re-derived recurrence and offline packing proof.
+
+---
+
+## EXP-2026-08-31-N: coupled initial three-block grid
+
+**Purpose**: test whether small joint size changes in the three equal five-job
+blocks before the first Type-2 stage can improve the complete 71-job sequence.
+
+**Method and result**
+- Three group multipliers, each ranging from `9950/10000` to `10050/10000` in
+  steps of `5/10000`; omit identity.
+- Candidates: `21^3 - 1 = 9,260`.
+- Exactness: scale every job by 10,000 and use the multiplier numerators on the
+  selected blocks; no division or rounding.
+- All 9,260 are rigorously rejected by a least-loaded scheduler path using the
+  basic lower bound on prefix OPT. There are no survivors and no candidate OPT
+  computations.
+- Largest path-ratio upper bound:
+  `33218540441529816435631165/19000100670473869822263296 =
+  1.7483349703063091...`, at prefix 71 and strictly below the target.
+- Artifact: `results/m5_structured/initial_coupled_grid.json`.
+
+**Scope**: this closes only the three independent initial-block multipliers on
+the stated grid. It does not alter multiplicities/order or re-derive downstream
+Type-2 sizes and packing identities.
+
+---
+
+## EXP-2026-08-31-O: shared perturbation across all Type-2 stages
+
+**Purpose**: test a coordinated proxy for changing Rudin's repeated Type-2
+mechanism. Apply one common B/A/singleton multiplier triple simultaneously to
+all five Type-2 stages.
+
+**Result**
+- Grid: `21^3 - 1 = 9,260` exact candidates.
+- Basic-bound least-loaded path escapes: 8,141.
+- Complete mixed-bound games on survivors: 1,119; escapes: **1,119**;
+  unresolved: **0**; PASS: **0**.
+- State range: 6,945--31,398.
+- Largest escape ratio upper bound:
+  `1054856925963865625/603349440398708736 =
+  1.7483349703064101...`, at unchanged prefix 15 and strictly below target.
+- Artifacts: `results/m5_structured/all_type2_shared_grid.json`,
+  `all_type2_shared_survivors.json`, and `all_type2_shared_safe_game.json`.
+
+**Scope**: this is a shared-multiplier family, not a formula-derived new
+recurrence. It rules out only these coordinated relative rescalings. Future
+work needs changed recurrence parameters, multiplicities, or packing identities.
+
+---
+
+## EXP-2026-08-31-P: inserted Type-2-shaped block
+
+**Purpose**: perform an explicit-sequence pilot for an additional Type-2 block
+before deriving a true sixth-layer recurrence. Insert a rationally scaled copy
+of the final published ten-job Type-2 block immediately before Type-3.
+
+**Method and result**
+- For `q=p/r`, scale the published sequence by `p` and the inserted copy by `r`;
+  its relative size is exactly `1/q`, without rounding.
+- Grid: `q=1.200,1.201,...,2.000`; 801 sequences of 81 jobs.
+- Basic-bound least-loaded scheduler escapes: 365.
+- Complete basic-bound games: 436; escapes: **436**; unresolved: **0**;
+  PASS: **0**.
+- Each survivor game visits 85 states. The largest escape ratio upper bound is
+  `124035018344733941032887/76475405198646660500000 =
+  1.621894228903398...`, at prefix 76.
+- Artifacts: `results/m5_structured/inserted_type2_probe.json`,
+  `inserted_type2_survivors.json`, and `inserted_type2_safe_game.json`.
+
+**Scope**: this copied block is only Type-2-shaped. It does not reconstruct the
+successor Type-3/final sizes or establish the packing tableaux of a true sixth
+Type-2 layer. The result rules out only the stated copied-block scale family.

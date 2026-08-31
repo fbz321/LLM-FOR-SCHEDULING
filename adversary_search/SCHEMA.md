@@ -42,7 +42,7 @@
 |---|---|---|
 | `schema_version` | ✅ | 固定为 1 |
 | `name` / `description` | ✅ | description 必须写明"以哪个已知结构为种子、变异点是什么"（去重用） |
-| `m` | ✅ | 机器数（当前求值器支持 m=4） |
+| `m` | ✅ | 机器数；schema/展开器支持 `m >= 2`，具体种子和搜索器可能有各自的机器数限制 |
 | `params` | 可选 | 数值参数。`free: true` + `bounds` = DE 可优化的自由参数；否则固定值 |
 | `solve` | 可选 | 代数参数：牛顿法解 `equation = 0`（给 `guess`）。**代数约束在这里声明** |
 | `defs` | 可选 | 按序求值的表达式定义，可引用 params/solve/前面的 defs |

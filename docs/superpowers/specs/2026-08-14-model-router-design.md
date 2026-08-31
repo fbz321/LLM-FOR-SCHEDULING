@@ -1,7 +1,7 @@
 # 设计文档：自适应模型路由（ModelRouter）
 
 - 日期：2026-08-14
-- 状态：已评审，待实现
+- 状态：已实现（实现与测试记录见 `docs/research/MULTI_AI_WORKFLOW.md`）
 - 位置：`OnlineScheduling/bottleneck_reflection/`
 
 ## 1. 背景
